@@ -1,4 +1,4 @@
-import type { User } from "@ansospace/types/user";
+import type { User } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
