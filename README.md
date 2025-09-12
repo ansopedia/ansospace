@@ -39,10 +39,10 @@ Ansospace aims to become the foundational ecosystem powering all current and fut
 
 #### Core Tools under `tools/`
 
-- `auth-kit`: replace Clerk/Auth0 with your own
-- `notification-kit`: self-hostable Mailgun/OneSignal alternative
+- `@ansospace/auth`: replace Clerk/Auth0 with your own
+- `@ansospace/notify`: self-hostable Mailgun/OneSignal alternative
 - `gamification-kit`: leaderboards, XP, badges
-- `chat-kit`: reusable internal chat layer
+- `@ansospace/chat`: reusable internal chat layer
 - `seo-kit`, `analytics-kit`: for metadata and business intelligence
 
 > ⚡ **Note:** `ansospace` is an internal-use-only foundation and landing site for platform marketing.
