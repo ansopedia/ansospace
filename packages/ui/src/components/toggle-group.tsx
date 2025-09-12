@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { toggleVariants } from "@monorepo/ui/components/toggle";
-import { cn } from "@monorepo/ui/lib/utils";
+import { toggleVariants } from "@ansospace/ui/components/toggle";
+import { cn } from "@ansospace/ui/lib/utils";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import { type VariantProps } from "class-variance-authority";
 

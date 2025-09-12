@@ -11,11 +11,11 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@monorepo/ui/components",
-    "utils": "@monorepo/ui/lib/utils",
-    "hooks": "@monorepo/ui/hooks",
-    "lib": "@monorepo/ui/lib",
-    "ui": "@monorepo/ui/components",
-    "theme": "@monorepo/ui/theme"
+    "components": "@ansospace/ui/components",
+    "utils": "@ansospace/ui/lib/utils",
+    "hooks": "@ansospace/ui/hooks",
+    "lib": "@ansospace/ui/lib",
+    "ui": "@ansospace/ui/components",
+    "theme": "@ansospace/ui/theme"
   }
 }

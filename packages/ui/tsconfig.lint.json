@@ -1,5 +1,5 @@
 {
-  "extends": "@monorepo/typescript-config/react-library.json",
+  "extends": "@ansospace/typescript-config/react-library.json",
   "compilerOptions": {
     "rootDir": "./src",
     "composite": true,

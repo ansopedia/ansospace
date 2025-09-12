@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@monorepo/ui/components/button";
+import { Button } from "@ansospace/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@monorepo/ui/components/dropdown-menu";
+} from "@ansospace/ui/components/dropdown-menu";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 

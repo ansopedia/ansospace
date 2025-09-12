@@ -2,14 +2,14 @@
 
 import * as React from "react";
 
-import { Button } from "@monorepo/ui/components/button";
-import { Input } from "@monorepo/ui/components/input";
-import { Separator } from "@monorepo/ui/components/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@monorepo/ui/components/sheet";
-import { Skeleton } from "@monorepo/ui/components/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@monorepo/ui/components/tooltip";
-import { useIsMobile } from "@monorepo/ui/hooks/use-mobile";
-import { cn } from "@monorepo/ui/lib/utils";
+import { Button } from "@ansospace/ui/components/button";
+import { Input } from "@ansospace/ui/components/input";
+import { Separator } from "@ansospace/ui/components/separator";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@ansospace/ui/components/sheet";
+import { Skeleton } from "@ansospace/ui/components/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@ansospace/ui/components/tooltip";
+import { useIsMobile } from "@ansospace/ui/hooks/use-mobile";
+import { cn } from "@ansospace/ui/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";

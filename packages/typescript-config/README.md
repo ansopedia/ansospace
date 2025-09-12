@@ -1,3 +1,3 @@
-# `@monorepo/typescript-config`
+# `@ansospace/typescript-config`
 
 Shared typescript configuration for the workspace.

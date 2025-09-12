@@ -8,10 +8,10 @@ importers:
 
   .:
     devDependencies:
-      '@monorepo/eslint-config':
+      '@ansospace/eslint-config':
         specifier: workspace:*
         version: link:packages/eslint-config
-      '@monorepo/typescript-config':
+      '@ansospace/typescript-config':
         specifier: workspace:*
         version: link:packages/typescript-config
       '@trivago/prettier-plugin-sort-imports':
@@ -35,7 +35,7 @@ importers:
 
   apps/docs:
     dependencies:
-      '@monorepo/ui':
+      '@ansospace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       lucide-react:
@@ -57,10 +57,10 @@ importers:
         specifier: 4.1.7
         version: 4.1.7
     devDependencies:
-      '@monorepo/eslint-config':
+      '@ansospace/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@monorepo/typescript-config':
+      '@ansospace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/node':
@@ -81,7 +81,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@monorepo/ui':
+      '@ansospace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       lucide-react:
@@ -103,13 +103,13 @@ importers:
         specifier: 4.1.7
         version: 4.1.7
     devDependencies:
-      '@monorepo/eslint-config':
+      '@ansospace/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@monorepo/types':
+      '@ansospace/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@monorepo/typescript-config':
+      '@ansospace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/node':
@@ -172,7 +172,7 @@ importers:
 
   packages/types:
     devDependencies:
-      '@monorepo/typescript-config':
+      '@ansospace/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
@@ -322,10 +322,10 @@ importers:
         specifier: 4.1.7
         version: 4.1.7
     devDependencies:
-      '@monorepo/eslint-config':
+      '@ansospace/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@monorepo/typescript-config':
+      '@ansospace/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@tailwindcss/postcss':

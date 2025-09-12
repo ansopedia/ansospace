@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { cn } from "@monorepo/ui/lib/utils";
+import { cn } from "@ansospace/ui/lib/utils";
 import * as LabelPrimitive from "@radix-ui/react-label";
 
 function Label({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {

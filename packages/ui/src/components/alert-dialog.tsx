@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { buttonVariants } from "@monorepo/ui/components/button";
-import { cn } from "@monorepo/ui/lib/utils";
+import { buttonVariants } from "@ansospace/ui/components/button";
+import { cn } from "@ansospace/ui/lib/utils";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
 function AlertDialog({ ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
@@ -100,14 +100,14 @@ function AlertDialogCancel({ className, ...props }: React.ComponentProps<typeof 
 
 export {
   AlertDialog,
-  AlertDialogPortal,
-  AlertDialogOverlay,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 };

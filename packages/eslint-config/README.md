@@ -1,3 +1,3 @@
-# `@monorepo/eslint-config`
+# `@ansospace/eslint-config`
 
 Shared eslint configuration for the workspace.

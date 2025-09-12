@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { cn } from "@monorepo/ui/lib/utils";
+import { cn } from "@ansospace/ui/lib/utils";
 import { OTPInput, OTPInputContext } from "input-otp";
 import { MinusIcon } from "lucide-react";
 

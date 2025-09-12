@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { Label } from "@monorepo/ui/components/label";
-import { cn } from "@monorepo/ui/lib/utils";
+import { Label } from "@ansospace/ui/components/label";
+import { cn } from "@ansospace/ui/lib/utils";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import {

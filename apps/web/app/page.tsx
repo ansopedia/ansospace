@@ -1,6 +1,6 @@
-import type { User } from "@monorepo/types/user";
-import { Button } from "@monorepo/ui/components";
-import { ThemeToggle } from "@monorepo/ui/theme";
+import type { User } from "@ansospace/types/user";
+import { Button } from "@ansospace/ui/components";
+import { ThemeToggle } from "@ansospace/ui/theme";
 
 import { APP_CONFIG } from "../lib/constants";
 import { env } from "../lib/env";

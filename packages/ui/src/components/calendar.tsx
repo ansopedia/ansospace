@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { Button, buttonVariants } from "@monorepo/ui/components/button";
-import { cn } from "@monorepo/ui/lib/utils";
+import { Button, buttonVariants } from "@ansospace/ui/components/button";
+import { cn } from "@ansospace/ui/lib/utils";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
 

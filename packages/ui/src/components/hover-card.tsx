@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { cn } from "@monorepo/ui/lib/utils";
+import { cn } from "@ansospace/ui/lib/utils";
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
 
 function HoverCard({ ...props }: React.ComponentProps<typeof HoverCardPrimitive.Root>) {

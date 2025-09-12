@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { cn } from "@monorepo/ui/lib/utils";
+import { cn } from "@ansospace/ui/lib/utils";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
 function TooltipProvider({ delayDuration = 0, ...props }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {

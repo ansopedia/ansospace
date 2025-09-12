@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { Button } from "@monorepo/ui/components/button";
-import { cn } from "@monorepo/ui/lib/utils";
+import { Button } from "@ansospace/ui/components/button";
+import { cn } from "@ansospace/ui/lib/utils";
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 

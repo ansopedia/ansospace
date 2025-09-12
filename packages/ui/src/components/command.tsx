@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@monorepo/ui/components/dialog";
-import { cn } from "@monorepo/ui/lib/utils";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@ansospace/ui/components/dialog";
+import { cn } from "@ansospace/ui/lib/utils";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 

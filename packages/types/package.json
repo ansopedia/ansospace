@@ -1,5 +1,5 @@
 {
-  "name": "@monorepo/types",
+  "name": "@ansospace/types",
   "type": "module",
   "scripts": {
     "dev": "tsc --watch",
@@ -16,7 +16,7 @@
     }
   },
   "devDependencies": {
-    "@monorepo/typescript-config": "workspace:*",
+    "@ansospace/typescript-config": "workspace:*",
     "typescript": "5.9.2"
   }
 }

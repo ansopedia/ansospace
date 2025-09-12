@@ -1,9 +1,9 @@
 {
-  "extends": "@monorepo/typescript-config/react-library.json",
+  "extends": "@ansospace/typescript-config/react-library.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@monorepo/ui/*": ["./src/*"]
+      "@ansospace/ui/*": ["./src/*"]
     }
   },
   "include": ["."],

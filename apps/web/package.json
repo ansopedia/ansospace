@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@monorepo/ui": "workspace:*",
+    "@ansospace/ui": "workspace:*",
     "lucide-react": "0.544.0",
     "next": "15.5.3",
     "next-themes": "0.4.6",
@@ -24,9 +24,9 @@
     "@types/node": "24.3.1",
     "@types/react": "19.1.12",
     "@types/react-dom": "19.1.9",
-    "@monorepo/eslint-config": "workspace:*",
-    "@monorepo/typescript-config": "workspace:*",
-    "@monorepo/types": "workspace:*",
+    "@ansospace/eslint-config": "workspace:*",
+    "@ansospace/typescript-config": "workspace:*",
+    "@ansospace/types": "workspace:*",
     "eslint": "9.35.0",
     "typescript": "5.9.2"
   }

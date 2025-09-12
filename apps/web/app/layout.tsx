@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
-import "@monorepo/ui/globals.css";
-import { ThemeProvider } from "@monorepo/ui/theme";
+import "@ansospace/ui/globals.css";
+import { ThemeProvider } from "@ansospace/ui/theme";
 
 import { Providers } from "@/components/providers";
 
