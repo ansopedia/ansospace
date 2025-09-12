@@ -1,6 +1,9 @@
 {
-  "extends": "@workspace/typescript-config/react-library.json",
+  "extends": "@monorepo/typescript-config/react-library.json",
   "compilerOptions": {
+    "rootDir": "./src",
+    "composite": true,
+    "incremental": true,
     "outDir": "dist"
   },
   "include": ["src", "turbo"],

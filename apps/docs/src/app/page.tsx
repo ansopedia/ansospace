@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { Button } from "@workspace/ui/components/button";
+import { Button } from "@monorepo/ui/components/button";
 
 import { env } from "../lib/env";
 

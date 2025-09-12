@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
-import "@workspace/ui/globals.css";
+import "@monorepo/ui/globals.css";
+import { ThemeProvider } from "@monorepo/ui/theme";
 
 import { Providers } from "@/components/providers";
 
@@ -22,7 +23,9 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>): Rea
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}>
-        <Providers>{children}</Providers>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <Providers>{children}</Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

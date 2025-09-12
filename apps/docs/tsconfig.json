@@ -1,11 +1,11 @@
 {
-  "extends": "@workspace/typescript-config/nextjs.json",
+  "extends": "@monorepo/typescript-config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@workspace/eslint-config/*": ["../../packages/eslint-config/*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"]
+      "@monorepo/eslint-config/*": ["../../packages/eslint-config/*"],
+      "@monorepo/ui/*": ["../../packages/ui/src/*"]
     },
     "plugins": [
       {
