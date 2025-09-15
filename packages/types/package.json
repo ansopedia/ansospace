@@ -1,6 +1,6 @@
 {
   "name": "@ansospace/types",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Shared TypeScript type definitions for the AnsoSpace platform",
   "keywords": [
     "typescript",
@@ -16,16 +16,13 @@
   },
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "default": "./dist/index.js"
+      "types": "./src/index.ts"
     },
     "./user": {
-      "types": "./src/user.ts",
-      "default": "./dist/user.js"
+      "types": "./src/user.ts"
     },
     "./course": {
-      "types": "./src/course.ts",
-      "default": "./dist/course.js"
+      "types": "./src/course.ts"
     }
   },
   "devDependencies": {

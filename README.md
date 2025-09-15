@@ -72,7 +72,7 @@ Each service:
 
 Each product (e.g., LMS, delivery app, school system) should have **separate polyrepos** with the following suggested structure:
 
-```
+```bash
 <product-name>-platform/
 ├── apps/
 │   ├── web/               # Public-facing web app (Next.js)
@@ -91,7 +91,7 @@ Each product (e.g., LMS, delivery app, school system) should have **separate pol
 
 > React Native SDKs & Apps
 
-```
+```bash
 ansomobile/
 ├── apps/
 │   ├── delivery-app/       # Mobile delivery app (Expo)

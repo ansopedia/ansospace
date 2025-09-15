@@ -21,11 +21,12 @@
     "zod": "4.1.7"
   },
   "devDependencies": {
+    "@ansospace/eslint-config": "workspace:*",
+    "@ansospace/types": "^0.0.1",
+    "@ansospace/typescript-config": "workspace:*",
     "@types/node": "24.3.1",
     "@types/react": "19.1.12",
     "@types/react-dom": "19.1.9",
-    "@ansospace/eslint-config": "workspace:*",
-    "@ansospace/typescript-config": "workspace:*",
     "eslint": "9.35.0",
     "typescript": "5.9.2"
   }

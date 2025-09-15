@@ -17,7 +17,17 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["Ansopedian", "ansospace", "hookform", "Sonner", "tanstack", "trivago"],
+  "cSpell.words": [
+    "ansomobile",
+    "Ansopedian",
+    "ansospace",
+    "hookform",
+    "polyrepo",
+    "Sonner",
+    "tanstack",
+    "trivago",
+    "turborepo"
+  ],
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
