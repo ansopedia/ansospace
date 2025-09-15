@@ -9,7 +9,7 @@
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
     "prepare": "husky",
-    "publish-packages": "turbo run build --filter='@ansospace/*' && changeset publish"
+    "publish-packages": "turbo run build --filter=@ansospace/types && changeset publish"
   },
   "devDependencies": {
     "@ansospace/eslint-config": "workspace:*",
