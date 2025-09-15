@@ -16,14 +16,20 @@
   },
   "exports": {
     ".": {
-      "types": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./user": {
-      "types": "./src/user.ts"
+      "types": "./dist/user.d.ts",
+      "import": "./dist/user.js"
     },
     "./course": {
-      "types": "./src/course.ts"
+      "types": "./dist/course.d.ts",
+      "import": "./dist/course.js"
     }
+  },
+  "dependencies": {
+    "zod": "3.25.76"
   },
   "devDependencies": {
     "@ansospace/typescript-config": "workspace:*",
