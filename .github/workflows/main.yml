@@ -1,12 +1,12 @@
-name: Release
+name: Build
 
 on:
   push:
     branches:
-      - main
+      - "**"
 
 jobs:
-  release:
+  build:
     name: Release
     runs-on: ubuntu-latest
     steps:
@@ -25,11 +25,5 @@ jobs:
           node-version: "22"
           cache: "pnpm"
 
-      - name: Create and Publish Release
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          publish: pnpm run publish-packages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: pnpm install
+      - run: pnpm run lint && pnpm run build
