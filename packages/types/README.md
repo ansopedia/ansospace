@@ -8,12 +8,16 @@ This package provides shared TypeScript type definitions and Zod validation sche
 - Provides Zod schemas for validation with branded types for enhanced type safety.
 - Enables type-safe imports throughout the codebase.
 - Compiled to JavaScript and declaration files for consumption by other packages.
+- Restructured for better readability, consistency, and maintainability with renamed types, grouped related schemas, and optimized code.
 
 ## Features
 
 - **Modular Structure**: Organized into logical modules (auth, user, notification, etc.) for better maintainability.
 - **Branded Types**: Uses Zod's `.brand()` to create distinct types (e.g., `Username`, `Password`) instead of plain strings.
-- **Validation Schemas**: Comprehensive Zod schemas for data validation and parsing.
+- **Validation Schemas**: Comprehensive Zod schemas for data validation and parsing, all consistently named with 'Schema' suffix.
+- **Consistent Naming**: PascalCase for types, camelCase for schemas, descriptive names.
+- **Grouped Related Types**: Token payloads moved to token.ts, auth-related in auth.ts.
+- **Refactored Repeated Structures**: Branded schemas used consistently, removed duplicates.
 - **No Heavy Dependencies**: Removed mongoose and socket.io dependencies, using regex for ObjectId validation and keeping only interfaces for sockets.
 
 ## Installation
@@ -27,23 +31,23 @@ Import the types and schemas as needed:
 ```ts
 // Import specific types
 import type { User, RegisterSchema } from "@ansospace/types";
-import { validateRegister, username } from "@ansospace/types";
+import { validateRegister, usernameSchema } from "@ansospace/types";
 
 // Use branded types by parsing through schemas
 const user: User = { ... };
 const validUser = validateRegister(userData);
 
 // Create branded types
-const uname: Username = username.parse("validusername");
+const uname: Username = usernameSchema.parse("validusername");
 ```
 
 ### Available Modules
 
-- `auth`: Authentication-related types and schemas (Username, Password, Email, Login, etc.)
+- `auth`: Authentication-related types and schemas (Username, Password, Email, Login, Session, etc.)
 - `user`: User management (User, Role, Permission, Profile, etc.)
 - `notification`: Notification types and email validation schemas
 - `otp`: OTP-related schemas and events
-- `token`: Token schemas for actions
+- `token`: Token schemas, payloads, and types
 - `socket`: Socket.io event interfaces (without dependencies)
 - `common`: Shared utilities like MongooseObjectId, DeviceInfo, Pagination
 
@@ -65,6 +69,7 @@ pnpm run build
 - Avoid adding runtime code to maintain lightweight builds.
 - Update the version and changesets carefully to reflect breaking changes.
 - Use semantic versioning to communicate changes to consumers.
+- Follow consistent naming: Schemas with 'Schema' suffix, types PascalCase, descriptive names.
 
 ## Contributing
 

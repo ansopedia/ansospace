@@ -1,34 +1,19 @@
 import z from "zod";
 
 import { DeviceId, MongooseObjectId, deviceId, deviceInfoSchema, mongooseObjectId } from "./common";
-import { userActionTypeSchema } from "./notification";
 
-export const Tokens = {
-  ACCESS: "access",
-  REFRESH: "refresh",
-  ACTION: "action",
-} as const;
-export type Tokens = (typeof Tokens)[keyof typeof Tokens];
-
-export type LoggedInUser = {
-  userId: MongooseObjectId;
-  permissions: string[];
-  deviceId: DeviceId;
-  tokenVersion: number;
-};
-
-export const username = z
+export const usernameSchema = z
   .string()
-  .min(3, "username must be at least 3 characters")
-  .max(18, "username must be at most 18 characters")
-  .regex(/^[a-z]/i, "username must start with a letter")
-  .regex(/^[a-z0-9-_]*$/i, "username can only contain alphanumeric characters, hyphens, and underscores")
+  .min(3, "Username must be at least 3 characters")
+  .max(18, "Username must be at most 18 characters")
+  .regex(/^[a-z]/i, "Username must start with a letter")
+  .regex(/^[a-z0-9-_]*$/i, "Username can only contain alphanumeric characters, hyphens, and underscores")
   .transform((val) => val.toLowerCase().trim())
   .brand<"Username">();
 
-export type Username = z.infer<typeof username>;
+export type Username = z.infer<typeof usernameSchema>;
 
-export const password = z
+export const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters long")
   .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
@@ -46,32 +31,25 @@ export const password = z
   )
   .brand<"Password">();
 
-export type Password = z.infer<typeof password>;
+export type Password = z.infer<typeof passwordSchema>;
 
-export const email = z
+export const emailSchema = z
   .string({ message: "Email is required" })
   .min(1, { message: "Email is required" })
   .email({ message: "Invalid email format" })
   .transform((val) => val.toLowerCase().trim());
 
-export type Email = z.infer<typeof email>;
+export type Email = z.infer<typeof emailSchema>;
 
-export type MyCustomType = {
-  id: string;
-  name: string;
-};
+export const otpSchema = z.string().length(6).brand<"Otp">();
 
-export const myCustomSchema = z.custom<MyCustomType>();
-
-export const otp = z.string().length(6);
-
-export type Otp = string & { __brand: "Otp" };
+export type Otp = z.infer<typeof otpSchema>;
 
 export const loginSchema = z
   .object({
-    email: email.optional(),
-    username: username.optional(),
-    password: password,
+    email: emailSchema.optional(),
+    username: usernameSchema.optional(),
+    password: passwordSchema,
   })
   .superRefine((data, ctx) => {
     if (data.email == null && data.username == null) {
@@ -92,64 +70,29 @@ export const loginSchema = z
 
 export type Login = z.infer<typeof loginSchema>;
 
-const AuthSchema = z.object({
+export const authTokenSchema = z.object({
   userId: mongooseObjectId,
-  refreshToken: z.string(),
-  otp,
   accessToken: z.string(),
-  device: z.string().optional(),
-  ip: z.string().optional(),
-  userAgent: z.string().optional(),
+  refreshToken: z.string(),
 });
 
-export const authToken = AuthSchema.pick({
-  userId: true,
-  accessToken: true,
-  refreshToken: true,
-});
+export type AuthToken = z.infer<typeof authTokenSchema>;
 
-export type AuthToken = z.infer<typeof authToken>;
-
-const SignUpResponse = z.object({
+export const signUpResponseSchema = z.object({
   userId: mongooseObjectId,
   token: z.string(),
 });
 
-export type SignUpResponse = z.infer<typeof SignUpResponse>;
+export type SignUpResponse = z.infer<typeof signUpResponseSchema>;
 
-const accessTokenPayload = z.object({
-  userId: mongooseObjectId,
-  deviceId: deviceId,
-  tokenVersion: z.number(),
-  permissions: z.array(z.string()),
-});
-
-export const validateAccessTokenPayload = (data: unknown) => {
-  return accessTokenPayload.parse(data);
+export type AuthenticatedUser = {
+  userId: MongooseObjectId;
+  permissions: string[];
+  deviceId: DeviceId;
+  tokenVersion: number;
 };
 
-const refreshTokenPayload = z.object({
-  sessionId: mongooseObjectId,
-});
-
-export const validateRefreshTokenPayload = (data: unknown) => {
-  return refreshTokenPayload.parse(data);
-};
-
-const actionTokenPayload = z.object({
-  userId: mongooseObjectId,
-  action: userActionTypeSchema,
-});
-
-export const validateActionTokenPayload = (data: unknown) => {
-  return actionTokenPayload.parse(data);
-};
-
-export type AccessTokenPayload = z.infer<typeof accessTokenPayload>;
-export type RefreshTokenPayload = z.infer<typeof refreshTokenPayload>;
-export type ActionTokenPayload = z.infer<typeof actionTokenPayload>;
-
-export const session = z.object({
+export const sessionSchema = z.object({
   id: mongooseObjectId,
   userId: mongooseObjectId,
   refreshToken: z.string(),
@@ -162,14 +105,14 @@ export const session = z.object({
   isActive: z.boolean().optional().default(true),
 });
 
-export type Session = z.infer<typeof session>;
+export type Session = z.infer<typeof sessionSchema>;
 
-const refreshTokenSchema = z.object({
+export const refreshTokenRequestSchema = z.object({
   refreshToken: z.string(),
 });
 
-export type RefreshTokenSchema = z.infer<typeof refreshTokenSchema>;
+export type RefreshTokenRequest = z.infer<typeof refreshTokenRequestSchema>;
 
-export const validateRefreshTokenSchema = (data: unknown) => {
-  return refreshTokenSchema.parse(data);
+export const validateRefreshTokenRequest = (data: unknown) => {
+  return refreshTokenRequestSchema.parse(data);
 };

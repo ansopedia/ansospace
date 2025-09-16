@@ -1,5 +1,5 @@
 import type { Otp, RegisterSchema } from "@ansospace/types";
-import { password, username, validateRegister } from "@ansospace/types";
+import { passwordSchema, usernameSchema, validateRegister } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
@@ -7,8 +7,8 @@ import { APP_CONFIG } from "../lib/constants";
 import { env } from "../lib/env";
 
 export default function Page() {
-  const newUsername = username.parse("username");
-  const newPassword = password.parse("Password123!");
+  const newUsername = usernameSchema.parse("username");
+  const newPassword = passwordSchema.parse("Password123!");
 
   const user: RegisterSchema = {
     username: newUsername,

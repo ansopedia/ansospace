@@ -1,6 +1,6 @@
 import z from "zod";
 
-import { password, username } from "./auth";
+import { emailSchema, passwordSchema, usernameSchema } from "./auth";
 import { mongooseObjectId } from "./common";
 
 export const userRoleSchema = z.object({
@@ -14,9 +14,9 @@ const roleSchema = z.object({
   id: mongooseObjectId,
   name: z
     .string()
-    .min(3, "name must be at least 3 characters")
-    .max(18, "name must be at most 18 characters")
-    .regex(/^[a-z][a-z-]*$/i, "name must start with a letter")
+    .min(3, "Name must be at least 3 characters")
+    .max(18, "Name must be at most 18 characters")
+    .regex(/^[a-z][a-z-]*$/i, "Name must start with a letter")
     .transform((val) => val.toLowerCase().trim()),
   description: z.string().min(25).max(255),
   isDeleted: z.boolean().default(false),
@@ -34,7 +34,7 @@ export const createRoleSchema = roleSchema.omit({
   updatedBy: true,
 });
 
-export const validateRoleName = roleSchema.pick({ name: true });
+export const validateRoleNameSchema = roleSchema.pick({ name: true });
 
 export const updateRoleSchema = roleSchema.partial({
   name: true,
@@ -50,8 +50,8 @@ export const getRoleSchema = roleSchema.omit({
 });
 
 export type Role = z.infer<typeof roleSchema>;
-export type createRole = z.infer<typeof createRoleSchema>;
-export type getRole = z.infer<typeof getRoleSchema>;
+export type CreateRole = z.infer<typeof createRoleSchema>;
+export type GetRole = z.infer<typeof getRoleSchema>;
 
 export const PermissionCategory = {
   USER_MANAGEMENT: "USER_MANAGEMENT",
@@ -87,7 +87,7 @@ export const createPermissionSchema = permissionSchema.omit({
   updatedBy: true,
 });
 
-export const validatePermissionName = permissionSchema.pick({ name: true });
+export const validatePermissionNameSchema = permissionSchema.pick({ name: true });
 
 export const getPermissionSchema = permissionSchema.omit({
   createdBy: true,
@@ -109,10 +109,10 @@ export type RolePermission = z.infer<typeof rolePermissionSchema>;
 export const userSchema = z.object({
   id: mongooseObjectId,
   googleId: z.string().optional(),
-  username: username,
-  email: z.string().email().trim().toLowerCase().min(1, "Email is required"),
-  password: password,
-  confirmPassword: password,
+  username: usernameSchema,
+  email: emailSchema,
+  password: passwordSchema,
+  confirmPassword: passwordSchema,
   isEmailVerified: z.boolean().default(false),
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),

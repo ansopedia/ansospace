@@ -1,5 +1,14 @@
 # @ansospace/types
 
+## 0.2.0
+
+### Minor Changes
+
+- Restructured types for enhanced readability, code optimization, and best practices: Consistent naming conventions (schemas with 'Schema' suffix, types PascalCase), descriptive names (e.g., 'LoggedInUser' to 'AuthenticatedUser'), grouped related types (moved token payloads to token.ts), refactored repeated structures (used branded schemas consistently).
+- Renamed types and schemas across files for consistency: e.g., username -> usernameSchema, Tokens -> TokenType, otpSchema -> otpRecordSchema.
+- Updated imports and exports to use branded schemas from auth.ts in all files, removed duplicates.
+- Improved type safety with consistent branding and validation.
+
 ## 0.1.0
 
 ### Minor Changes

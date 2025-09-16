@@ -1,7 +1,47 @@
 import z from "zod";
 
-import { MongooseObjectId, mongooseObjectId } from "./common";
+import { deviceId, mongooseObjectId } from "./common";
 import { userActionTypeSchema } from "./notification";
+
+export const TokenType = {
+  ACCESS: "access",
+  REFRESH: "refresh",
+  ACTION: "action",
+} as const;
+
+export type TokenType = (typeof TokenType)[keyof typeof TokenType];
+
+export const accessTokenPayloadSchema = z.object({
+  userId: mongooseObjectId,
+  deviceId: deviceId,
+  tokenVersion: z.number(),
+  permissions: z.array(z.string()),
+});
+
+export const validateAccessTokenPayload = (data: unknown) => {
+  return accessTokenPayloadSchema.parse(data);
+};
+
+export const refreshTokenPayloadSchema = z.object({
+  sessionId: mongooseObjectId,
+});
+
+export const validateRefreshTokenPayload = (data: unknown) => {
+  return refreshTokenPayloadSchema.parse(data);
+};
+
+export const actionTokenPayloadSchema = z.object({
+  userId: mongooseObjectId,
+  action: userActionTypeSchema,
+});
+
+export const validateActionTokenPayload = (data: unknown) => {
+  return actionTokenPayloadSchema.parse(data);
+};
+
+export type AccessTokenPayload = z.infer<typeof accessTokenPayloadSchema>;
+export type RefreshTokenPayload = z.infer<typeof refreshTokenPayloadSchema>;
+export type ActionTokenPayload = z.infer<typeof actionTokenPayloadSchema>;
 
 export const tokenSchema = z.object({
   id: mongooseObjectId,
