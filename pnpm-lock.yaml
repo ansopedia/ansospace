@@ -64,8 +64,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/eslint-config
       '@ansospace/types':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: ^0.0.2
+        version: 0.0.2
       '@ansospace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -369,8 +369,8 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
-  '@ansospace/types@0.0.1':
-    resolution: {integrity: sha512-X11rScSBp2kzoSWxzNA8wMKz0TR5xT42gU1ymxglH6rscZOSavdeBqC6kxR/mTWtJ8ktvac7MJTf89REmidjxA==}
+  '@ansospace/types@0.0.2':
+    resolution: {integrity: sha512-1lUv6nr/IMcj9k0Tjepi5UyYaazQplnwbPGIG/7XyTtnmZsALcLb6hidocwzzQ3RFySz64vDtxYPdUUW7okCTw==}
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -3868,7 +3868,9 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@ansospace/types@0.0.1': {}
+  '@ansospace/types@0.0.2':
+    dependencies:
+      zod: 3.25.76
 
   '@babel/code-frame@7.27.1':
     dependencies:

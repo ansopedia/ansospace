@@ -1,4 +1,5 @@
-import { type User, validateRegister } from "@ansospace/types";
+import type { RegisterSchema } from "@ansospace/types";
+import { validateRegister } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
@@ -6,16 +7,11 @@ import { APP_CONFIG } from "../lib/constants";
 import { env } from "../lib/env";
 
 export default function Page() {
-  const user: User = {
-    id: "507f1f77bcf86cd799439011", // Valid ObjectId format
-    username: "tes",
+  const user: RegisterSchema = {
+    username: "test",
     email: "test@example.com",
-    password: "Password123",
-    confirmPassword: "Password123",
-    isEmailVerified: true,
-    isDeleted: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    password: "Password123!",
+    confirmPassword: "Password123!",
   };
 
   return (

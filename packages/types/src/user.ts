@@ -1,24 +1,110 @@
-import { z } from "zod";
+import z from "zod";
 
-// Define common types
-const mongooseObjectId = z.string().refine((val) => /^[a-f\d]{24}$/i.test(val), {
-  message: "Invalid ObjectId",
+import { password, username } from "./auth";
+import { mongooseObjectId } from "./common";
+
+export const userRoleSchema = z.object({
+  userId: mongooseObjectId,
+  roleId: mongooseObjectId,
 });
 
-const password = z
-  .string()
-  .min(8, "Password must be at least 8 characters")
-  .max(100, "Password must be at most 100 characters")
-  .regex(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-    "Password must contain at least one lowercase letter, one uppercase letter, and one number"
-  );
+export type UserRole = z.infer<typeof userRoleSchema>;
 
-const username = z
-  .string()
-  .min(3, "Username must be at least 3 characters")
-  .max(30, "Username must be at most 30 characters")
-  .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores");
+const roleSchema = z.object({
+  id: mongooseObjectId,
+  name: z
+    .string()
+    .min(3, "name must be at least 3 characters")
+    .max(18, "name must be at most 18 characters")
+    .regex(/^[a-z][a-z-]*$/i, "name must start with a letter")
+    .transform((val) => val.toLowerCase().trim()),
+  description: z.string().min(25).max(255),
+  isDeleted: z.boolean().default(false),
+  isSystemRole: z.boolean().default(false),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  createdBy: mongooseObjectId,
+  updatedBy: mongooseObjectId,
+});
+
+export const createRoleSchema = roleSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  updatedBy: true,
+});
+
+export const validateRoleName = roleSchema.pick({ name: true });
+
+export const updateRoleSchema = roleSchema.partial({
+  name: true,
+  description: true,
+  updatedBy: true,
+});
+
+export const getRoleSchema = roleSchema.omit({
+  createdBy: true,
+  updatedBy: true,
+  isDeleted: true,
+  isSystemRole: true,
+});
+
+export type Role = z.infer<typeof roleSchema>;
+export type createRole = z.infer<typeof createRoleSchema>;
+export type getRole = z.infer<typeof getRoleSchema>;
+
+export const PermissionCategory = {
+  USER_MANAGEMENT: "USER_MANAGEMENT",
+  CONTENT_MANAGEMENT: "CONTENT_MANAGEMENT",
+  ROLE_MANAGEMENT: "ROLE_MANAGEMENT",
+  ANALYTICS: "ANALYTICS",
+  SYSTEM: "SYSTEM",
+  PROFILE: "PROFILE",
+  COURSE_MANAGEMENT: "COURSE_MANAGEMENT",
+} as const;
+
+const permissionSchema = z.object({
+  id: mongooseObjectId,
+  name: z
+    .string()
+    .min(3, "Name must be at least 3 characters long.")
+    .max(30, "Name must be at most 30 characters long.")
+    .regex(/^[a-z][a-z-]*$/i, "Name must start with a letter and can only contain letters and hyphens.")
+    .transform((val) => val.toLowerCase().trim()),
+  description: z.string().min(25).max(255),
+  category: z.nativeEnum(PermissionCategory),
+  isDeleted: z.boolean().default(false),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  createdBy: mongooseObjectId,
+  updatedBy: mongooseObjectId,
+});
+
+export const createPermissionSchema = permissionSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  updatedBy: true,
+});
+
+export const validatePermissionName = permissionSchema.pick({ name: true });
+
+export const getPermissionSchema = permissionSchema.omit({
+  createdBy: true,
+  updatedBy: true,
+  isDeleted: true,
+});
+
+export type Permission = z.infer<typeof permissionSchema>;
+export type CreatePermission = z.infer<typeof createPermissionSchema>;
+export type GetPermission = z.infer<typeof getPermissionSchema>;
+
+export const rolePermissionSchema = z.object({
+  roleId: mongooseObjectId,
+  permissionId: mongooseObjectId,
+});
+
+export type RolePermission = z.infer<typeof rolePermissionSchema>;
 
 export const userSchema = z.object({
   id: mongooseObjectId,
@@ -31,24 +117,6 @@ export const userSchema = z.object({
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
-});
-
-const DEFAULT_PAGINATION_LIMIT = 10;
-const MAX_PAGINATION_LIMIT = 100;
-const DEFAULT_PAGINATION_OFFSET = 0;
-
-export const paginationSchema = z.object({
-  limit: z
-    .number()
-    .int("Limit must be an integer")
-    .min(DEFAULT_PAGINATION_LIMIT, `Limit must be at least ${DEFAULT_PAGINATION_LIMIT}`)
-    .max(MAX_PAGINATION_LIMIT, `Limit must be at most ${MAX_PAGINATION_LIMIT}`)
-    .default(DEFAULT_PAGINATION_LIMIT),
-  offset: z
-    .number()
-    .int("Limit must be an integer")
-    .min(DEFAULT_PAGINATION_OFFSET, `Offset must be at least ${DEFAULT_PAGINATION_OFFSET}`)
-    .default(DEFAULT_PAGINATION_OFFSET),
 });
 
 const createUserWithGoogleSchema = userSchema
@@ -74,7 +142,7 @@ const createUserWithEmailAndPasswordSchema = userSchema
     path: ["confirmPassword"],
   });
 
-export const registerSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
+const registerSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
 
 export const updateUserSchema = userSchema
   .partial() // Make all keys optional
@@ -92,6 +160,7 @@ export const getUserSchema = userSchema.omit({
   confirmPassword: true,
   isDeleted: true,
 });
+
 export const resetPasswordSchema = userSchema
   .pick({ password: true, confirmPassword: true })
   .extend({
@@ -107,9 +176,8 @@ export type RegisterSchema = z.infer<typeof registerSchema>;
 export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
 export type ResetPassword = z.infer<typeof resetPasswordSchema>;
-export type Pagination = z.infer<typeof paginationSchema>;
 
-export const validateRegister = (data: unknown) => {
+export const validateRegister = (data: RegisterSchema) => {
   return registerSchema.parse(data);
 };
 
@@ -117,27 +185,75 @@ export const validateResetPasswordSchema = (data: unknown): ResetPassword => {
   return resetPasswordSchema.parse(data);
 };
 
-export const validatePagination = (data: Pagination) => {
-  paginationSchema.parse(data);
-};
-
 export interface UserRolePermission {
   _id: string;
   username: string;
   email: string;
-  roles: Role[];
-  allPermissions: Permission[];
+  roles: {
+    roleId: string;
+    roleName: string;
+    roleDescription: string;
+    permissions: {
+      _id: string;
+      name: string;
+      description: string;
+    }[];
+  }[];
+  allPermissions: {
+    _id: string;
+    name: string;
+    description: string;
+  }[];
 }
 
-export interface Role {
-  roleId: string;
-  roleName: string;
-  roleDescription: string;
-  permissions: Permission[];
-}
+export const profileSchema = z.object({
+  userId: mongooseObjectId,
+  name: z.string().optional(),
+  givenName: z.string().optional(),
+  familyName: z.string().optional(),
+  avatar: z.string().url().optional(),
+  bio: z.string().max(500).optional(),
+  address: z
+    .object({
+      street: z.string().optional(),
+      city: z.string().optional(),
+      country: z.string().optional(),
+      zipCode: z.string().optional(),
+    })
+    .optional(),
+  phoneNumber: z.string().optional(),
+  socialLinks: z
+    .object({
+      twitter: z.string().url().optional(),
+      linkedin: z.string().url().optional(),
+      github: z.string().url().optional(),
+    })
+    .optional(),
+  isPublic: z.boolean().optional(),
+});
 
-export interface Permission {
-  _id: string;
-  name: string;
-  description: string;
-}
+export const toggleVisibilitySchema = z.object({
+  isPublic: z.boolean(),
+});
+
+export const validateProfileSchema = (data: ProfileData) => {
+  // Check if at least one key from profileSchema is present in the data, excluding userId
+  const hasAnyKey = Object.keys(profileSchema.shape)
+    .filter((key) => key !== "userId")
+    .some((key) => key in data && data[key as keyof ProfileData] !== undefined);
+
+  if (!hasAnyKey) {
+    throw new z.ZodError([
+      {
+        code: z.ZodIssueCode.custom,
+        path: Object.keys(profileSchema.shape).filter((key) => key !== "userId"),
+        message: "At least one field from the profile schema must be provided",
+      },
+    ]);
+  }
+
+  return profileSchema.parse(data);
+};
+
+export type ProfileData = z.infer<typeof profileSchema>;
+export type CreateProfileData = Omit<ProfileData, "userId">;

@@ -20,14 +20,6 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./user": {
-      "types": "./dist/user.d.ts",
-      "import": "./dist/user.js"
-    },
-    "./course": {
-      "types": "./dist/course.d.ts",
-      "import": "./dist/course.js"
     }
   },
   "dependencies": {

@@ -6,7 +6,6 @@
       "@/*": ["./*"],
       "@ansospace/eslint-config/*": ["../../packages/eslint-config/*"],
       "@ansospace/ui/*": ["../../packages/ui/src/*"],
-      "@ansospace/types": ["../../packages/types/dist/index.d.ts"],
       "@ansospace/types/*": ["../../packages/types/*"]
     },
     "plugins": [
