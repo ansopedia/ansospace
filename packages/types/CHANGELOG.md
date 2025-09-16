@@ -1,5 +1,16 @@
 # @ansospace/types
 
+## 0.1.0
+
+### Minor Changes
+
+- Restructured the monolithic `index.ts` into modular files for better maintainability: `auth.ts`, `user.ts`, `notification.ts`, `otp.ts`, `token.ts`, `socket.ts`, and `common.ts`.
+- Removed mongoose dependency by replacing `mongoose.Types.ObjectId` validation with a regex pattern for ObjectId strings.
+- Removed socket.io imports while keeping socket event interfaces for type safety without runtime dependencies.
+- Added branded types using Zod's `.brand()` method for `Username`, `Password`, `Email`, and `Otp` to create distinct types instead of plain strings.
+- Updated exports to re-export from all modules, maintaining backward compatibility.
+- Updated README.md with new modular structure, usage examples, and best practices for branded types.
+
 ## 0.0.2
 
 ### Patch Changes

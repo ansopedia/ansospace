@@ -1,5 +1,5 @@
-import type { RegisterSchema } from "@ansospace/types";
-import { validateRegister } from "@ansospace/types";
+import type { Otp, RegisterSchema } from "@ansospace/types";
+import { password, username, validateRegister } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
@@ -7,18 +7,24 @@ import { APP_CONFIG } from "../lib/constants";
 import { env } from "../lib/env";
 
 export default function Page() {
+  const newUsername = username.parse("username");
+  const newPassword = password.parse("Password123!");
+
   const user: RegisterSchema = {
-    username: "test",
+    username: newUsername,
     email: "test@example.com",
-    password: "Password123!",
-    confirmPassword: "Password123!",
+    password: newPassword,
+    confirmPassword: newPassword,
   };
+
+  const otp: Otp = "sd" as Otp;
 
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="flex flex-col items-center justify-center gap-4">
         <ThemeToggle />
 
+        <p>{otp}</p>
         {/* Validation test */}
         <p>Validation test: {JSON.stringify(validateRegister(user))}</p>
         <p>User is only available in the server component in next.js</p>

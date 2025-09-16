@@ -23,7 +23,8 @@ export const username = z
   .max(18, "username must be at most 18 characters")
   .regex(/^[a-z]/i, "username must start with a letter")
   .regex(/^[a-z0-9-_]*$/i, "username can only contain alphanumeric characters, hyphens, and underscores")
-  .transform((val) => val.toLowerCase().trim());
+  .transform((val) => val.toLowerCase().trim())
+  .brand<"Username">();
 
 export type Username = z.infer<typeof username>;
 
@@ -42,7 +43,8 @@ export const password = z
     {
       message: "Password should not contain repeated characters",
     }
-  );
+  )
+  .brand<"Password">();
 
 export type Password = z.infer<typeof password>;
 
@@ -54,9 +56,16 @@ export const email = z
 
 export type Email = z.infer<typeof email>;
 
+export type MyCustomType = {
+  id: string;
+  name: string;
+};
+
+export const myCustomSchema = z.custom<MyCustomType>();
+
 export const otp = z.string().length(6);
 
-export type Otp = z.infer<typeof otp>;
+export type Otp = string & { __brand: "Otp" };
 
 export const loginSchema = z
   .object({
