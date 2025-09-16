@@ -18,26 +18,14 @@ export const accessTokenPayloadSchema = z.object({
   permissions: z.array(z.string()),
 });
 
-export const validateAccessTokenPayload = (data: unknown) => {
-  return accessTokenPayloadSchema.parse(data);
-};
-
 export const refreshTokenPayloadSchema = z.object({
   sessionId: mongooseObjectId,
 });
-
-export const validateRefreshTokenPayload = (data: unknown) => {
-  return refreshTokenPayloadSchema.parse(data);
-};
 
 export const actionTokenPayloadSchema = z.object({
   userId: mongooseObjectId,
   action: userActionTypeSchema,
 });
-
-export const validateActionTokenPayload = (data: unknown) => {
-  return actionTokenPayloadSchema.parse(data);
-};
 
 export type AccessTokenPayload = z.infer<typeof accessTokenPayloadSchema>;
 export type RefreshTokenPayload = z.infer<typeof refreshTokenPayloadSchema>;

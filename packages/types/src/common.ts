@@ -106,7 +106,3 @@ export const paginationSchema = z.object({
 });
 
 export type Pagination = z.infer<typeof paginationSchema>;
-
-export const validatePagination = (data: Pagination) => {
-  paginationSchema.parse(data);
-};

@@ -112,7 +112,3 @@ export const refreshTokenRequestSchema = z.object({
 });
 
 export type RefreshTokenRequest = z.infer<typeof refreshTokenRequestSchema>;
-
-export const validateRefreshTokenRequest = (data: unknown) => {
-  return refreshTokenRequestSchema.parse(data);
-};

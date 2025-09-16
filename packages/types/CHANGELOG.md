@@ -1,5 +1,11 @@
 # @ansospace/types
 
+## 0.3.0
+
+### Minor Changes
+
+- Standardized validation functions: Removed simple validate functions for basic schemas; users should use schema.parse() directly. Kept validate functions only for complex schemas with custom logic (e.g., validateProfileSchema, validateEmailNotification).
+
 ## 0.2.0
 
 ### Minor Changes

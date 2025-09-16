@@ -142,7 +142,7 @@ const createUserWithEmailAndPasswordSchema = userSchema
     path: ["confirmPassword"],
   });
 
-const registerSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
+export const registerSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
 
 export const updateUserSchema = userSchema
   .partial() // Make all keys optional
@@ -176,14 +176,6 @@ export type RegisterSchema = z.infer<typeof registerSchema>;
 export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
 export type ResetPassword = z.infer<typeof resetPasswordSchema>;
-
-export const validateRegister = (data: RegisterSchema) => {
-  return registerSchema.parse(data);
-};
-
-export const validateResetPasswordSchema = (data: unknown): ResetPassword => {
-  return resetPasswordSchema.parse(data);
-};
 
 export interface UserRolePermission {
   _id: string;

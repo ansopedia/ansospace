@@ -31,11 +31,14 @@ Import the types and schemas as needed:
 ```ts
 // Import specific types
 import type { User, RegisterSchema } from "@ansospace/types";
-import { validateRegister, usernameSchema } from "@ansospace/types";
+import { registerSchema, usernameSchema, validateProfileSchema } from "@ansospace/types";
 
 // Use branded types by parsing through schemas
 const user: User = { ... };
-const validUser = validateRegister(userData);
+const validUser = registerSchema.parse(userData); // For simple schemas
+
+// For complex schemas with custom validation, use validate functions
+const validProfile = validateProfileSchema(profileData);
 
 // Create branded types
 const uname: Username = usernameSchema.parse("validusername");
