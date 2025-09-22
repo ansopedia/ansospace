@@ -1,6 +1,6 @@
 {
   "name": "@ansospace/types",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Shared TypeScript type definitions for the AnsoSpace platform",
   "keywords": [
     "typescript",
@@ -13,8 +13,8 @@
   },
   "scripts": {
     "dev": "tsc --watch",
-    "build": "tsc",
-    "publish-packages": "turbo run build lint test && changeset version && changeset publish"
+    "build": "tsup src/index.ts --format esm --dts",
+    "publish-packages": "turbo run build lint && changeset version && changeset publish"
   },
   "exports": {
     ".": {
@@ -27,6 +27,13 @@
   },
   "devDependencies": {
     "@ansospace/typescript-config": "workspace:*",
+    "tsup": "^8.5.0",
     "typescript": "5.9.2"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json",
+    "CHANGELOG.md"
+  ]
 }

@@ -1,5 +1,12 @@
 # @ansospace/types
 
+## 0.3.1
+
+### Patch Changes
+
+- **Fixed:** Corrected package publishing configuration to prevent the `src` directory and `tsconfig.json` from being included in the npm package. This resolves "File not found" errors in consumer applications.
+- **Fixed:** Updated `package.json` to correctly specify published files, ensuring only the `dist` directory and other necessary files are included.
+
 ## 0.3.0
 
 ### Minor Changes
