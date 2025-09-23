@@ -6,9 +6,9 @@ import tseslint from "typescript-eslint";
 /**
  * A shared ESLint configuration for the repository.
  *
- * @type {import("eslint").Linter.Config}
- * */
-export const config = [
+ * @type {import("eslint").Linter.Config[]}
+ */
+export const baseConfig = [
   js.configs.recommended,
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
