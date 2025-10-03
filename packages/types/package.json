@@ -1,6 +1,6 @@
 {
   "name": "@ansospace/types",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Shared TypeScript type definitions for the AnsoSpace platform",
   "keywords": [
     "typescript",
