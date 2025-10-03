@@ -1,5 +1,11 @@
 # @ansospace/types
 
+## 0.3.3
+
+### Patch Changes
+
+- Added `prepublishOnly` script to run `pnpm build` before publishing, ensuring the package is built.
+
 ## 0.3.2
 
 ### Patch Changes

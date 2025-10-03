@@ -1,6 +1,6 @@
 {
   "name": "@ansospace/types",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Shared TypeScript type definitions for the AnsoSpace platform",
   "keywords": [
     "typescript",
@@ -14,7 +14,8 @@
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsup src/index.ts --format esm --dts",
-    "publish-packages": "turbo run build lint && changeset version && changeset publish"
+    "publish-packages": "turbo run build lint && changeset version && changeset publish",
+    "prepublishOnly": "pnpm build"
   },
   "exports": {
     ".": {
