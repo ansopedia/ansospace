@@ -1,5 +1,17 @@
 # @ansospace/types
 
+## 0.3.5
+
+### Patch Changes
+
+- Refactored `gender` and `pronouns` enums in `profileSchema` to use exported constants `Genders` and `Pronouns`.
+
+## 0.3.4
+
+### Minor Changes
+
+- Added optional `gender` and `pronouns` fields to `profileSchema`.
+
 ## 0.3.3
 
 ### Patch Changes

@@ -63,6 +63,9 @@ export const PermissionCategory = {
   COURSE_MANAGEMENT: "COURSE_MANAGEMENT",
 } as const;
 
+export const Genders = ["male", "female", "non-binary", "other"] as const;
+export const Pronouns = ["he/him", "she/her", "they/them", "other"] as const;
+
 const permissionSchema = z.object({
   id: mongooseObjectId,
   name: z
@@ -221,6 +224,8 @@ export const profileSchema = z.object({
       github: z.string().url().optional(),
     })
     .optional(),
+  gender: z.enum(Genders).optional(),
+  pronouns: z.enum(Pronouns).optional(),
   isPublic: z.boolean().optional(),
 });
 
