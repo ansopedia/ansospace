@@ -1,5 +1,11 @@
 # @ansospace/types
 
+## 0.3.4
+
+### Minor Changes
+
+- Extended `profileSchema` to include optional `gender` and `pronouns` fields for improved inclusivity and personalization. `gender` is an enum with values ['male', 'female', 'non-binary', 'other'], and `pronouns` is an enum with values ['he/him', 'she/her', 'they/them', 'other'].
+
 ## 0.3.3
 
 ### Patch Changes

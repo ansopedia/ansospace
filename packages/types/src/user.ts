@@ -221,6 +221,8 @@ export const profileSchema = z.object({
       github: z.string().url().optional(),
     })
     .optional(),
+  gender: z.enum(["male", "female", "non-binary", "other"]).optional(),
+  pronouns: z.enum(["he/him", "she/her", "they/them", "other"]).optional(),
   isPublic: z.boolean().optional(),
 });
 
