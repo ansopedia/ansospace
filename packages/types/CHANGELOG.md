@@ -1,5 +1,12 @@
 # @ansospace/types
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated `mongooseObjectId` schema in `common.ts` to use `mongoose.Types.ObjectId.isValid` for validation and transform strings into `mongoose.Types.ObjectId` instances.
+- Fixed type incompatibility issues between client-side string `id` and Mongoose `ObjectId` by aligning validation and transformation logic.
+
 ## 0.3.1
 
 ### Patch Changes

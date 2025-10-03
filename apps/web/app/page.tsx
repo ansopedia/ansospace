@@ -1,5 +1,5 @@
-import type { MongooseObjectId, Otp, RegisterSchema } from "@ansospace/types";
-import { passwordSchema, registerSchema, usernameSchema } from "@ansospace/types";
+import type { Otp, RegisterSchema } from "@ansospace/types";
+import { mongooseObjectId, passwordSchema, registerSchema, usernameSchema } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
@@ -10,7 +10,7 @@ export default function Page() {
   const newUsername = usernameSchema.parse("username");
   const newPassword = passwordSchema.parse("Password123!");
 
-  const mongooseId: MongooseObjectId = "";
+  const mongooseId = mongooseObjectId.parse("68bda53ea5c0a2f0ac69dd3e");
 
   const user: RegisterSchema = {
     username: newUsername,
@@ -27,7 +27,7 @@ export default function Page() {
         <ThemeToggle />
 
         <p>{otp}</p>
-        {mongooseId}
+        {mongooseId.toString()}
         {/* Validation test */}
         <p>Validation test: {JSON.stringify(registerSchema.parse(user))}</p>
         <p>User is only available in the server component in next.js</p>
