@@ -78,6 +78,12 @@ export const authTokenSchema = z.object({
 
 export type AuthToken = z.infer<typeof authTokenSchema>;
 
+export const loginResponseSchema = z.object({
+  userId: mongooseObjectId,
+});
+
+export type LoginResponse = z.infer<typeof loginResponseSchema>;
+
 export const signUpResponseSchema = z.object({
   userId: mongooseObjectId,
   token: z.string(),

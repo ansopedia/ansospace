@@ -1,5 +1,11 @@
 # @ansospace/types
 
+## 0.3.7
+
+### Minor Changes
+
+- Added `LoginResponse` type
+
 ## 0.3.6
 
 ### Minor Changes
