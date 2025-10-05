@@ -1,0 +1,45 @@
+{
+  "name": "@ansospace/auth",
+  "version": "0.0.1",
+  "description": "Centralized authentication package for AnsoSpace platform",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "test": "jest",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "peerDependencies": {
+    "react": "19.2.0"
+  },
+  "dependencies": {
+    "@ansospace/types": "0.3.7"
+  },
+  "optionalDependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0"
+  },
+  "devDependencies": {
+    "@ansospace/eslint-config": "workspace:*",
+    "@ansospace/typescript-config": "workspace:*",
+    "@types/jest": "30.0.0",
+    "@types/react": "19.2.0",
+    "@typescript-eslint/eslint-plugin": "8.45.0",
+    "@typescript-eslint/parser": "8.45.0",
+    "eslint": "9.37.0",
+    "jest": "30.2.0",
+    "react": "19.2.0",
+    "tsup": "8.5.0",
+    "typescript": "5.9.3",
+    "@react-native-async-storage/async-storage": "2.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

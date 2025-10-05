@@ -1,6 +1,6 @@
 {
   "name": "@ansospace/types",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "Shared TypeScript type definitions for the AnsoSpace platform",
   "keywords": [
     "typescript",
@@ -24,13 +24,13 @@
     }
   },
   "dependencies": {
-    "mongoose": "^8.19.0",
+    "bson": "^6.10.4",
     "zod": "3.25.76"
   },
   "devDependencies": {
     "@ansospace/typescript-config": "workspace:*",
     "tsup": "^8.5.0",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   },
   "files": [
     "dist",

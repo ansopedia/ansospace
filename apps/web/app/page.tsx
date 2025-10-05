@@ -1,8 +1,11 @@
+import Link from "next/link";
+
 import type { Otp, RegisterSchema } from "@ansospace/types";
 import { mongooseObjectId, passwordSchema, registerSchema, usernameSchema } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
+import User from "../components/user";
 import { APP_CONFIG } from "../lib/constants";
 import { env } from "../lib/env";
 
@@ -28,6 +31,9 @@ export default function Page() {
 
         <p>{otp}</p>
         {mongooseId.toString()}
+        <Link href="/auth">auth</Link>
+
+        <User />
         {/* Validation test */}
         <p>Validation test: {JSON.stringify(registerSchema.parse(user))}</p>
         <p>User is only available in the server component in next.js</p>

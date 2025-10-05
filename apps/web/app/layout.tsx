@@ -5,6 +5,8 @@ import { ThemeProvider } from "@ansospace/ui/theme";
 
 import { Providers } from "@/components/providers";
 
+import { env } from "../lib/env";
+
 const fontSans = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -24,7 +26,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>): Rea
     <html lang="en" suppressHydrationWarning>
       <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <Providers>{children}</Providers>
+          <Providers baseUrl={env.USER_SERVICE_URL}>{children}</Providers>
         </ThemeProvider>
       </body>
     </html>

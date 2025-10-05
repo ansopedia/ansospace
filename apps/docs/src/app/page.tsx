@@ -1,9 +1,9 @@
 import Image from "next/image";
 
 import {
-  MongooseObjectId,
   Otp,
   RegisterSchema,
+  mongooseObjectId,
   passwordSchema,
   registerSchema,
   usernameSchema,
@@ -16,7 +16,7 @@ export default function Home() {
   const newUsername = usernameSchema.parse("username");
   const newPassword = passwordSchema.parse("Password123!");
 
-  const mongooseId: MongooseObjectId = "";
+  const mongooseId = mongooseObjectId.parse("68bda53ea5c0a2f0ac69dd3e");
 
   const user: RegisterSchema = {
     username: newUsername,
@@ -34,7 +34,7 @@ export default function Home() {
         <p>Env is only available in the server component in next.js</p>
         <p className="text-sm text-gray-500">{env.NODE_ENV}</p>
         <p>{otp}</p>
-        {mongooseId}
+        {mongooseId.toString()}
         {/* Validation test */}
         <p>Validation test: {JSON.stringify(registerSchema.parse(user))}</p>
         <p>User is only available in the server component in next.js</p>

@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["./*"],
       "@ansospace/eslint-config/*": ["../../packages/eslint-config/*"],
-      "@ansospace/ui/*": ["../../packages/ui/src/*"]
+      "@ansospace/ui/*": ["../../packages/ui/src/*"],
+      "@ansospace/auth/*": ["../../packages/auth/dist/*"]
     },
     "plugins": [
       {

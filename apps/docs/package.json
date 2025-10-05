@@ -23,7 +23,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
     "@ansospace/eslint-config": "workspace:*",
-    "@ansospace/types": "^0.3.1",
+    "@ansospace/types": "^0.3.7",
     "@ansospace/typescript-config": "workspace:*",
     "@next/eslint-plugin-next": "15.5.3",
     "@types/node": "24.5.2",

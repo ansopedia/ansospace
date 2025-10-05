@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import { ObjectId } from "bson";
 import z from "zod";
 
 export const mongooseObjectId = z
   .string()
-  .refine((val) => mongoose.Types.ObjectId.isValid(val), "Invalid ObjectId")
-  .transform((val) => new mongoose.Types.ObjectId(val));
+  .refine((val) => ObjectId.isValid(val), "Invalid ObjectId")
+  .transform((val) => new ObjectId(val));
 
 export type MongooseObjectId = z.infer<typeof mongooseObjectId>;
 

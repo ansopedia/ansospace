@@ -2,9 +2,12 @@
 
 import * as React from "react";
 
+import { AuthProvider } from "@ansospace/auth";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+import { config } from "../app/config/ansospace";
+
+export function Providers({ children, baseUrl }: { baseUrl: string; children: React.ReactNode }) {
   return (
     <NextThemesProvider
       attribute="class"
@@ -13,7 +16,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableColorScheme
     >
-      {children}
+      <AuthProvider config={config(baseUrl)}>{children}</AuthProvider>
     </NextThemesProvider>
   );
 }
