@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import type { Otp, RegisterSchema } from "@ansospace/types";
-import { mongooseObjectId, passwordSchema, registerSchema, usernameSchema } from "@ansospace/types";
+import { objectId, passwordSchema, registerSchema, usernameSchema } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
@@ -13,7 +13,7 @@ export default function Page() {
   const newUsername = usernameSchema.parse("username");
   const newPassword = passwordSchema.parse("Password123!");
 
-  const mongooseId = mongooseObjectId.parse("68bda53ea5c0a2f0ac69dd3e");
+  const mongooseId = objectId.parse("68bda53ea5c0a2f0ac69dd3e");
 
   const user: RegisterSchema = {
     username: newUsername,

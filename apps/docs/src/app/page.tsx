@@ -1,13 +1,6 @@
 import Image from "next/image";
 
-import {
-  Otp,
-  RegisterSchema,
-  mongooseObjectId,
-  passwordSchema,
-  registerSchema,
-  usernameSchema,
-} from "@ansospace/types";
+import { Otp, RegisterSchema, objectId, passwordSchema, registerSchema, usernameSchema } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components/button";
 
 import { env } from "../lib/env";
@@ -16,7 +9,7 @@ export default function Home() {
   const newUsername = usernameSchema.parse("username");
   const newPassword = passwordSchema.parse("Password123!");
 
-  const mongooseId = mongooseObjectId.parse("68bda53ea5c0a2f0ac69dd3e");
+  const mongooseId = objectId.parse("68bda53ea5c0a2f0ac69dd3e");
 
   const user: RegisterSchema = {
     username: newUsername,

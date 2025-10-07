@@ -1,6 +1,6 @@
 import z from "zod";
 
-import { DeviceId, MongooseObjectId, deviceId, deviceInfoSchema, mongooseObjectId } from "./common";
+import { DeviceId, ObjectId, deviceId, deviceInfoSchema, objectId } from "./common";
 
 export const usernameSchema = z
   .string()
@@ -71,7 +71,7 @@ export const loginSchema = z
 export type Login = z.infer<typeof loginSchema>;
 
 export const authTokenSchema = z.object({
-  userId: mongooseObjectId,
+  userId: objectId,
   accessToken: z.string(),
   refreshToken: z.string(),
 });
@@ -79,28 +79,28 @@ export const authTokenSchema = z.object({
 export type AuthToken = z.infer<typeof authTokenSchema>;
 
 export const loginResponseSchema = z.object({
-  userId: mongooseObjectId,
+  userId: objectId,
 });
 
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
 
 export const signUpResponseSchema = z.object({
-  userId: mongooseObjectId,
+  userId: objectId,
   token: z.string(),
 });
 
 export type SignUpResponse = z.infer<typeof signUpResponseSchema>;
 
 export type AuthenticatedUser = {
-  userId: MongooseObjectId;
+  userId: ObjectId;
   permissions: string[];
   deviceId: DeviceId;
   tokenVersion: number;
 };
 
 export const sessionSchema = z.object({
-  id: mongooseObjectId,
-  userId: mongooseObjectId,
+  id: objectId,
+  userId: objectId,
   refreshToken: z.string(),
   tokenVersion: z.number().default(0),
   lastActive: z.date().default(() => new Date()),

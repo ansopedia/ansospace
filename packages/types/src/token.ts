@@ -1,6 +1,6 @@
 import z from "zod";
 
-import { deviceId, mongooseObjectId } from "./common";
+import { deviceId, objectId } from "./common";
 import { userActionTypeSchema } from "./notification";
 
 export const TokenType = {
@@ -12,18 +12,18 @@ export const TokenType = {
 export type TokenType = (typeof TokenType)[keyof typeof TokenType];
 
 export const accessTokenPayloadSchema = z.object({
-  userId: mongooseObjectId,
+  userId: objectId,
   deviceId: deviceId,
   tokenVersion: z.number(),
   permissions: z.array(z.string()),
 });
 
 export const refreshTokenPayloadSchema = z.object({
-  sessionId: mongooseObjectId,
+  sessionId: objectId,
 });
 
 export const actionTokenPayloadSchema = z.object({
-  userId: mongooseObjectId,
+  userId: objectId,
   action: userActionTypeSchema,
 });
 
@@ -32,8 +32,8 @@ export type RefreshTokenPayload = z.infer<typeof refreshTokenPayloadSchema>;
 export type ActionTokenPayload = z.infer<typeof actionTokenPayloadSchema>;
 
 export const tokenSchema = z.object({
-  id: mongooseObjectId,
-  userId: mongooseObjectId,
+  id: objectId,
+  userId: objectId,
   action: userActionTypeSchema,
   token: z.string(),
   isUsed: z.boolean(),

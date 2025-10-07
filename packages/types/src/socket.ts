@@ -1,12 +1,12 @@
-import { MongooseObjectId } from "./common";
+import { ObjectId } from "./common";
 
 export type UserConnectionEvent = {
-  userId: MongooseObjectId;
+  userId: ObjectId;
   timestamp: number;
 };
 
 export type UserUpdateEvent = {
-  userId: MongooseObjectId;
+  userId: ObjectId;
   updates: {
     field: string;
     value: unknown;
@@ -14,7 +14,7 @@ export type UserUpdateEvent = {
 };
 
 export type NotificationEvent = {
-  id: MongooseObjectId;
+  id: ObjectId;
   type: "info" | "warning" | "error" | "success";
   message: string;
   timestamp: number;
@@ -25,7 +25,7 @@ export interface ServerToClientEvents {
   "user:disconnected": (event: UserConnectionEvent) => void;
   "user:updated": (event: UserUpdateEvent) => void;
   "notification:received": (event: NotificationEvent) => void;
-  "role:updated": (data: { userId: MongooseObjectId; roles: string[] }) => void;
+  "role:updated": (data: { userId: ObjectId; roles: string[] }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -38,10 +38,10 @@ export interface InterServerEvents {
 }
 
 export interface SocketData {
-  userId: MongooseObjectId;
+  userId: ObjectId;
 }
 
 export interface SocketUser {
-  userId: MongooseObjectId;
+  userId: ObjectId;
   socketId: string;
 }

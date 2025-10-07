@@ -52,7 +52,7 @@ const uname: Username = usernameSchema.parse("validusername");
 - `otp`: OTP-related schemas and events
 - `token`: Token schemas, payloads, and types
 - `socket`: Socket.io event interfaces (without dependencies)
-- `common`: Shared utilities like MongooseObjectId, DeviceInfo, Pagination
+- `common`: Shared utilities like ObjectId, DeviceInfo, Pagination
 
 ## Development
 

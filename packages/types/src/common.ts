@@ -1,12 +1,12 @@
-import { ObjectId } from "bson";
+import { ObjectId as BsonObjectId } from "bson";
 import z from "zod";
 
-export const mongooseObjectId = z
+export const objectId = z
   .string()
-  .refine((val) => ObjectId.isValid(val), "Invalid ObjectId")
-  .transform((val) => new ObjectId(val));
+  .refine((val) => BsonObjectId.isValid(val), "Invalid ObjectId")
+  .transform((val) => new BsonObjectId(val));
 
-export type MongooseObjectId = z.infer<typeof mongooseObjectId>;
+export type ObjectId = z.infer<typeof objectId>;
 
 export const deviceId = z.string().uuid();
 

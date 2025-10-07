@@ -1,7 +1,7 @@
 import z from "zod";
 
 import { emailSchema, otpSchema } from "./auth";
-import { mongooseObjectId } from "./common";
+import { objectId } from "./common";
 import { NotificationType, notificationTypeSchema } from "./notification";
 
 // Define separate schemas for each OTP type
@@ -34,9 +34,9 @@ export const otpVerifyEventSchema = z.object({
 });
 
 export const otpRecordSchema = z.object({
-  id: mongooseObjectId,
+  id: objectId,
   otp: otpSchema,
-  userId: mongooseObjectId,
+  userId: objectId,
   expiryTime: z.date(),
   otpType: notificationTypeSchema,
 });

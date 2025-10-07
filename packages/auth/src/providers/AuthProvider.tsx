@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useState } from "react";
 
-import { GetPermission, MongooseObjectId } from "@ansospace/types";
+import { GetPermission, ObjectId } from "@ansospace/types";
 
 import { ApiClient } from "../apiClient";
 import { AuthContext, AuthContextValue } from "../context/AuthContext";
@@ -20,7 +20,7 @@ export interface AuthConfig {
 }
 
 export const AuthProvider = ({ children, config }: { children: ReactNode; config: AuthConfig }) => {
-  const [userId, setUserId] = useState<MongooseObjectId | null>(null);
+  const [userId, setUserId] = useState<ObjectId | null>(null);
   const [permissions, setPermissions] = useState<GetPermission[]>([]);
 
   const apiClient = new ApiClient(config.baseUrl, config.tokenStorage);
@@ -31,13 +31,13 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
     const loadUserId = async () => {
       const storedUserId = await config.tokenStorage.getUserId();
       if (storedUserId) {
-        setUserId(storedUserId as unknown as MongooseObjectId);
+        setUserId(storedUserId as unknown as ObjectId);
       }
     };
     loadUserId();
   }, [config.tokenStorage]);
 
-  const login = async (id: MongooseObjectId, perms: GetPermission[] = []) => {
+  const login = async (id: ObjectId, perms: GetPermission[] = []) => {
     setUserId(id);
     setPermissions(perms);
     await config.tokenStorage.saveUserId(id.toString());

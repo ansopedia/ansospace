@@ -1,17 +1,17 @@
 import z from "zod";
 
 import { emailSchema, passwordSchema, usernameSchema } from "./auth";
-import { mongooseObjectId } from "./common";
+import { objectId } from "./common";
 
 export const userRoleSchema = z.object({
-  userId: mongooseObjectId,
-  roleId: mongooseObjectId,
+  userId: objectId,
+  roleId: objectId,
 });
 
 export type UserRole = z.infer<typeof userRoleSchema>;
 
 const roleSchema = z.object({
-  id: mongooseObjectId,
+  id: objectId,
   name: z
     .string()
     .min(3, "Name must be at least 3 characters")
@@ -23,8 +23,8 @@ const roleSchema = z.object({
   isSystemRole: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
-  createdBy: mongooseObjectId,
-  updatedBy: mongooseObjectId,
+  createdBy: objectId,
+  updatedBy: objectId,
 });
 
 export const createRoleSchema = roleSchema.omit({
@@ -67,7 +67,7 @@ export const Genders = ["male", "female", "non-binary", "other"] as const;
 export const Pronouns = ["he/him", "she/her", "they/them", "other"] as const;
 
 const permissionSchema = z.object({
-  id: mongooseObjectId,
+  id: objectId,
   name: z
     .string()
     .min(3, "Name must be at least 3 characters long.")
@@ -79,8 +79,8 @@ const permissionSchema = z.object({
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
-  createdBy: mongooseObjectId,
-  updatedBy: mongooseObjectId,
+  createdBy: objectId,
+  updatedBy: objectId,
 });
 
 export const createPermissionSchema = permissionSchema.omit({
@@ -103,14 +103,14 @@ export type CreatePermission = z.infer<typeof createPermissionSchema>;
 export type GetPermission = z.infer<typeof getPermissionSchema>;
 
 export const rolePermissionSchema = z.object({
-  roleId: mongooseObjectId,
-  permissionId: mongooseObjectId,
+  roleId: objectId,
+  permissionId: objectId,
 });
 
 export type RolePermission = z.infer<typeof rolePermissionSchema>;
 
 export const userSchema = z.object({
-  id: mongooseObjectId,
+  id: objectId,
   googleId: z.string().optional(),
   username: usernameSchema,
   email: emailSchema,
@@ -202,7 +202,7 @@ export interface UserRolePermission {
 }
 
 export const profileSchema = z.object({
-  userId: mongooseObjectId,
+  userId: objectId,
   name: z.string().optional(),
   givenName: z.string().optional(),
   familyName: z.string().optional(),
