@@ -3,6 +3,7 @@ export * from "./auth";
 export * from "./common";
 export * from "./notification";
 export * from "./otp";
+export * from "./platform";
 export * from "./socket";
 export * from "./token";
 export * from "./user";

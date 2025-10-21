@@ -1,5 +1,17 @@
 # @ansospace/types
 
+## 0.4.1
+
+- Add `CreatePermission` type and `createPermissionSchema` from user types.
+
+## 0.4.0
+
+### Minor Changes
+
+- Added new `Platform` types and schemas for platform management, including `PlatformSchema`, `CreatePlatformInputSchema`, `CreatePlatformSchema`, `GetPlatformSchema`, `UpdatePlatformInputSchema`, and `UpdatePlatformSchema`. ([#11](https://github.com/ansopedia/ansospace/issues/11))
+- Added `PERMISSION_MANAGEMENT` to `PermissionCategory` enum in user types.
+- Removed unused `CreatePermission` type and `createPermissionSchema` from user types.
+
 ## 0.3.8
 
 ### Patch Changes

@@ -61,6 +61,7 @@ export const PermissionCategory = {
   SYSTEM: "SYSTEM",
   PROFILE: "PROFILE",
   COURSE_MANAGEMENT: "COURSE_MANAGEMENT",
+  PERMISSION_MANAGEMENT: "PERMISSION_MANAGEMENT",
 } as const;
 
 export const Genders = ["male", "female", "non-binary", "other"] as const;
