@@ -1,21 +1,10 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 
 import "@ansospace/ui/globals.css";
-import { ThemeProvider } from "@ansospace/ui/theme";
 
 import { Providers } from "@/components/providers";
 
 import { env } from "../lib/env";
-
-const fontSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-});
 
 export interface RootLayoutProps {
   children: React.ReactNode;
@@ -24,10 +13,23 @@ export interface RootLayoutProps {
 export default function RootLayout({ children }: Readonly<RootLayoutProps>): React.ReactElement {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <Providers baseUrl={env.USER_SERVICE_URL}>{children}</Providers>
-        </ThemeProvider>
+      <body className={`font-sans antialiased`}>
+        <Providers baseUrl={env.USER_SERVICE_URL}>
+          <nav>
+            <ul>
+              <li>
+                <Link href="/">Home</Link>
+              </li>
+              <li>
+                <Link href="/login">login</Link>
+              </li>
+              <li>
+                <Link href="/dashboard">dashboard</Link>
+              </li>
+            </ul>
+          </nav>
+          {children}
+        </Providers>
       </body>
     </html>
   );

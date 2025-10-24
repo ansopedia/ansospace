@@ -12,7 +12,7 @@ export const useSignup = () => {
         // Assuming signup returns userId, login the user
         login(response.data.userId, []);
       }
-      return response;
+      return response.message;
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Signup failed:", error);

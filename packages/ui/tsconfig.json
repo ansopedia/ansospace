@@ -1,7 +1,6 @@
 {
   "extends": "@ansospace/typescript-config/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@ansospace/ui/*": ["./src/*"]
     }

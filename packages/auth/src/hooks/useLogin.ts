@@ -6,18 +6,18 @@ export const useLogin = () => {
   const { login, authService } = useAuth();
 
   const loginUser = async (body: Login) => {
-    try {
-      const response = await authService.loginUser(body);
-      if (response.status === "success") {
-        // Assuming response.data has userId and permissions
-        await login(response.data.userId, []); // Adjust based on actual response
-      }
-      return response;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Login failed:", error);
-      throw error;
+    // try {
+    const response = await authService.loginUser(body);
+    if (response.status === "success") {
+      //   // Assuming response.data has userId and permissions
+      await login(response.data.userId, []); // Adjust based on actual response
     }
+    // return response.message;
+    // } catch (error) {
+    //   // eslint-disable-next-line no-console
+    //   console.error("Login failed:", error);
+    //   throw error;
+    // }
   };
 
   return { loginUser };

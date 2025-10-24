@@ -29,10 +29,9 @@ type PaginationLinkProps = {
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
   React.ComponentProps<"a">;
 
-function PaginationLink({ className, isActive, size = "icon", ...props }: PaginationLinkProps) {
+function PaginationLink({ className, isActive, size = "icon", children, ...props }: PaginationLinkProps) {
   return (
     <a
-      aria-label={isActive ? "Current page" : "Go to page"}
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
       data-active={isActive}
@@ -44,7 +43,9 @@ function PaginationLink({ className, isActive, size = "icon", ...props }: Pagina
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </a>
   );
 }
 

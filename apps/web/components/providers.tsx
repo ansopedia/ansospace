@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import { AuthProvider } from "@ansospace/auth";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeProvider as NextThemesProvider } from "@ansospace/ui/theme";
 
 import { config } from "../app/config/ansospace";
 

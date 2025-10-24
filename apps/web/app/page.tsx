@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import type { Otp, RegisterSchema } from "@ansospace/types";
 import { objectId, passwordSchema, registerSchema, usernameSchema } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components";
@@ -31,7 +29,6 @@ export default function Page() {
 
         <p>{otp}</p>
         {mongooseId.toString()}
-        <Link href="/auth">auth</Link>
 
         <User />
         {/* Validation test */}
