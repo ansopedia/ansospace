@@ -34,9 +34,8 @@ export const passwordSchema = z
 export type Password = z.infer<typeof passwordSchema>;
 
 export const emailSchema = z
-  .string({ message: "Email is required" })
-  .min(1, { message: "Email is required" })
   .email({ message: "Invalid email format" })
+  .min(1, { message: "Email is required" })
   .transform((val) => val.toLowerCase().trim());
 
 export type Email = z.infer<typeof emailSchema>;
@@ -54,14 +53,14 @@ export const loginSchema = z
   .superRefine((data, ctx) => {
     if (data.email == null && data.username == null) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "Please provide either an email or a username",
         path: ["email", "username"],
       });
     }
     if (data.password == null) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "Password is required",
         path: ["password"],
       });

@@ -20,7 +20,8 @@
     "react": "19.2.0"
   },
   "dependencies": {
-    "@ansospace/types": "0.4.1"
+    "@ansospace/types": "workspace:*",
+    "react-hook-form": "7.65.0"
   },
   "optionalDependencies": {
     "@react-native-async-storage/async-storage": "2.2.0"
@@ -28,16 +29,16 @@
   "devDependencies": {
     "@ansospace/eslint-config": "workspace:*",
     "@ansospace/typescript-config": "workspace:*",
+    "@react-native-async-storage/async-storage": "2.2.0",
     "@types/jest": "30.0.0",
-    "@types/react": "19.2.0",
-    "@typescript-eslint/eslint-plugin": "8.45.0",
-    "@typescript-eslint/parser": "8.45.0",
-    "eslint": "9.37.0",
+    "@types/react": "19.2.2",
+    "@typescript-eslint/eslint-plugin": "8.46.2",
+    "@typescript-eslint/parser": "8.46.2",
+    "eslint": "9.38.0",
     "jest": "30.2.0",
     "react": "19.2.0",
     "tsup": "8.5.0",
-    "typescript": "5.9.3",
-    "@react-native-async-storage/async-storage": "2.2.0"
+    "typescript": "5.9.3"
   },
   "publishConfig": {
     "access": "public"

@@ -1,4 +1,4 @@
-import { ZodIssue } from "zod";
+import type { $ZodIssue } from "zod/v4/core";
 
 type IApiResponseSuccess<T> = {
   status: "success";
@@ -9,7 +9,7 @@ interface IApiResponseFailed {
   status: "failed";
   message: string;
   code: string;
-  errors?: ZodIssue[];
+  errors?: $ZodIssue[];
 }
 
 export type IApiResponse<T = void> = IApiResponseSuccess<T> | IApiResponseFailed;

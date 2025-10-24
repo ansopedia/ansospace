@@ -107,7 +107,7 @@ export const validateEmailNotification = (data: EmailNotification) => {
           const fieldName = issue.path[issue.path.length - 1];
           return {
             ...issue,
-            message: `Missing required field: ${fieldName}`,
+            message: `Missing required field: ${String(fieldName)}`,
           };
         }
         return issue;
@@ -153,8 +153,8 @@ export const notificationToActionMap: Record<NotificationType, UserActionType> =
 };
 
 // Zod schemas for validation
-export const userActionTypeSchema = z.nativeEnum(UserActionType);
-export const notificationTypeSchema = z.nativeEnum(NotificationType);
+export const userActionTypeSchema = z.enum(UserActionType);
+export const notificationTypeSchema = z.enum(NotificationType);
 
 // Type exports
 export type UserAction = z.infer<typeof userActionTypeSchema>;

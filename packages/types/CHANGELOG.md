@@ -1,5 +1,13 @@
 # @ansospace/types
 
+## 0.4.2
+
+### Patch Changes
+
+- Upgraded Zod to version 4.1.12 for improved type safety and performance. ([#10](https://github.com/ansopedia/ansospace/issues/10))
+  - Updated `IApiResponse` type to use `$ZodIssue` from "zod/v4/core" instead of `ZodIssue` for compatibility with Zod v4.
+  - Simplified `emailSchema` validation by removing redundant string type assertion and min length check, relying on Zod's built-in email validation.
+
 ## 0.4.1
 
 - Add `CreatePermission` type and `createPermissionSchema` from user types.
@@ -9,8 +17,8 @@
 ### Minor Changes
 
 - Added new `Platform` types and schemas for platform management, including `PlatformSchema`, `CreatePlatformInputSchema`, `CreatePlatformSchema`, `GetPlatformSchema`, `UpdatePlatformInputSchema`, and `UpdatePlatformSchema`. ([#11](https://github.com/ansopedia/ansospace/issues/11))
-- Added `PERMISSION_MANAGEMENT` to `PermissionCategory` enum in user types.
-- Removed unused `CreatePermission` type and `createPermissionSchema` from user types.
+  - Added `PERMISSION_MANAGEMENT` to `PermissionCategory` enum in user types.
+  - Removed unused `CreatePermission` type and `createPermissionSchema` from user types.
 
 ## 0.3.8
 

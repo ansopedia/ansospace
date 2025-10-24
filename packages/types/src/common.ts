@@ -8,7 +8,7 @@ export const objectId = z
 
 export type ObjectId = z.infer<typeof objectId>;
 
-export const deviceId = z.string().uuid();
+export const deviceId = z.uuid();
 
 export type DeviceId = z.infer<typeof deviceId>;
 

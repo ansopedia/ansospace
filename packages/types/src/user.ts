@@ -76,7 +76,7 @@ const permissionSchema = z.object({
     .regex(/^[a-z][a-z-]*$/i, "Name must start with a letter and can only contain letters and hyphens.")
     .transform((val) => val.toLowerCase().trim()),
   description: z.string().min(25).max(255),
-  category: z.nativeEnum(PermissionCategory),
+  category: z.enum(PermissionCategory),
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -207,7 +207,7 @@ export const profileSchema = z.object({
   name: z.string().optional(),
   givenName: z.string().optional(),
   familyName: z.string().optional(),
-  avatar: z.string().url().optional(),
+  avatar: z.url().optional(),
   bio: z.string().max(500).optional(),
   address: z
     .object({
@@ -220,9 +220,9 @@ export const profileSchema = z.object({
   phoneNumber: z.string().optional(),
   socialLinks: z
     .object({
-      twitter: z.string().url().optional(),
-      linkedin: z.string().url().optional(),
-      github: z.string().url().optional(),
+      twitter: z.url().optional(),
+      linkedin: z.url().optional(),
+      github: z.url().optional(),
     })
     .optional(),
   gender: z.enum(Genders).optional(),
@@ -243,7 +243,7 @@ export const validateProfileSchema = (data: ProfileData) => {
   if (!hasAnyKey) {
     throw new z.ZodError([
       {
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         path: Object.keys(profileSchema.shape).filter((key) => key !== "userId"),
         message: "At least one field from the profile schema must be provided",
       },
