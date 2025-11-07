@@ -1,5 +1,15 @@
-const page = () => {
-  return <div>Dashboard</div>;
+"use client";
+
+import { useAuth } from "@ansospace/auth";
+
+const Page = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <div>Unauthorized</div>;
+  }
+
+  return <div>Dashboard {"" + isAuthenticated}</div>;
 };
 
-export default page;
+export default Page;

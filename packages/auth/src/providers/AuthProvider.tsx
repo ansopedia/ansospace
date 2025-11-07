@@ -14,11 +14,6 @@ export interface AuthConfig {
   tokenStorage: TokenStorage;
 }
 
-export interface AuthConfig {
-  baseUrl: string;
-  tokenStorage: TokenStorage;
-}
-
 export const AuthProvider = ({ children, config }: { children: ReactNode; config: AuthConfig }) => {
   const [userId, setUserId] = useState<ObjectId | null>(null);
   const [permissions, setPermissions] = useState<GetPermission[]>([]);
