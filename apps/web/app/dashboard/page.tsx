@@ -1,41 +1,25 @@
-"use client";
+import { env } from "../../lib/env";
+import { initializeServerAuth } from "../../lib/serverAuth";
+import { User } from "./User";
 
-import { useEffect, useState } from "react";
+const page = async () => {
+  // Initialize AuthManager with server-side cookie support
+  const authManger = await initializeServerAuth(env.USER_SERVICE_URL);
 
-import { useAuth } from "@ansospace/auth";
-import { User } from "@ansospace/types";
+  const response = await authManger.auth.getPermissions();
 
-const url = "/api/v1/users";
-type IUserResponse = { totalUsers: string; user: User[] };
-const Dashboard = () => {
-  const { userId, apiClient } = useAuth();
-  const [user, setUser] = useState<IUserResponse>();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await apiClient.GET<IUserResponse>(url);
-      if (user.status === "success") {
-        setUser(user.data);
-      }
-      console.log(user);
-    };
-
-    fetchUser();
-  }, [apiClient]);
-
-  console.log("user", user);
-
-  if (!user?.totalUsers) return "loading";
+  if (response.status === "success") {
+    return <div>Dashboard server side {JSON.stringify(response)}</div>;
+  }
 
   return (
     <div>
-      {user?.totalUsers}
-      Dashboard ${userId?.toString()}
-      {JSON.stringify(user?.user)}
-      {/* {JSON.stringify(user)} */}
-      {/* <User /> */}
+      <User />
+      Error: {response.message}
+      <p>Check the response for more details.</p>
+      <div>{JSON.stringify(response)}</div>
     </div>
   );
 };
 
-export default Dashboard;
+export default page;

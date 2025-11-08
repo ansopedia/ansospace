@@ -1,32 +1,14 @@
-// Context and Provider
-export * from "./context/AuthContext";
-export * from "./providers/AuthProvider";
+/**
+ * @ansospace/auth - Main entry point
+ *
+ * WARNING: This entry point includes both client and server code.
+ * For better compatibility with Next.js App Router:
+ *
+ * - Use `@ansospace/auth/client` for client components (hooks, providers)
+ * - Use `@ansospace/auth/server` for server components and API routes
+ * - Only use this main entry point if you know what you're doing
+ */
 
-// Hooks
-export { useAuth } from "./hooks/useAuth";
-export { useLogin } from "./hooks/useLogin";
-export { useLogout } from "./hooks/useLogout";
-export { useOtp } from "./hooks/useOtp";
-export { usePasswordReset } from "./hooks/usePasswordReset";
-export { useSignup } from "./hooks/useSignup";
-// Services
-export { AuthService } from "./services/authService";
-
-// API Client
-export { ApiClient } from "./apiClient";
-
-// Storage Adapters
-export type { StorageAdapter } from "./storage/adapter";
-export { AsyncStorageAdapter } from "./storage/asyncStorage";
-export { BrowserStorageAdapter } from "./storage/browser";
-export { InMemoryStorageAdapter } from "./storage/inMemory";
-
-// Utils
-export { TokenManager } from "./utils/tokenManager";
-export type { TokenStorage } from "./utils/tokenManager";
-
-// Constants
-export { SESSION_STORAGE_KEY, TOKEN_STORAGE_KEYS } from "./constants";
-
-// Types
-export type { AuthContextValue, AuthState } from "./context/AuthContext";
+// Re-export everything (this may cause issues in server components)
+export * from "./client";
+export * from "./server";

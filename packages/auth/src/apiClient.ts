@@ -31,10 +31,26 @@ export class ApiClient {
   private tokenStorage: TokenStorage;
   private isRefreshing = false;
   private failedQueue: QueueItem[] = [];
+  private defaultHeaders: Record<string, string> = {};
 
-  constructor(baseUrl: string, tokenStorage: TokenStorage) {
+  constructor(baseUrl: string, tokenStorage: TokenStorage, defaultHeaders: Record<string, string> = {}) {
     this.baseUrl = baseUrl;
     this.tokenStorage = tokenStorage;
+    this.defaultHeaders = defaultHeaders;
+  }
+
+  /**
+   * Set default headers for all requests
+   */
+  public setDefaultHeaders(headers: Record<string, string>) {
+    this.defaultHeaders = { ...this.defaultHeaders, ...headers };
+  }
+
+  /**
+   * Get the current default headers
+   */
+  public getDefaultHeaders(): Record<string, string> {
+    return { ...this.defaultHeaders };
   }
 
   private processQueue = (error: unknown, accessToken: string | null = null) => {
@@ -69,8 +85,13 @@ export class ApiClient {
 
       const accessToken = await this.tokenStorage.getAccessToken();
 
-      const headers = new Headers(fetchOptions.headers);
-      headers.set("Content-Type", "application/json");
+      const headers = new Headers({
+        ...this.defaultHeaders,
+        ...fetchOptions.headers,
+      });
+      if (!headers.has("Content-Type") && method !== "GET") {
+        headers.set("Content-Type", "application/json");
+      }
 
       if (accessToken && !headers.has("Authorization")) {
         headers.set("Authorization", `Bearer ${accessToken}`);
@@ -88,7 +109,7 @@ export class ApiClient {
       // Save tokens from auth endpoints
       if (url.includes("/auth/login") || url.includes("/auth/refresh") || url.includes("/otp/verify")) {
         const newAccessToken = response.headers.get("authorization");
-        const newRefreshToken = response.headers.get("refresh");
+        const newRefreshToken = response.headers.get("refresh-token");
 
         if (newAccessToken) {
           await this.tokenStorage.saveAccessToken(newAccessToken);
@@ -123,8 +144,8 @@ export class ApiClient {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${refreshToken}`,
             },
+            body: JSON.stringify({ refreshToken }),
           });
 
           if (refreshResponse.ok) {
@@ -185,5 +206,51 @@ export class ApiClient {
 
   async DELETE<T>(url: string, options: RequestOptions = {}): Promise<IApiResponse<T>> {
     return this.request<T>("DELETE", url, options);
+  }
+
+  /**
+   * Make a request without automatic token handling (useful for public endpoints)
+   */
+  async publicRequest<T>(method: Method, url: URL, options: RequestOptions = {}): Promise<IApiResponse<T>> {
+    const { body, ...fetchOptions } = options;
+
+    const headers = new Headers({
+      ...this.defaultHeaders,
+      ...fetchOptions.headers,
+    });
+    if (!headers.has("Content-Type") && method !== "GET") {
+      headers.set("Content-Type", "application/json");
+    }
+
+    const response = await fetch(`${this.baseUrl}${url}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+      ...fetchOptions,
+    });
+
+    return this.handleResponse<T>(response);
+  }
+
+  /**
+   * Set a new base URL (useful for switching between different API endpoints)
+   */
+  public setBaseUrl(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
+
+  /**
+   * Get the current base URL
+   */
+  public getBaseUrl(): string {
+    return this.baseUrl;
+  }
+
+  /**
+   * Check if user is authenticated (has valid access token)
+   */
+  public async isAuthenticated(): Promise<boolean> {
+    const token = await this.tokenStorage.getAccessToken();
+    return !!token;
   }
 }

@@ -2,11 +2,15 @@
 
 import * as React from "react";
 
-import { AuthProvider } from "@ansospace/auth";
+import {
+  AuthProvider,
+  TOKEN_STORAGE_KEYS,
+  TokenManager,
+  createAuthConfig,
+  createCookieStorageAdapter,
+} from "@ansospace/auth/client";
 import { Toaster } from "@ansospace/ui/components";
 import { ThemeProvider as NextThemesProvider } from "@ansospace/ui/theme";
-
-import { config } from "../app/config/ansospace";
 
 export function Providers({ children, baseUrl }: { baseUrl: string; children: React.ReactNode }) {
   return (
@@ -17,7 +21,16 @@ export function Providers({ children, baseUrl }: { baseUrl: string; children: Re
       disableTransitionOnChange
       enableColorScheme
     >
-      <AuthProvider config={config(baseUrl)}>
+      <AuthProvider
+        config={createAuthConfig(baseUrl, {
+          tokenStorage: new TokenManager(
+            createCookieStorageAdapter(),
+            TOKEN_STORAGE_KEYS.AUTHORIZATION,
+            TOKEN_STORAGE_KEYS.REFRESH_TOKEN,
+            TOKEN_STORAGE_KEYS.USER_ID
+          ),
+        })}
+      >
         {children}
         <Toaster />
       </AuthProvider>

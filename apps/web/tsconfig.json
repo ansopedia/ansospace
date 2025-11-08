@@ -1,7 +1,6 @@
 {
   "extends": "@ansospace/typescript-config/nextjs.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
       "@ansospace/eslint-config/*": ["../../packages/eslint-config/*"],
