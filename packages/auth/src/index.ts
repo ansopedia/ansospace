@@ -6,6 +6,8 @@ export * from "./providers/AuthProvider";
 export { useAuth } from "./hooks/useAuth";
 export { useLogin } from "./hooks/useLogin";
 export { useLogout } from "./hooks/useLogout";
+export { useOtp } from "./hooks/useOtp";
+export { usePasswordReset } from "./hooks/usePasswordReset";
 export { useSignup } from "./hooks/useSignup";
 // Services
 export { AuthService } from "./services/authService";
@@ -24,7 +26,7 @@ export { TokenManager } from "./utils/tokenManager";
 export type { TokenStorage } from "./utils/tokenManager";
 
 // Constants
-export { TOKEN_STORAGE_KEYS, SESSION_STORAGE_KEY } from "./constants";
+export { SESSION_STORAGE_KEY, TOKEN_STORAGE_KEYS } from "./constants";
 
 // Types
 export type { AuthContextValue, AuthState } from "./context/AuthContext";

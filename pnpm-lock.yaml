@@ -175,6 +175,9 @@ importers:
       '@ansospace/types':
         specifier: workspace:*
         version: link:../types
+      '@hookform/resolvers':
+        specifier: 5.2.2
+        version: 5.2.2(react-hook-form@7.65.0(react@19.2.0))
       react-hook-form:
         specifier: 7.65.0
         version: 7.65.0(react@19.2.0)
@@ -6539,6 +6542,11 @@ snapshots:
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.63.0(react@19.1.1)
+
+  '@hookform/resolvers@5.2.2(react-hook-form@7.65.0(react@19.2.0))':
+    dependencies:
+      '@standard-schema/utils': 0.3.0
+      react-hook-form: 7.65.0(react@19.2.0)
 
   '@humanfs/core@0.19.1': {}
 

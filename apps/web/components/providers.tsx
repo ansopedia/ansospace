@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { AuthProvider } from "@ansospace/auth";
+import { Toaster } from "@ansospace/ui/components";
 import { ThemeProvider as NextThemesProvider } from "@ansospace/ui/theme";
 
 import { config } from "../app/config/ansospace";
@@ -16,7 +17,10 @@ export function Providers({ children, baseUrl }: { baseUrl: string; children: Re
       disableTransitionOnChange
       enableColorScheme
     >
-      <AuthProvider config={config(baseUrl)}>{children}</AuthProvider>
+      <AuthProvider config={config(baseUrl)}>
+        {children}
+        <Toaster />
+      </AuthProvider>
     </NextThemesProvider>
   );
 }

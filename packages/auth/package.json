@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@ansospace/types": "workspace:*",
+    "@hookform/resolvers": "5.2.2",
     "react-hook-form": "7.65.0"
   },
   "optionalDependencies": {

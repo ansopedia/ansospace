@@ -10,11 +10,12 @@ export const useSignup = () => {
       const response = await authService.signup(body);
       if (response.status === "success") {
         // Assuming signup returns userId, login the user
-        login(response.data.userId, []);
+        await login(response.data.userId, []);
+        return response.message;
+      } else {
+        throw new Error(response.message);
       }
-      return response.message;
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error("Signup failed:", error);
       throw error;
     }

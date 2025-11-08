@@ -51,4 +51,9 @@ export class AuthService {
     const url = "/api/v1/otp";
     return this.apiClient.POST(url, { body });
   }
+
+  async resetPassword(body: { actionToken: string; newPassword: string }): Promise<IApiResponse<void>> {
+    const url = "/api/v1/auth/reset-password";
+    return this.apiClient.POST<void>(url, { body });
+  }
 }

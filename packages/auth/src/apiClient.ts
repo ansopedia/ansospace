@@ -86,9 +86,9 @@ export class ApiClient {
       const result = await this.handleResponse<T>(response);
 
       // Save tokens from auth endpoints
-      if (url.includes("/auth/login") || url.includes("/auth/refresh-token") || url.includes("/otp/verify")) {
+      if (url.includes("/auth/login") || url.includes("/auth/refresh") || url.includes("/otp/verify")) {
         const newAccessToken = response.headers.get("authorization");
-        const newRefreshToken = response.headers.get("refresh-token");
+        const newRefreshToken = response.headers.get("refresh");
 
         if (newAccessToken) {
           await this.tokenStorage.saveAccessToken(newAccessToken);
@@ -119,7 +119,7 @@ export class ApiClient {
             throw new Error("Unauthorized User. Please log in again.");
           }
 
-          const refreshResponse = await fetch(`${this.baseUrl}/api/v1/auth/refresh-token`, {
+          const refreshResponse = await fetch(`${this.baseUrl}/api/v1/auth/refresh`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -129,7 +129,7 @@ export class ApiClient {
 
           if (refreshResponse.ok) {
             const newAccessToken = refreshResponse.headers.get("authorization");
-            const newRefreshToken = refreshResponse.headers.get("refresh-token");
+            const newRefreshToken = refreshResponse.headers.get("refresh");
 
             if (newAccessToken && newRefreshToken) {
               await this.tokenStorage.saveAccessToken(newAccessToken);
