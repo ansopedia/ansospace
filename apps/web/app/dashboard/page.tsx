@@ -1,21 +1,35 @@
-import { env } from "../../lib/env";
-import { initializeServerAuth } from "../../lib/serverAuth";
-import { User } from "./User";
+import { Suspense } from "react";
+
+import { AnsospaceAuth } from "@ansospace/auth";
+import { IApiResponse } from "@ansospace/types";
+
+import { Users } from "../../components/user";
+
+let response: IApiResponse<{
+  permissions: string[];
+}>;
 
 const page = async () => {
-  // Initialize AuthManager with server-side cookie support
-  const authManger = await initializeServerAuth(env.USER_SERVICE_URL);
-
-  const response = await authManger.auth.getPermissions();
-
-  if (response.status === "success") {
-    return <div>Dashboard server side {JSON.stringify(response)}</div>;
+  try {
+    // const authManger = AnsospaceAuth.init({ baseUrl: "http://localhost:8000/" });
+    response = await AnsospaceAuth.instance.auth.getPermissions();
+    // response = await AnsospaceAuth.instance.apiClient.GET("/api/v1/permissions");
+    console.log({ response });
+  } catch (error) {
+    console.log({ error });
   }
+  // const authManger = AuthManager.instance;
+
+  // if (response.status === "success") {
+  //   return <div>Dashboard server side {JSON.stringify(response)}</div>;
+  // }
 
   return (
     <div>
-      <User />
-      Error: {response.message}
+      <Suspense fallback="Loading users">
+        <Users />
+      </Suspense>
+      {/* Error: {response.message} */}
       <p>Check the response for more details.</p>
       <div>{JSON.stringify(response)}</div>
     </div>

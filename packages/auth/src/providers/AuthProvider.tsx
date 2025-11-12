@@ -1,13 +1,11 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
-import { GetPermission, ObjectId } from "@ansospace/types";
+import { GetPermission, IApiResponse, Login, LoginResponse, ObjectId } from "@ansospace/types";
 
-import { ApiClient } from "../apiClient";
-import { AuthContext, AuthContextValue } from "../context/AuthContext";
-import { AuthService } from "../services/authService";
-import { TokenStorage } from "../utils/tokenManager";
+import { AnsospaceAuth } from "../core/AnsospaceAuth";
+import { TokenStorage } from "../types";
 
 export interface AuthConfig {
   baseUrl: string;
@@ -19,36 +17,51 @@ export interface AuthConfig {
   tokenStorage: TokenStorage;
 }
 
-export const AuthProvider = ({ children, config }: { children: ReactNode; config: AuthConfig }) => {
+export interface AuthState {
+  userId: ObjectId | null;
+  isAuthenticated: boolean;
+  permissions: GetPermission[];
+}
+
+export interface AuthContextValue extends AuthState {
+  login: (body: Login) => Promise<IApiResponse<LoginResponse>>;
+  logout: () => Promise<void>;
+  setPermissions: (permissions: GetPermission[]) => void;
+}
+
+export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+export const AuthProvider = ({ children, config }: { children: ReactNode; config?: Partial<AuthConfig> }) => {
+  const [instance] = useState(() => AnsospaceAuth.init(config));
   const [userId, setUserId] = useState<ObjectId | null>(null);
   const [permissions, setPermissions] = useState<GetPermission[]>([]);
-
-  const apiClient = new ApiClient(config.baseUrl, config.tokenStorage);
-  const authService = new AuthService(apiClient);
 
   // On mount, try to load userId from tokenStorage
   useEffect(() => {
     const loadUserId = async () => {
-      const storedUserId = await config.tokenStorage.getUserId();
+      const storedUserId = await instance.tokenStorage.getUserId();
       if (storedUserId) {
         setUserId(storedUserId as unknown as ObjectId);
       }
     };
     loadUserId();
-  }, [config.tokenStorage]);
+  }, [instance.tokenStorage]);
 
-  const login = async (id: ObjectId, perms: GetPermission[] = []) => {
-    setUserId(id);
-    setPermissions(perms);
-    await config.tokenStorage.saveUserId(id.toString());
+  const login = async (body: Login) => {
+    instance.auth.loginUser(body);
+    const response = await instance.auth.loginUser(body);
+    if (response.status === "success") {
+      setUserId(response.data.userId);
+      await instance.tokenStorage.saveUserId(response.data.userId.toString());
+    }
+    return response;
   };
 
   const logout = async () => {
     setUserId(null);
     setPermissions([]);
-    // Remove userId via tokenStorage
-    await config.tokenStorage.deleteUserId();
-    // Tokens are cleared by authService or apiClient
+    await instance.tokenStorage.deleteUserId();
+    await instance.auth.logout();
   };
 
   const value: AuthContextValue = {
@@ -58,9 +71,15 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
     login,
     logout,
     setPermissions,
-    apiClient,
-    authService,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuthProviderContext = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

@@ -1,11 +1,10 @@
-import { useAuth } from "./useAuth";
+import { useAuthProviderContext } from "../client";
 
 export const useLogout = () => {
-  const { logout, authService } = useAuth();
+  const { logout } = useAuthProviderContext();
 
   const logoutUser = async () => {
     try {
-      await authService.logout();
       await logout();
     } catch (error) {
       // eslint-disable-next-line no-console

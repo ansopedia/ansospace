@@ -1,10 +1,10 @@
-import { StorageAdapter } from "./adapter";
+import { StorageAdapter } from "../types";
 
 export class InMemoryStorageAdapter implements StorageAdapter {
   private storage = new Map<string, string>();
 
-  async get(key: string): Promise<string | null> {
-    return this.storage.get(key) || null;
+  async get(key: string): Promise<string | undefined> {
+    return this.storage.get(key);
   }
 
   async set(key: string, value: string): Promise<void> {

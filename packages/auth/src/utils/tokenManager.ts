@@ -1,34 +1,28 @@
-import { StorageAdapter } from "../storage/adapter";
-
-export interface TokenStorage {
-  getAccessToken: () => Promise<string | null>;
-  getRefreshToken: () => Promise<string | null>;
-  saveAccessToken: (token: string) => Promise<void>;
-  saveRefreshToken: (token: string) => Promise<void>;
-  deleteTokens: () => Promise<void>;
-  getUserId: () => Promise<string | null>;
-  saveUserId: (userId: string) => Promise<void>;
-  deleteUserId: () => Promise<void>;
-}
+import { OptionalString, StorageAdapter, TOKEN_STORAGE_KEYS, TOKEN_STORAGE_VALUE, TokenStorage } from "../types";
 
 export class TokenManager implements TokenStorage {
-  private adapter: StorageAdapter;
-  private accessKey: string;
-  private refreshKey: string;
-  private userIdKey: string;
+  private readonly adapter: StorageAdapter;
+  private readonly accessKey: TOKEN_STORAGE_VALUE;
+  private readonly refreshKey: TOKEN_STORAGE_VALUE;
+  private readonly userIdKey: TOKEN_STORAGE_VALUE;
 
-  constructor(adapter: StorageAdapter, accessKey: string, refreshKey: string, userIdKey: string) {
+  constructor(
+    adapter: StorageAdapter,
+    accessKey: TOKEN_STORAGE_VALUE = TOKEN_STORAGE_KEYS.AUTHORIZATION,
+    refreshKey: TOKEN_STORAGE_VALUE = TOKEN_STORAGE_KEYS.REFRESH_TOKEN,
+    userIdKey: TOKEN_STORAGE_VALUE = TOKEN_STORAGE_KEYS.USER_ID
+  ) {
     this.adapter = adapter;
     this.accessKey = accessKey;
     this.refreshKey = refreshKey;
     this.userIdKey = userIdKey;
   }
 
-  async getAccessToken(): Promise<string | null> {
+  async getAccessToken(): Promise<OptionalString> {
     return this.adapter.get(this.accessKey);
   }
 
-  async getRefreshToken(): Promise<string | null> {
+  async getRefreshToken(): Promise<OptionalString> {
     return this.adapter.get(this.refreshKey);
   }
 
@@ -45,8 +39,8 @@ export class TokenManager implements TokenStorage {
     await this.adapter.remove(this.refreshKey);
   }
 
-  async getUserId(): Promise<string | null> {
-    return this.adapter.get(this.userIdKey);
+  async getUserId(): Promise<OptionalString> {
+    return await this.adapter.get(this.userIdKey);
   }
 
   async saveUserId(userId: string): Promise<void> {

@@ -49,7 +49,7 @@ export class AuthService {
 
   async getPermissions(): Promise<IApiResponse<{ permissions: string[] }>> {
     const url = "/api/v1/permissions";
-    return this._apiClient.POST(url, {});
+    return this._apiClient.GET(url, {});
   }
 
   async resetPassword(body: { actionToken: string; newPassword: string }): Promise<IApiResponse<void>> {

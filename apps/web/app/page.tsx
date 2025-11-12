@@ -3,7 +3,7 @@ import { objectId, passwordSchema, registerSchema, usernameSchema } from "@ansos
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
-import User from "../components/user";
+import { Users } from "../components/user";
 import { APP_CONFIG } from "../lib/constants";
 import { env } from "../lib/env";
 
@@ -30,7 +30,13 @@ export default function Page() {
         <p>{otp}</p>
         {mongooseId.toString()}
 
-        <User />
+        <h2>User Components</h2>
+        {/* <Suspense fallback={"Loading"}> */}
+        <Users />
+        {/* </Suspense> */}
+        <br />
+        <br />
+        <br />
         {/* Validation test */}
         <p>Validation test: {JSON.stringify(registerSchema.parse(user))}</p>
         <p>User is only available in the server component in next.js</p>

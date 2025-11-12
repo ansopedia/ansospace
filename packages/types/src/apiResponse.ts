@@ -1,11 +1,11 @@
 import type { $ZodIssue } from "zod/v4/core";
 
-type IApiResponseSuccess<T> = {
+export type IApiResponseSuccess<T> = {
   status: "success";
   message: string;
 } & (T extends void ? { readonly data?: never } : { data: T });
 
-interface IApiResponseFailed {
+export interface IApiResponseFailed {
   status: "failed";
   message: string;
   code: string;

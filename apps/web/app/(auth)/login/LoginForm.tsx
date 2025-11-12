@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useLogin } from "@ansospace/auth";
+import { useLogin } from "@ansospace/auth/client";
 import type { Login } from "@ansospace/types";
 import { loginSchema } from "@ansospace/types";
 import {
@@ -26,33 +26,21 @@ import { Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 export const LoginForm = () => {
-  const { loginUser } = useLogin();
   const router = useRouter();
+  const { login, loading } = useLogin();
 
-  const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "group.ansopedia@gmail.com",
-      password: "sanjay0209047G@ansopedia",
-    },
   });
 
-  const onSubmit = async (data: Login) => {
-    setIsLoading(true);
-    try {
-      const res = await loginUser(data);
-      if (res.status === "success") {
-        router.replace("/dashboard");
-      } else {
-        toast.error(res.message);
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Login failed. Please check your credentials.");
-    } finally {
-      setIsLoading(false);
+  const onSubmit = async (body: Login) => {
+    const response = await login(body);
+    if (response.status === "success") {
+      router.replace("/dashboard");
+    } else {
+      toast.error(response.message);
     }
   };
 
@@ -68,13 +56,7 @@ export const LoginForm = () => {
               <FormControl>
                 <div className="relative">
                   <Mail className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="pl-10"
-                    {...field}
-                    disabled={isLoading}
-                  />
+                  <Input type="email" placeholder="Enter your email" className="pl-10" {...field} disabled={loading} />
                 </div>
               </FormControl>
               <FormMessage />
@@ -96,7 +78,7 @@ export const LoginForm = () => {
                     placeholder="Enter your password"
                     className="pl-10"
                     {...field}
-                    disabled={isLoading}
+                    disabled={loading}
                   />
                 </div>
               </FormControl>
@@ -111,7 +93,7 @@ export const LoginForm = () => {
               id="remember"
               checked={rememberMe}
               onCheckedChange={(checked) => setRememberMe(checked === true)}
-              disabled={isLoading}
+              disabled={loading}
             />
             <label
               htmlFor="remember"
@@ -129,9 +111,9 @@ export const LoginForm = () => {
         </div>
 
         <ButtonGroup>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading && <Spinner />}
-            {isLoading ? "Logging in..." : "Login"}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading && <Spinner />}
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </ButtonGroup>
       </form>

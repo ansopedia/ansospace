@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IApiResponse } from "@ansospace/types";
 
-import { TokenStorage } from "./utils/tokenManager";
+import { TokenStorage } from "./types";
 
 interface RequestOptions extends RequestInit {
   body?: any;
@@ -150,7 +150,7 @@ export class ApiClient {
 
           if (refreshResponse.ok) {
             const newAccessToken = refreshResponse.headers.get("authorization");
-            const newRefreshToken = refreshResponse.headers.get("refresh");
+            const newRefreshToken = refreshResponse.headers.get("refresh-token");
 
             if (newAccessToken && newRefreshToken) {
               await this.tokenStorage.saveAccessToken(newAccessToken);
@@ -181,7 +181,7 @@ export class ApiClient {
 
       return result;
     } catch (error: any) {
-      if (error.cause?.code === "ECONNREFUSED") {
+      if (error.cause?.code === "ECONNREFUSED" || error.message === "Failed to fetch") {
         return {
           status: "failed",
           message: "Could not connect to the server. Please check your network connection and try again.",

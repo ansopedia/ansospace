@@ -1,16 +1,26 @@
 import Link from "next/link";
 
+import { AnsospaceAuth, TOKEN_STORAGE_KEYS, TokenManager } from "@ansospace/auth";
 import "@ansospace/ui/globals.css";
 
-import { Providers } from "@/components/providers";
-
 import { env } from "../lib/env";
+import { ServerStorageAdapter } from "../lib/storage/ServerStorageAdapter";
+import { Providers } from "./providers";
 
 export interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: Readonly<RootLayoutProps>): React.ReactElement {
+AnsospaceAuth.init({
+  baseUrl: env.USER_SERVICE_URL,
+  tokenStorage: new TokenManager(
+    new ServerStorageAdapter(),
+    TOKEN_STORAGE_KEYS.AUTHORIZATION,
+    TOKEN_STORAGE_KEYS.REFRESH_TOKEN,
+    TOKEN_STORAGE_KEYS.USER_ID
+  ),
+});
+export default async function RootLayout({ children }: Readonly<RootLayoutProps>): Promise<React.ReactElement> {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased`}>

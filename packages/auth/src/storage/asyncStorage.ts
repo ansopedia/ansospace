@@ -1,4 +1,4 @@
-import { StorageAdapter } from "./adapter";
+import { StorageAdapter } from "../types";
 
 export class AsyncStorageAdapter implements StorageAdapter {
   private async getAsyncStorage() {
@@ -6,17 +6,17 @@ export class AsyncStorageAdapter implements StorageAdapter {
       const module = await import("@react-native-async-storage/async-storage");
       return module.default;
     } catch {
-      return null;
+      return undefined;
     }
   }
 
-  async get(key: string): Promise<string | null> {
+  async get(key: string): Promise<string | undefined> {
     try {
       const AsyncStorage = await this.getAsyncStorage();
-      if (!AsyncStorage) return null;
-      return await AsyncStorage.getItem(key);
+      if (!AsyncStorage) return undefined;
+      return (await AsyncStorage.getItem(key)) ?? undefined;
     } catch {
-      return null;
+      return undefined;
     }
   }
 
