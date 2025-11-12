@@ -6,4 +6,4 @@ export { useLogin } from "./hooks/useLogin";
 export { useLogout } from "./hooks/useLogout";
 export { useOtp } from "./hooks/useOtp";
 export { usePasswordReset } from "./hooks/usePasswordReset";
-export { useSignup } from "./hooks/useSignup";
+export { useRegister } from "./hooks/useRegister";

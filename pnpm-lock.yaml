@@ -105,6 +105,9 @@ importers:
       '@ansospace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@hookform/error-message':
+        specifier: 2.0.1
+        version: 2.0.1(react-dom@19.1.1(react@19.1.1))(react-hook-form@7.63.0(react@19.1.1))(react@19.1.1)
       '@hookform/resolvers':
         specifier: 5.2.2
         version: 5.2.2(react-hook-form@7.63.0(react@19.1.1))
@@ -149,7 +152,7 @@ importers:
         specifier: 15.5.3
         version: 15.5.3
       '@tanstack/react-query-devtools':
-        specifier: ^5.90.2
+        specifier: 5.90.2
         version: 5.90.2(@tanstack/react-query@5.90.7(react@19.1.1))(react@19.1.1)
       '@types/node':
         specifier: 24.5.2
@@ -949,6 +952,13 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@hookform/error-message@2.0.1':
+    resolution: {integrity: sha512-U410sAr92xgxT1idlu9WWOVjndxLdgPUHEB8Schr27C9eh7/xUnITWpCMF93s+lGiG++D4JnbSnrb5A21AdSNg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      react-hook-form: ^7.0.0
 
   '@hookform/resolvers@5.2.2':
     resolution: {integrity: sha512-A/IxlMLShx3KjV/HeTcTfaMxdwy690+L/ZADoeaTltLx+CVuzkeVIPuybK3jrRfw7YZnmdKsVVHAlEPIAEUNlA==}
@@ -6563,6 +6573,12 @@ snapshots:
       react-dom: 19.1.1(react@19.1.1)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@hookform/error-message@2.0.1(react-dom@19.1.1(react@19.1.1))(react-hook-form@7.63.0(react@19.1.1))(react@19.1.1)':
+    dependencies:
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
+      react-hook-form: 7.63.0(react@19.1.1)
 
   '@hookform/resolvers@5.2.2(react-hook-form@7.63.0(react@19.1.1))':
     dependencies:

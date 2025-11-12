@@ -4,8 +4,8 @@ import {
   LoginResponse,
   OtpEvent,
   OtpVerifyEvent,
+  RegisterResponse,
   RegisterSchema,
-  SignUpResponse,
 } from "@ansospace/types";
 
 import { ApiClient } from "../apiClient";
@@ -22,7 +22,7 @@ export class AuthService {
     return this._apiClient.POST<LoginResponse>(url, { body });
   }
 
-  async signup(body: RegisterSchema): Promise<IApiResponse<SignUpResponse>> {
+  async register(body: RegisterSchema): Promise<IApiResponse<RegisterResponse>> {
     const url = "/api/v1/auth/register";
     return this._apiClient.POST(url, { body });
   }

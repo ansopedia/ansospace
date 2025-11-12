@@ -7,12 +7,12 @@ export const TOKEN_STORAGE_KEYS = {
 export type TOKEN_STORAGE_KEY = keyof typeof TOKEN_STORAGE_KEYS; // 'AUTHORIZATION' | 'REFRESH_TOKEN' | 'USER_ID'
 export type TOKEN_STORAGE_VALUE = (typeof TOKEN_STORAGE_KEYS)[TOKEN_STORAGE_KEY]; // 'authorization' | 'refresh-token' | 'user-id'
 
-export const SESSION_STORAGE_KEYS = {
-  AUTH_ACTION: "auth-action",
-} as const;
+// export const SESSION_STORAGE_KEYS = {
+//   AUTH_ACTION: "auth-action",
+// } as const;
 
-export type SESSION_STORAGE_KEY = keyof typeof SESSION_STORAGE_KEYS;
-export type SESSION_STORAGE_VALUE = (typeof SESSION_STORAGE_KEYS)[SESSION_STORAGE_KEY];
+// export type SESSION_STORAGE_KEY = keyof typeof SESSION_STORAGE_KEYS;
+// export type SESSION_STORAGE_VALUE = (typeof SESSION_STORAGE_KEYS)[SESSION_STORAGE_KEY];
 
 export type OptionalString = string | undefined;
 

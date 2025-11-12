@@ -83,12 +83,12 @@ export const loginResponseSchema = z.object({
 
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
 
-export const signUpResponseSchema = z.object({
+export const registerResponseSchema = z.object({
   userId: objectId,
   token: z.string(),
 });
 
-export type SignUpResponse = z.infer<typeof signUpResponseSchema>;
+export type RegisterResponse = z.infer<typeof registerResponseSchema>;
 
 export type AuthenticatedUser = {
   userId: ObjectId;

@@ -2,15 +2,20 @@
 
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
-import { GetPermission, IApiResponse, Login, LoginResponse, ObjectId } from "@ansospace/types";
+import {
+  GetPermission,
+  IApiResponse,
+  Login,
+  LoginResponse,
+  ObjectId,
+  RegisterResponse,
+  RegisterSchema,
+  UserActionType,
+} from "@ansospace/types";
 
 import { AnsospaceAuth } from "../core/AnsospaceAuth";
+import { useSessionStorage } from "../hooks/useSessionStorage";
 import { TokenStorage } from "../types";
-
-export interface AuthConfig {
-  baseUrl: string;
-  tokenStorage: TokenStorage;
-}
 
 export interface AuthConfig {
   baseUrl: string;
@@ -25,6 +30,7 @@ export interface AuthState {
 
 export interface AuthContextValue extends AuthState {
   login: (body: Login) => Promise<IApiResponse<LoginResponse>>;
+  register: (body: RegisterSchema) => Promise<IApiResponse<RegisterResponse>>;
   logout: () => Promise<void>;
   setPermissions: (permissions: GetPermission[]) => void;
 }
@@ -36,32 +42,60 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
   const [userId, setUserId] = useState<ObjectId | null>(null);
   const [permissions, setPermissions] = useState<GetPermission[]>([]);
 
-  // On mount, try to load userId from tokenStorage
+  const [, setSessionData] = useSessionStorage<UserActionType, string | null>(UserActionType.VERIFY_EMAIL, null);
+
+  // Load existing user from tokenStorage on mount
   useEffect(() => {
     const loadUserId = async () => {
-      const storedUserId = await instance.tokenStorage.getUserId();
-      if (storedUserId) {
-        setUserId(storedUserId as unknown as ObjectId);
+      try {
+        const storedUserId = await instance.tokenStorage.getUserId();
+        if (storedUserId) {
+          setUserId(storedUserId as unknown as ObjectId);
+        }
+      } catch (error) {
+        console.error("Failed to load user ID from tokenStorage:", error);
       }
     };
     loadUserId();
   }, [instance.tokenStorage]);
 
+  // ✅ Login Handler
   const login = async (body: Login) => {
-    instance.auth.loginUser(body);
     const response = await instance.auth.loginUser(body);
-    if (response.status === "success") {
-      setUserId(response.data.userId);
-      await instance.tokenStorage.saveUserId(response.data.userId.toString());
+    if (response.status === "success" && response.data?.userId) {
+      const uid = response.data.userId as ObjectId;
+      setUserId(uid);
+      await instance.tokenStorage.saveUserId(uid.toString());
     }
     return response;
   };
 
+  // ✅ Register Handler
+  const register = async (body: RegisterSchema) => {
+    const response = await instance.auth.register(body);
+    if (response.status === "success" && response.data?.userId) {
+      const uid = response.data.userId as ObjectId;
+      setUserId(uid);
+      await instance.tokenStorage.saveUserId(uid.toString());
+
+      // Store token in session for verification step
+      if (response.data.token) {
+        setSessionData(response.data.token);
+      }
+    }
+    return response;
+  };
+
+  // ✅ Logout Handler
   const logout = async () => {
-    setUserId(null);
-    setPermissions([]);
-    await instance.tokenStorage.deleteUserId();
-    await instance.auth.logout();
+    try {
+      setUserId(null);
+      setPermissions([]);
+      await instance.tokenStorage.deleteUserId();
+      await instance.auth.logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const value: AuthContextValue = {
@@ -69,6 +103,7 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
     isAuthenticated: !!userId,
     permissions,
     login,
+    register,
     logout,
     setPermissions,
   };
@@ -76,10 +111,11 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+// ✅ Hook to consume AuthContext safely
 export const useAuthProviderContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuthProviderContext must be used within an AuthProvider");
   }
   return context;
 };

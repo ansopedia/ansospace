@@ -2,6 +2,12 @@
 
 ## 0.4.2
 
+- Replace signup terminology with register
+  - `signUpResponseSchema` => `registerResponseSchema`
+  - `SignUpResponse` => `RegisterResponse`
+
+## 0.4.2
+
 ### Patch Changes
 
 - Upgraded Zod to version 4.1.12 for improved type safety and performance. ([#10](https://github.com/ansopedia/ansospace/issues/10))

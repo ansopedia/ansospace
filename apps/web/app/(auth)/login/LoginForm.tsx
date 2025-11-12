@@ -7,32 +7,24 @@ import { useState } from "react";
 import { useLogin } from "@ansospace/auth/client";
 import type { Login } from "@ansospace/types";
 import { loginSchema } from "@ansospace/types";
-import {
-  Button,
-  ButtonGroup,
-  Checkbox,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-  Spinner,
-  toast,
-} from "@ansospace/ui/components";
+import { Button, Checkbox, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
+
+import { AuthFields } from "@/components/auth/AuthFields";
+import { SIGNUP_FORM_FIELDS } from "@/constants/auth-fields";
 
 export const LoginForm = () => {
   const router = useRouter();
   const { login, loading } = useLogin();
-
   const [rememberMe, setRememberMe] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const onSubmit = async (body: Login) => {
@@ -44,48 +36,13 @@ export const LoginForm = () => {
     }
   };
 
+  // Reuse only email + password
+  const LOGIN_FIELDS = SIGNUP_FORM_FIELDS.filter((f) => ["email", "password"].includes(f.name));
+
   return (
     <Form {...form}>
       <form className="mt-10 flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Mail className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
-                  <Input type="email" placeholder="Enter your email" className="pl-10" {...field} disabled={loading} />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Lock className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
-                  <Input
-                    type="password"
-                    placeholder="Enter your password"
-                    className="pl-10"
-                    {...field}
-                    disabled={loading}
-                  />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <AuthFields form={form} fields={LOGIN_FIELDS} loading={loading} />
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -110,12 +67,10 @@ export const LoginForm = () => {
           </Link>
         </div>
 
-        <ButtonGroup>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading && <Spinner />}
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-        </ButtonGroup>
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading && <Spinner />}
+          {loading ? "Logging in..." : "Login"}
+        </Button>
       </form>
     </Form>
   );
