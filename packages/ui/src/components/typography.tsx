@@ -4,7 +4,7 @@ import { cn } from "@ansospace/ui/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
 
-const typographyVariants = cva("text-foreground", {
+const typographyVariants = cva("text-foreground leading-[130%]", {
   variants: {
     variant: {
       h1: "scroll-m-20 text-4xl font-bold lg:text-5xl",
@@ -20,8 +20,7 @@ const typographyVariants = cva("text-foreground", {
       lead: "text-xl text-muted-foreground",
       largeText: "text-lg font-semibold",
       smallText: "text-sm font-medium leading-none",
-      mutedText: "text-sm text-muted-foreground",
-      span: "",
+      mutedText: "text-muted-foreground",
     },
   },
   defaultVariants: {
@@ -44,9 +43,8 @@ const variantElementMap: Record<NonNullable<VariantPropType["variant"]>, string>
   largeText: "div",
   smallText: "small",
   lead: "p",
-  mutedText: "p",
+  mutedText: "span",
   ul: "ul",
-  span: "span",
 };
 
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof typographyVariants> {

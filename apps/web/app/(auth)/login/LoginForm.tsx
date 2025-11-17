@@ -59,10 +59,7 @@ export const LoginForm = () => {
               Remember me
             </label>
           </div>
-          <Link
-            href="#"
-            className="text-primary hover:text-primary/80 text-sm font-medium transition-colors hover:underline"
-          >
+          <Link href="#" className="link-primary">
             Forgot password?
           </Link>
         </div>

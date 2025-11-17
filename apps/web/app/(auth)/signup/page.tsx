@@ -9,18 +9,15 @@ const RegisterPage = () => {
   return (
     <div className="h-vh container m-auto flex min-h-dvh w-svw items-center justify-center gap-10 p-6">
       <div className="lg:1/4 w-full sm:w-2/3 md:w-2/4 lg:w-1/3">
-        <Typography variant="h2" className="border-none">
+        <Typography variant="h2">
           Want to be an
           <span className="text-primary">&nbsp;Ansopedian?</span>
         </Typography>
-        <Typography>Sign up to continue</Typography>
+        <Typography className="text-muted-foreground">Sign up to continue</Typography>
         <RegisterForm />
-        <Typography className="mt-2">
+        <Typography className="text-muted-foreground mt-6 text-center text-sm">
           Already have an account?
-          <Link
-            href="/login"
-            className="text-primary hover:text-primary/80 font-medium transition-colors hover:underline"
-          >
+          <Link href="/login" className="link-primary">
             &nbsp;Login
           </Link>
         </Typography>

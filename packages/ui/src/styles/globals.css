@@ -124,3 +124,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .link-primary {
+    @apply text-[#3498DB] transition-colors hover:text-[#3498DB]/80 hover:underline;
+  }
+}
