@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { AnsospaceAuth, TOKEN_STORAGE_KEYS, TokenManager } from "@ansospace/auth";
+import { AnsospaceAuth, TokenManager } from "@ansospace/auth";
 import "@ansospace/ui/globals.css";
 
 import { env } from "../lib/env";
@@ -13,12 +13,7 @@ export interface RootLayoutProps {
 
 AnsospaceAuth.init({
   baseUrl: env.USER_SERVICE_URL,
-  tokenStorage: new TokenManager(
-    new ServerStorageAdapter(),
-    TOKEN_STORAGE_KEYS.AUTHORIZATION,
-    TOKEN_STORAGE_KEYS.REFRESH_TOKEN,
-    TOKEN_STORAGE_KEYS.USER_ID
-  ),
+  storage: new TokenManager(new ServerStorageAdapter()),
 });
 export default async function RootLayout({ children }: Readonly<RootLayoutProps>): Promise<React.ReactElement> {
   return (

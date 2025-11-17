@@ -17,7 +17,10 @@ const RegisterPage = () => {
         <RegisterForm />
         <Typography className="mt-2">
           Already have an account?
-          <Link href="/login" className="text-blue-500 hover:underline">
+          <Link
+            href="/login"
+            className="text-primary hover:text-primary/80 font-medium transition-colors hover:underline"
+          >
             &nbsp;Login
           </Link>
         </Typography>

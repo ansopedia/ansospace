@@ -1,5 +1,5 @@
 // Client-side exports - safe for client components
-export * from "./providers/AuthProvider";
+export { AuthProvider } from "./providers/AuthProvider";
 
 // Hooks (client-side only)
 export { useLogin } from "./hooks/useLogin";

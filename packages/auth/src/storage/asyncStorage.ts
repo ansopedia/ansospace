@@ -1,6 +1,6 @@
-import { StorageAdapter } from "../types";
+import { AnsospaceStorage, StorageKey } from "../types";
 
-export class AsyncStorageAdapter implements StorageAdapter {
+export class AsyncStorageAdapter implements AnsospaceStorage {
   private async getAsyncStorage() {
     try {
       const module = await import("@react-native-async-storage/async-storage");
@@ -10,7 +10,7 @@ export class AsyncStorageAdapter implements StorageAdapter {
     }
   }
 
-  async get(key: string): Promise<string | undefined> {
+  async get(key: StorageKey): Promise<string | undefined> {
     try {
       const AsyncStorage = await this.getAsyncStorage();
       if (!AsyncStorage) return undefined;
@@ -20,7 +20,7 @@ export class AsyncStorageAdapter implements StorageAdapter {
     }
   }
 
-  async set(key: string, value: string): Promise<void> {
+  async set(key: StorageKey, value: string): Promise<void> {
     try {
       const AsyncStorage = await this.getAsyncStorage();
       if (!AsyncStorage) return;
@@ -30,7 +30,7 @@ export class AsyncStorageAdapter implements StorageAdapter {
     }
   }
 
-  async remove(key: string): Promise<void> {
+  async remove(key: StorageKey): Promise<void> {
     try {
       const AsyncStorage = await this.getAsyncStorage();
       if (!AsyncStorage) return;

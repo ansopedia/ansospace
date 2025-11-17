@@ -1,7 +1,7 @@
 import { ApiClient } from "../apiClient";
 import { AuthService } from "../services/authService";
 import { InMemoryStorageAdapter } from "../storage/inMemory";
-import { type AuthConfig, TOKEN_STORAGE_KEYS } from "../types";
+import { type AuthConfig } from "../types";
 import { TokenManager } from "../utils/tokenManager";
 
 /**
@@ -10,12 +10,7 @@ import { TokenManager } from "../utils/tokenManager";
  */
 export const defaultConfig: AuthConfig = {
   baseUrl: "https://api.ansospace.dev",
-  tokenStorage: new TokenManager(
-    new InMemoryStorageAdapter(),
-    TOKEN_STORAGE_KEYS.AUTHORIZATION,
-    TOKEN_STORAGE_KEYS.REFRESH_TOKEN,
-    TOKEN_STORAGE_KEYS.USER_ID
-  ),
+  storage: new TokenManager(new InMemoryStorageAdapter()),
 };
 
 /**
@@ -40,7 +35,7 @@ export class AnsospaceAuth {
 
   private constructor(config?: Partial<AuthConfig>) {
     this._config = { ...defaultConfig, ...config };
-    this._apiClient = new ApiClient(this._config.baseUrl, this._config.tokenStorage);
+    this._apiClient = new ApiClient(this._config.baseUrl, this._config.storage);
     this._authService = new AuthService(this._apiClient);
   }
 
@@ -72,11 +67,6 @@ export class AnsospaceAuth {
   // 🔧 Configuration
   // ======================
 
-  /** Returns current configuration (read-only) */
-  get config(): Readonly<AuthConfig> {
-    return this._config;
-  }
-
   /** Accessor for core services */
   get auth(): AuthService {
     return this._authService;
@@ -86,8 +76,8 @@ export class AnsospaceAuth {
     return this._apiClient;
   }
 
-  get tokenStorage() {
-    return this._config.tokenStorage;
+  get storage() {
+    return this._config.storage;
   }
 
   /** Merge new config and refresh dependent services if necessary */
@@ -98,30 +88,11 @@ export class AnsospaceAuth {
     // Reinitialize services only if relevant config changed
     if (
       (newConfig.baseUrl && newConfig.baseUrl !== prevConfig.baseUrl) ||
-      (newConfig.tokenStorage && newConfig.tokenStorage !== prevConfig.tokenStorage)
+      (newConfig.storage && newConfig.storage !== prevConfig.storage)
     ) {
-      this._apiClient = new ApiClient(this._config.baseUrl, this._config.tokenStorage);
+      this._apiClient = new ApiClient(this._config.baseUrl, this._config.storage);
       this._authService = new AuthService(this._apiClient);
     }
-  }
-
-  // ======================
-  // 🔐 Token Management
-  // ======================
-
-  /** Returns the current access token (if any) */
-  getToken() {
-    return this.tokenStorage.getAccessToken();
-  }
-
-  /** Saves a new access token */
-  setToken(token: string) {
-    return this.tokenStorage.saveAccessToken(token);
-  }
-
-  /** Clears both access and refresh tokens */
-  clearToken() {
-    return this.tokenStorage.deleteTokens();
   }
 
   // ======================
@@ -134,7 +105,7 @@ export class AnsospaceAuth {
   }
 
   public async isAuthenticated(): Promise<boolean> {
-    const token = await this.getToken();
+    const token = await this.storage.get("access");
     if (!token) return false;
 
     try {
@@ -143,7 +114,7 @@ export class AnsospaceAuth {
       if (payload) {
         const { exp } = JSON.parse(atob(payload));
         if (exp && Date.now() >= exp * 1000) {
-          await this.clearToken();
+          await this.storage.remove("access");
           return false;
         }
       }

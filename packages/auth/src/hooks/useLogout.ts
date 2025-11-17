@@ -1,4 +1,4 @@
-import { useAuthProviderContext } from "../client";
+import { useAuthProviderContext } from "../providers/AuthProvider";
 
 export const useLogout = () => {
   const { logout } = useAuthProviderContext();

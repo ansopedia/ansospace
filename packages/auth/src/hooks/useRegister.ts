@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import { IApiResponse, RegisterResponse, RegisterSchema } from "@ansospace/types";
 
-import { useAuthProviderContext } from "../client";
+import { useAuthProviderContext } from "../providers/AuthProvider";
 
 interface UseRegisterResult {
   register: (body: RegisterSchema) => Promise<IApiResponse<RegisterResponse>>;

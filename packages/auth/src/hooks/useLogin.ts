@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 import { IApiResponse, IApiResponseFailed, Login, LoginResponse } from "@ansospace/types";
 
-import { useAuthProviderContext } from "../client";
+import { useAuthProviderContext } from "../providers/AuthProvider";
 
 interface UseLoginResult {
   login: (body: Login) => Promise<IApiResponse<LoginResponse>>;

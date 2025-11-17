@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IApiResponse } from "@ansospace/types";
 
-import { TokenStorage } from "./types";
+import { AnsospaceStorage } from "./types";
 
 interface RequestOptions extends RequestInit {
   body?: any;
@@ -28,12 +28,12 @@ interface QueueItem {
 
 export class ApiClient {
   private baseUrl: string;
-  private tokenStorage: TokenStorage;
+  private tokenStorage: AnsospaceStorage;
   private isRefreshing = false;
   private failedQueue: QueueItem[] = [];
   private defaultHeaders: Record<string, string> = {};
 
-  constructor(baseUrl: string, tokenStorage: TokenStorage, defaultHeaders: Record<string, string> = {}) {
+  constructor(baseUrl: string, tokenStorage: AnsospaceStorage, defaultHeaders: Record<string, string> = {}) {
     this.baseUrl = baseUrl;
     this.tokenStorage = tokenStorage;
     this.defaultHeaders = defaultHeaders;
@@ -83,7 +83,7 @@ export class ApiClient {
     try {
       const { body, _retry, ...fetchOptions } = options;
 
-      const accessToken = await this.tokenStorage.getAccessToken();
+      const accessToken = await this.tokenStorage.get("access");
 
       const headers = new Headers({
         ...this.defaultHeaders,
@@ -112,10 +112,10 @@ export class ApiClient {
         const newRefreshToken = response.headers.get("refresh-token");
 
         if (newAccessToken) {
-          await this.tokenStorage.saveAccessToken(newAccessToken);
+          await this.tokenStorage.set("access", newAccessToken);
         }
         if (newRefreshToken) {
-          await this.tokenStorage.saveRefreshToken(newRefreshToken);
+          await this.tokenStorage.set("refresh", newRefreshToken);
         }
       }
 
@@ -134,7 +134,7 @@ export class ApiClient {
         this.isRefreshing = true;
 
         try {
-          const refreshToken = await this.tokenStorage.getRefreshToken();
+          const refreshToken = await this.tokenStorage.get("refresh");
 
           if (!refreshToken) {
             throw new Error("Unauthorized User. Please log in again.");
@@ -153,8 +153,8 @@ export class ApiClient {
             const newRefreshToken = refreshResponse.headers.get("refresh-token");
 
             if (newAccessToken && newRefreshToken) {
-              await this.tokenStorage.saveAccessToken(newAccessToken);
-              await this.tokenStorage.saveRefreshToken(newRefreshToken);
+              await this.tokenStorage.set("access", newAccessToken);
+              await this.tokenStorage.set("refresh", newRefreshToken);
 
               this.processQueue(null, newAccessToken);
 
@@ -250,7 +250,7 @@ export class ApiClient {
    * Check if user is authenticated (has valid access token)
    */
   public async isAuthenticated(): Promise<boolean> {
-    const token = await this.tokenStorage.getAccessToken();
+    const token = await this.tokenStorage.get("access");
     return !!token;
   }
 }

@@ -10,17 +10,10 @@ import {
   ObjectId,
   RegisterResponse,
   RegisterSchema,
-  UserActionType,
 } from "@ansospace/types";
 
 import { AnsospaceAuth } from "../core/AnsospaceAuth";
-import { useSessionStorage } from "../hooks/useSessionStorage";
-import { TokenStorage } from "../types";
-
-export interface AuthConfig {
-  baseUrl: string;
-  tokenStorage: TokenStorage;
-}
+import { AuthConfig } from "../types";
 
 export interface AuthState {
   userId: ObjectId | null;
@@ -42,13 +35,11 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
   const [userId, setUserId] = useState<ObjectId | null>(null);
   const [permissions, setPermissions] = useState<GetPermission[]>([]);
 
-  const [, setSessionData] = useSessionStorage<UserActionType, string | null>(UserActionType.VERIFY_EMAIL, null);
-
   // Load existing user from tokenStorage on mount
   useEffect(() => {
     const loadUserId = async () => {
       try {
-        const storedUserId = await instance.tokenStorage.getUserId();
+        const storedUserId = await instance.storage.get("user-id");
         if (storedUserId) {
           setUserId(storedUserId as unknown as ObjectId);
         }
@@ -57,7 +48,7 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
       }
     };
     loadUserId();
-  }, [instance.tokenStorage]);
+  }, [instance.storage]);
 
   // ✅ Login Handler
   const login = async (body: Login) => {
@@ -65,7 +56,7 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
     if (response.status === "success" && response.data?.userId) {
       const uid = response.data.userId as ObjectId;
       setUserId(uid);
-      await instance.tokenStorage.saveUserId(uid.toString());
+      await instance.storage.set("user-id", uid.toString());
     }
     return response;
   };
@@ -76,12 +67,8 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
     if (response.status === "success" && response.data?.userId) {
       const uid = response.data.userId as ObjectId;
       setUserId(uid);
-      await instance.tokenStorage.saveUserId(uid.toString());
-
-      // Store token in session for verification step
-      if (response.data.token) {
-        setSessionData(response.data.token);
-      }
+      await instance.storage.set("user-id", uid.toString());
+      await instance.storage.set("access", uid.toString());
     }
     return response;
   };
@@ -91,8 +78,8 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
     try {
       setUserId(null);
       setPermissions([]);
-      await instance.tokenStorage.deleteUserId();
       await instance.auth.logout();
+      await instance.storage.remove("user-id");
     } catch (error) {
       console.error("Logout failed:", error);
     }

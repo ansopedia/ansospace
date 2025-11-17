@@ -18,42 +18,59 @@ pnpm add @ansospace/auth
 
 ## Usage
 
-Wrap your app with `AuthProvider` and configure token storage. Use hooks like `useAuth`, `useLogin`, `useLogout` to manage authentication.
+This package provides separate entry points for client and server components to avoid hydration mismatches and ensure proper Next.js App Router compatibility.
 
-### Basic Setup
+### Client Components
+
+For components that use hooks, context, or other client-side features, import from `@ansospace/auth/client`:
 
 ```tsx
-import { AuthProvider, BrowserStorageAdapter, TOKEN_STORAGE_KEYS, TokenManager } from "@ansospace/auth";
+import { BrowserStorageAdapter, TokenManager } from "@ansospace/auth";
+import { AuthProvider } from "@ansospace/auth/client";
 
 // For cookie-based storage (SSR compatible)
-const tokenStorage = new TokenManager(
-  new BrowserStorageAdapter(),
-  TOKEN_STORAGE_KEYS.AUTHORIZATION,
-  TOKEN_STORAGE_KEYS.REFRESH_TOKEN,
-  TOKEN_STORAGE_KEYS.USER_ID
-);
-
-// For localStorage-based storage
-// const tokenStorage = new TokenManager(new BrowserStorageAdapter(), "accessToken", "refreshToken", "userId");
+const authConfig: AuthConfig = {
+  baseUrl,
+  storage: new TokenManager(new BrowserStorageAdapter()),
+};
 
 // For React Native AsyncStorage
-// const tokenStorage = new TokenManager(new AsyncStorageAdapter(), "accessToken", "refreshToken", "userId");
+const authConfig: AuthConfig = {
+  baseUrl,
+  storage: new TokenManager(new AsyncStorageAdapter()),
+};
 
 // For in-memory storage (tests)
-// const tokenStorage = new TokenManager(new InMemoryStorageAdapter(), "accessToken", "refreshToken", "userId");
+const authConfig: AuthConfig = {
+  baseUrl,
+  storage: new TokenManager(new InMemoryStorageAdapter()),
+};
 
 function App() {
-  return (
-    <AuthProvider config={{ baseUrl: "https://api.example.com", tokenStorage }}>
-      {/* Your app components */}
-    </AuthProvider>
-  );
+  return <AuthProvider config={authConfig}>{children}</AuthProvider>;
 }
+```
+
+### Server Components
+
+For server components, API routes, or server-side utilities, import from `@ansospace/auth/server`:
+
+```tsx
+// Server-side usage (limited exports available)
+import "@ansospace/auth/server";
+```
+
+### Main Entry Point
+
+For general usage or when you need access to core services, import from `@ansospace/auth`:
+
+```tsx
+import { AnsospaceAuth, ApiClient, AuthService, TokenManager } from "@ansospace/auth";
 ```
 
 ### Token Storage Options
 
-Use `TokenManager` with any `StorageAdapter` to create custom token storage.
+Use `TokenManager` with any `AnsospaceStorage` to create custom token storage.
 
 ### Storage Adapters
 
@@ -66,11 +83,11 @@ You can also use the storage adapters directly if you want to implement custom t
 ### Using Hooks
 
 ```tsx
-import { useAuth, useLogin, useLogout, useSignup } from "@ansospace/auth";
+import { useAuthProviderContext, useLogin, useLogout, useRegister } from "@ansospace/auth/client";
 
 function LoginComponent() {
   const { login } = useLogin();
-  const { user, isAuthenticated } = useAuth();
+  const { userId, isAuthenticated } = useAuthProviderContext();
 
   // Your login UI and logic
 }
