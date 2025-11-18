@@ -6,6 +6,9 @@ import {
   OtpVerifyEvent,
   RegisterResponse,
   RegisterSchema,
+  ResetPassword,
+  SendOtpResponse,
+  VerifyOtpResponse,
 } from "@ansospace/types";
 
 import { ApiClient } from "../apiClient";
@@ -17,7 +20,7 @@ export class AuthService {
     this._apiClient = apiClient;
   }
 
-  async loginUser(body: Login): Promise<IApiResponse<LoginResponse>> {
+  async login(body: Login): Promise<IApiResponse<LoginResponse>> {
     const url = "/api/v1/auth/login";
     return this._apiClient.POST<LoginResponse>(url, { body });
   }
@@ -37,12 +40,12 @@ export class AuthService {
     return this._apiClient.POST<void>(url);
   }
 
-  async verifyOtp<T>(body: OtpVerifyEvent): Promise<IApiResponse<{ actionToken: T }>> {
+  async verifyOtp(body: OtpVerifyEvent): Promise<IApiResponse<VerifyOtpResponse>> {
     const url = "/api/v1/otp/verify";
     return this._apiClient.POST(url, { body });
   }
 
-  async sendOtp(body: OtpEvent): Promise<IApiResponse<{ token?: string }>> {
+  async sendOtp(body: OtpEvent): Promise<IApiResponse<SendOtpResponse>> {
     const url = "/api/v1/otp";
     return this._apiClient.POST(url, { body });
   }
@@ -52,8 +55,13 @@ export class AuthService {
     return this._apiClient.GET(url, {});
   }
 
-  async resetPassword(body: { actionToken: string; newPassword: string }): Promise<IApiResponse<void>> {
+  async resetPassword(body: ResetPassword): Promise<IApiResponse<void>> {
     const url = "/api/v1/auth/reset-password";
     return this._apiClient.POST<void>(url, { body });
+  }
+
+  async autoLogin(body: { actionToken: string }): Promise<IApiResponse<LoginResponse>> {
+    const url = "/api/v1/auth/auto-login";
+    return this._apiClient.POST(url, { body });
   }
 }

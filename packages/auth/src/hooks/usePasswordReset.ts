@@ -1,41 +1,99 @@
+import { useCallback, useState } from "react";
+
+import type { OtpEvent, OtpVerifyEvent, ResetPassword, SendOtpResponse } from "@ansospace/types";
+import { IApiResponse } from "@ansospace/types";
+
+import { AnsospaceAuth } from "../core/AnsospaceAuth";
+import { useAuthProviderContext } from "../providers/AuthProvider";
+
 export const usePasswordReset = () => {
-  // const { authService } = useAuth();
-  // const sendPasswordResetOtp = async (body: OtpEvent) => {
-  //   // Assuming body.otpType is FORGET_PASSWORD_OTP
-  //   try {
-  //     const response = await authService.sendOtp(body);
-  //     if (response.status !== "success") {
-  //       throw new Error(response.message);
-  //     }
-  //     return response;
-  //   } catch (error) {
-  //     console.error("Send password reset OTP failed:", error);
-  //     throw error;
-  //   }
-  // };
-  // const verifyPasswordResetOtp = async (body: OtpVerifyEvent) => {
-  //   try {
-  //     const response = await authService.verifyOtp<{ actionToken: string }>(body);
-  //     if (response.status !== "success") {
-  //       throw new Error(response.message);
-  //     }
-  //     return response.data.actionToken;
-  //   } catch (error) {
-  //     console.error("Verify password reset OTP failed:", error);
-  //     throw error;
-  //   }
-  // };
-  // const resetPassword = async (actionToken: string, newPassword: string) => {
-  //   try {
-  //     const response = await authService.resetPassword({ actionToken, newPassword });
-  //     if (response.status !== "success") {
-  //       throw new Error(response.message);
-  //     }
-  //     return response;
-  //   } catch (error) {
-  //     console.error("Reset password failed:", error);
-  //     throw error;
-  //   }
-  // };
-  // return { sendPasswordResetOtp, verifyPasswordResetOtp, resetPassword };
+  const { sendOtp: sendOtpFn, verifyOtp: verifyOtpFn } = useAuthProviderContext();
+  const auth = AnsospaceAuth.instance.auth;
+
+  const [sendLoading, setSendLoading] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+
+  const [sendError, setSendError] = useState<Error | null>(null);
+  const [verifyError, setVerifyError] = useState<Error | null>(null);
+  const [resetError, setResetError] = useState<Error | null>(null);
+
+  const [sendData, setSendData] = useState<IApiResponse<SendOtpResponse> | null>(null);
+  const [verifyData, setVerifyData] = useState<IApiResponse<{ actionToken: string }> | null>(null);
+  const [resetData, setResetData] = useState<IApiResponse<void> | null>(null);
+
+  const sendPasswordResetOtp = useCallback(
+    async (body: OtpEvent): Promise<IApiResponse<SendOtpResponse>> => {
+      setSendLoading(true);
+      setSendError(null);
+      setSendData(null);
+      try {
+        const response = await sendOtpFn(body);
+        setSendData(response);
+        return response;
+      } catch (err) {
+        const e = err instanceof Error ? err : new Error("Send password reset OTP failed");
+        setSendError(e);
+        throw e;
+      } finally {
+        setSendLoading(false);
+      }
+    },
+    [sendOtpFn]
+  );
+
+  const verifyPasswordResetOtp = useCallback(
+    async (body: OtpVerifyEvent): Promise<IApiResponse<{ actionToken: string }>> => {
+      setVerifyLoading(true);
+      setVerifyError(null);
+      setVerifyData(null);
+      try {
+        const response = await verifyOtpFn(body);
+        setVerifyData(response);
+        return response as IApiResponse<{ actionToken: string }>;
+      } catch (err) {
+        const e = err instanceof Error ? err : new Error("Verify password reset OTP failed");
+        setVerifyError(e);
+        throw e;
+      } finally {
+        setVerifyLoading(false);
+      }
+    },
+    [verifyOtpFn]
+  );
+
+  const resetPassword = useCallback(
+    async (body: ResetPassword): Promise<IApiResponse<void>> => {
+      setResetLoading(true);
+      setResetError(null);
+      setResetData(null);
+      try {
+        const response = await auth.resetPassword(body);
+        setResetData(response);
+        return response;
+      } catch (err) {
+        const e = err instanceof Error ? err : new Error("Reset password failed");
+        setResetError(e);
+        throw e;
+      } finally {
+        setResetLoading(false);
+      }
+    },
+    [auth]
+  );
+
+  return {
+    sendPasswordResetOtp,
+    verifyPasswordResetOtp,
+    resetPassword,
+    sendLoading,
+    verifyLoading,
+    resetLoading,
+    sendError,
+    verifyError,
+    resetError,
+    sendData,
+    verifyData,
+    resetData,
+  };
 };

@@ -85,7 +85,7 @@ export type LoginResponse = z.infer<typeof loginResponseSchema>;
 
 export const registerResponseSchema = z.object({
   userId: objectId,
-  token: z.string(),
+  actionToken: z.string(),
 });
 
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;

@@ -2,7 +2,7 @@ import { Lock, Mail, User } from "lucide-react";
 
 import { AuthFieldConfig } from "../components/auth/AuthFields";
 
-export const SIGNUP_FORM_FIELDS: AuthFieldConfig[] = [
+export const AUTH_FORM_FIELDS: AuthFieldConfig[] = [
   {
     id: "signup_username",
     icon: <User className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />,

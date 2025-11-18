@@ -107,7 +107,12 @@ export class ApiClient {
       const result = await this.handleResponse<T>(response);
 
       // Save tokens from auth endpoints
-      if (url.includes("/auth/login") || url.includes("/auth/refresh") || url.includes("/otp/verify")) {
+      if (
+        url.includes("/auth/login") ||
+        url.includes("/auth/refresh") ||
+        url.includes("/otp/verify") ||
+        url.includes("/auth/auto-login")
+      ) {
         const newAccessToken = response.headers.get("authorization");
         const newRefreshToken = response.headers.get("refresh-token");
 

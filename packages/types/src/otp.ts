@@ -47,9 +47,19 @@ export const getOtpSchema = otpRecordSchema.pick({
   otpType: true,
 });
 
+export const sendOtpResponse = z.object({
+  token: z.string(),
+});
+
+export const verifyOtpResponse = z.object({
+  actionToken: z.string(),
+});
+
 // Update types based on the new schemas
 export type OtpRecord = z.infer<typeof otpRecordSchema>;
 export type OtpEvent = z.infer<typeof otpEventSchema>;
 export type GetOtp = z.infer<typeof getOtpSchema>;
 export type SaveOtp = z.infer<typeof saveOtpSchema>;
 export type OtpVerifyEvent = z.infer<typeof otpVerifyEventSchema>;
+export type SendOtpResponse = z.infer<typeof sendOtpResponse>;
+export type VerifyOtpResponse = z.infer<typeof verifyOtpResponse>;

@@ -2,17 +2,11 @@
 
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
-import {
-  GetPermission,
-  IApiResponse,
-  Login,
-  LoginResponse,
-  ObjectId,
-  RegisterResponse,
-  RegisterSchema,
-} from "@ansospace/types";
+import type { OtpEvent, OtpVerifyEvent } from "@ansospace/types";
+import { GetPermission, Login, ObjectId, RegisterSchema } from "@ansospace/types";
 
 import { AnsospaceAuth } from "../core/AnsospaceAuth";
+import { AuthService } from "../services/authService";
 import { AuthConfig } from "../types";
 
 export interface AuthState {
@@ -21,9 +15,10 @@ export interface AuthState {
   permissions: GetPermission[];
 }
 
-export interface AuthContextValue extends AuthState {
-  login: (body: Login) => Promise<IApiResponse<LoginResponse>>;
-  register: (body: RegisterSchema) => Promise<IApiResponse<RegisterResponse>>;
+// Use mapped types to reference AuthService methods, avoiding duplication
+type AuthServiceMethods = Pick<AuthService, "login" | "register" | "sendOtp" | "verifyOtp" | "autoLogin">;
+
+export interface AuthContextValue extends AuthState, AuthServiceMethods {
   logout: () => Promise<void>;
   setPermissions: (permissions: GetPermission[]) => void;
 }
@@ -52,11 +47,11 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
 
   // ✅ Login Handler
   const login = async (body: Login) => {
-    const response = await instance.auth.loginUser(body);
-    if (response.status === "success" && response.data?.userId) {
-      const uid = response.data.userId as ObjectId;
-      setUserId(uid);
-      await instance.storage.set("user-id", uid.toString());
+    const response = await instance.auth.login(body);
+    if (response.status === "success") {
+      const { userId } = response.data;
+      setUserId(userId);
+      await instance.storage.set("user-id", userId.toString());
     }
     return response;
   };
@@ -64,11 +59,29 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
   // ✅ Register Handler
   const register = async (body: RegisterSchema) => {
     const response = await instance.auth.register(body);
-    if (response.status === "success" && response.data?.userId) {
-      const uid = response.data.userId as ObjectId;
-      setUserId(uid);
-      await instance.storage.set("user-id", uid.toString());
-      await instance.storage.set("access", uid.toString());
+    if (response.status === "success") {
+      const { actionToken, userId } = response.data;
+      setUserId(userId);
+      await instance.storage.set("user-id", userId.toString());
+      await instance.storage.set("action", actionToken);
+    }
+    return response;
+  };
+
+  const sendOtp = async (body: OtpEvent) => {
+    return await instance.auth.sendOtp(body);
+  };
+
+  const verifyOtp = async (body: OtpVerifyEvent) => {
+    return await instance.auth.verifyOtp(body);
+  };
+
+  const autoLogin = async (body: { actionToken: string }) => {
+    const response = await instance.auth.autoLogin(body);
+    if (response.status === "success") {
+      const { userId } = response.data;
+      setUserId(userId);
+      await instance.storage.set("user-id", userId.toString());
     }
     return response;
   };
@@ -79,7 +92,6 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
       setUserId(null);
       setPermissions([]);
       await instance.auth.logout();
-      await instance.storage.remove("user-id");
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -91,6 +103,9 @@ export const AuthProvider = ({ children, config }: { children: ReactNode; config
     permissions,
     login,
     register,
+    sendOtp,
+    verifyOtp,
+    autoLogin,
     logout,
     setPermissions,
   };

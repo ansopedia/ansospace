@@ -9,10 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { AuthFields } from "@/components/auth/AuthFields";
-import { SIGNUP_FORM_FIELDS } from "@/constants/auth-fields";
+import { AUTH_FORM_FIELDS } from "@/constants/auth-fields";
 
 export const RegisterForm = () => {
   const router = useRouter();
+
   const form = useForm({
     resolver: zodResolver(registerSchema),
     mode: "onTouched",
@@ -29,8 +30,8 @@ export const RegisterForm = () => {
   const onSubmit = async (body: RegisterSchema) => {
     const response = await handleRegister(body);
     if (response.status === "success") {
-      toast.success("Account created successfully!");
-      router.replace("/dashboard");
+      toast.success(response.message);
+      router.push(`/verify-email?email=${encodeURIComponent(body.email)}&token=${response.data.actionToken}`);
     } else {
       toast.error(response.message);
     }
@@ -39,7 +40,7 @@ export const RegisterForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 flex flex-col gap-6">
-        <AuthFields form={form} fields={SIGNUP_FORM_FIELDS} loading={loading} />
+        <AuthFields form={form} fields={AUTH_FORM_FIELDS} loading={loading} />
         <Button type="submit" className="rounded-2xl" disabled={loading}>
           {loading && <Spinner />}
           {loading ? "Creating account..." : "Sign Up"}

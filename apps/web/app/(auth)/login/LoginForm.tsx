@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { AuthFields } from "@/components/auth/AuthFields";
-import { SIGNUP_FORM_FIELDS } from "@/constants/auth-fields";
+import { AUTH_FORM_FIELDS } from "@/constants/auth-fields";
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -37,7 +37,7 @@ export const LoginForm = () => {
   };
 
   // Reuse only email + password
-  const LOGIN_FIELDS = SIGNUP_FORM_FIELDS.filter((f) => ["email", "password"].includes(f.name));
+  const LOGIN_FIELDS = AUTH_FORM_FIELDS.filter((f) => ["email", "password"].includes(f.name));
 
   return (
     <Form {...form}>
@@ -59,7 +59,7 @@ export const LoginForm = () => {
               Remember me
             </label>
           </div>
-          <Link href="#" className="link-primary">
+          <Link href="/forgot-password" className="link-primary">
             Forgot password?
           </Link>
         </div>
