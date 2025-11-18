@@ -11,7 +11,13 @@ import { AUTH_FORM_FIELDS } from "@/constants/auth-fields";
 
 const RESET_PASSWORD_FIELDS = AUTH_FORM_FIELDS.filter((f) => ["password", "confirmPassword"].includes(f.name));
 
-export function PasswordResetNewPasswordForm({ actionToken, onSuccess }: { actionToken: string; onSuccess: () => void }) {
+export function PasswordResetNewPasswordForm({
+  actionToken,
+  onSuccess,
+}: {
+  actionToken: string;
+  onSuccess: () => void;
+}) {
   const { resetPassword, resetLoading } = usePasswordReset();
 
   const form = useForm({

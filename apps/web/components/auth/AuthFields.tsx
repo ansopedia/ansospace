@@ -65,7 +65,7 @@ export const AuthFields = <T extends FieldValues>({ form, fields, loading }: Aut
                         type="button"
                         tabIndex={-1}
                         onClick={() => togglePassword(name)}
-                        className="text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2"
+                        className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2"
                       >
                         {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                       </button>

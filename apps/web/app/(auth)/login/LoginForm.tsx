@@ -54,7 +54,7 @@ export const LoginForm = () => {
             />
             <label
               htmlFor="remember"
-              className="text-muted-foreground cursor-pointer select-none text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+              className="text-muted-foreground cursor-pointer text-sm leading-none font-medium select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
             >
               Remember me
             </label>

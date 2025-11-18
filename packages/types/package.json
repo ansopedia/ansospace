@@ -24,12 +24,12 @@
     }
   },
   "dependencies": {
-    "bson": "^6.10.4",
+    "bson": "^7.0.0",
     "zod": "4.1.12"
   },
   "devDependencies": {
     "@ansospace/typescript-config": "workspace:*",
-    "tsup": "^8.5.0",
+    "tsup": "^8.5.1",
     "typescript": "5.9.3"
   },
   "files": [

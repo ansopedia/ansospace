@@ -32,12 +32,12 @@
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "@tanstack/react-query": "^5.0.0"
+    "@tanstack/react-query": "^5.90.10"
   },
   "dependencies": {
     "@ansospace/types": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
-    "react-hook-form": "^7.65.0"
+    "react-hook-form": "^7.66.1"
   },
   "optionalDependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0"
@@ -46,13 +46,13 @@
     "@ansospace/eslint-config": "workspace:*",
     "@ansospace/typescript-config": "workspace:*",
     "@types/jest": "^30.0.0",
-    "@types/react": "^19.2.2",
-    "@typescript-eslint/eslint-plugin": "^8.46.2",
-    "@typescript-eslint/parser": "^8.46.2",
-    "eslint": "^9.38.0",
+    "@types/react": "^19.2.6",
+    "@typescript-eslint/eslint-plugin": "^8.47.0",
+    "@typescript-eslint/parser": "^8.47.0",
+    "eslint": "^9.39.1",
     "jest": "^30.2.0",
     "react": "^19.2.0",
-    "tsup": "^8.5.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3"
   },
   "publishConfig": {

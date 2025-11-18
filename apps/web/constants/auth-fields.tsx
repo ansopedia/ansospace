@@ -5,7 +5,7 @@ import { AuthFieldConfig } from "../components/auth/AuthFields";
 export const AUTH_FORM_FIELDS: AuthFieldConfig[] = [
   {
     id: "signup_username",
-    icon: <User className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />,
+    icon: <User className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />,
     placeholder: "Create a unique username",
     name: "username",
     type: "text",
@@ -13,7 +13,7 @@ export const AUTH_FORM_FIELDS: AuthFieldConfig[] = [
   },
   {
     id: "signup_email",
-    icon: <Mail className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />,
+    icon: <Mail className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />,
     placeholder: "Email",
     name: "email",
     type: "email",
@@ -21,7 +21,7 @@ export const AUTH_FORM_FIELDS: AuthFieldConfig[] = [
   },
   {
     id: "signup_password",
-    icon: <Lock className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />,
+    icon: <Lock className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />,
     placeholder: "Create a password",
     name: "password",
     type: "password",
@@ -29,7 +29,7 @@ export const AUTH_FORM_FIELDS: AuthFieldConfig[] = [
   },
   {
     id: "signup_confirm_password",
-    icon: <Lock className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />,
+    icon: <Lock className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />,
     placeholder: "Confirm password",
     name: "confirmPassword",
     type: "password",

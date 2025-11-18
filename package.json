@@ -15,14 +15,14 @@
     "@ansospace/eslint-config": "workspace:*",
     "@ansospace/typescript-config": "workspace:*",
     "@changesets/cli": "^2.29.7",
-    "@trivago/prettier-plugin-sort-imports": "5.2.2",
+    "@trivago/prettier-plugin-sort-imports": "6.0.0",
     "husky": "9.1.7",
     "prettier": "3.6.2",
-    "prettier-plugin-tailwindcss": "0.6.14",
-    "turbo": "2.5.6",
-    "typescript": "5.9.2"
+    "prettier-plugin-tailwindcss": "0.7.1",
+    "turbo": "2.6.1",
+    "typescript": "5.9.3"
   },
-  "packageManager": "pnpm@10.19.0",
+  "packageManager": "pnpm@10.22.0",
   "engines": {
     "node": ">=24"
   }
