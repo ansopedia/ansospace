@@ -1,4 +1,4 @@
-import { AnsospaceStorage, OptionalString, StorageKey } from "../types";
+import { AnsospaceStorage, AuthStorageKey, StorageValueType } from "../types";
 
 export class TokenManager implements AnsospaceStorage {
   private readonly storage: AnsospaceStorage;
@@ -7,15 +7,15 @@ export class TokenManager implements AnsospaceStorage {
     this.storage = storage;
   }
 
-  async remove(key: StorageKey): Promise<void> {
-    await this.storage.remove(key);
-  }
-
-  async get(type: StorageKey): Promise<OptionalString> {
+  async get(type: AuthStorageKey): Promise<StorageValueType> {
     return this.storage.get(type);
   }
 
-  async set(key: StorageKey, value: string) {
+  async set(key: AuthStorageKey, value: string | boolean): Promise<void> {
     this.storage.set(key, value);
+  }
+
+  async remove(key: AuthStorageKey): Promise<void> {
+    await this.storage.remove(key);
   }
 }

@@ -1,13 +1,13 @@
 import { cookies } from "next/headers";
 
-import { AnsospaceStorage, StorageKey } from "@ansospace/auth";
+import { AnsospaceStorage, AuthStorageKey } from "@ansospace/auth";
 
 export class ServerStorageAdapter implements AnsospaceStorage {
-  async get(key: StorageKey) {
+  async get(key: AuthStorageKey) {
     return (await cookies()).get(key)?.value;
   }
 
-  async set(key: StorageKey, value: string) {
+  async set(key: AuthStorageKey, value: string) {
     (await cookies()).set({
       name: key,
       value,
@@ -17,7 +17,7 @@ export class ServerStorageAdapter implements AnsospaceStorage {
     });
   }
 
-  async remove(key: StorageKey) {
+  async remove(key: AuthStorageKey) {
     (await cookies()).delete(key);
   }
 }

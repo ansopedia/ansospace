@@ -36,7 +36,7 @@ export const useOtp = () => {
   );
 
   const verifyOtp = useCallback(
-    async (body: OtpVerifyEvent): Promise<IApiResponse<{ actionToken: string }>> => {
+    async (body: Omit<OtpVerifyEvent, "token">): Promise<IApiResponse<{ actionToken: string }>> => {
       setVerifyOtpLoading(true);
       setVerifyOtpError(null);
       setVerifyOtpData(null);

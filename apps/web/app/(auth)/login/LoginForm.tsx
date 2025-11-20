@@ -32,6 +32,9 @@ export const LoginForm = () => {
     if (response.status === "success") {
       router.replace("/dashboard");
     } else {
+      if (response.code === "email_not_verified") {
+        setTimeout(() => router.push("/verify-email"), 1000);
+      }
       toast.error(response.message);
     }
   };

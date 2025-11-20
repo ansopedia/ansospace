@@ -163,7 +163,7 @@ export type LocalStorageKey = keyof typeof LOCAL_STORAGE_KEYS;
 /**
  * All possible storage keys
  */
-export type StorageKey = CookieKey | SessionStorageKey | LocalStorageKey;
+export type AuthStorageKey = CookieKey | SessionStorageKey | LocalStorageKey;
 
 /**
  * Cookie value type for type safety
@@ -193,7 +193,7 @@ export interface StorageItem<T = unknown> {
 export function getStorageKey(keyType: "cookie", key: CookieKey): string;
 export function getStorageKey(keyType: "session", key: SessionStorageKey): string;
 export function getStorageKey(keyType: "local", key: LocalStorageKey): string;
-export function getStorageKey(keyType: "cookie" | "session" | "local", key: StorageKey): string {
+export function getStorageKey(keyType: "cookie" | "session" | "local", key: AuthStorageKey): string {
   switch (keyType) {
     case "cookie":
       return COOKIE_KEYS[key as CookieKey];

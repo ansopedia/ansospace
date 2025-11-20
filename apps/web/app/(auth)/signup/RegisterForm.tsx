@@ -31,7 +31,7 @@ export const RegisterForm = () => {
     const response = await handleRegister(body);
     if (response.status === "success") {
       toast.success(response.message);
-      router.push(`/verify-email?email=${encodeURIComponent(body.email)}&token=${response.data.actionToken}`);
+      setTimeout(() => router.push("/verify-email?sent=true"), 1000);
     } else {
       toast.error(response.message);
     }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useOtp } from "@ansospace/auth/client";
-import { NotificationType, OtpVerifyEvent, otpSchema } from "@ansospace/types";
+import { NotificationType, otpSchema } from "@ansospace/types";
 import {
   Button,
   Form,
@@ -29,15 +29,15 @@ type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;
 
 interface VerifyEmailFormProps {
   email: string;
-  token: string;
   otpType: NotificationType;
-  onTokenUpdate: (actionToken: string) => void;
   onSuccess: (data: { actionToken: string }) => void;
+  isOtpSent: boolean;
+  onOtpSent: () => void;
 }
 
 const REGEXP_ONLY_DIGITS: RegExp = /^\d+$/;
 
-export const VerifyOtpForm = ({ email, token, onTokenUpdate, otpType, onSuccess }: VerifyEmailFormProps) => {
+export const VerifyOtpForm = ({ email, otpType, onSuccess, isOtpSent, onOtpSent }: VerifyEmailFormProps) => {
   const { verifyOtp, verifyOtpLoading, sendOtp, sendOtpLoading } = useOtp();
 
   const form = useForm({
@@ -48,10 +48,9 @@ export const VerifyOtpForm = ({ email, token, onTokenUpdate, otpType, onSuccess 
   });
 
   const onSubmit = async (data: VerifyEmailSchema) => {
-    const otpBody: OtpVerifyEvent = {
+    const otpBody = {
       otp: data.otp,
       otpType,
-      token: token,
     };
 
     try {
@@ -60,9 +59,6 @@ export const VerifyOtpForm = ({ email, token, onTokenUpdate, otpType, onSuccess 
         toast.success(response.message);
         // Auto-login happens inside verifyOtp hook; redirect to dashboard
         onSuccess(response.data);
-        // setTimeout(() => {
-        //   router.replace("/dashboard");
-        // }, 1000);
       } else {
         toast.error(response.message);
         form.reset();
@@ -82,27 +78,41 @@ export const VerifyOtpForm = ({ email, token, onTokenUpdate, otpType, onSuccess 
     try {
       const response = await sendOtp({ otpType: NotificationType.EMAIL_VERIFICATION_OTP, email });
       if (response.status === "success" && response.data?.token) {
-        onTokenUpdate(response.data.token);
-        toast.success("New OTP sent to your email");
+        toast.success("OTP sent to your email");
+        onOtpSent();
         form.reset();
       } else {
         toast.error(response.message);
       }
     } catch (error) {
-      toast.error("Failed to resend OTP");
+      toast.error("Failed to send OTP");
     }
   };
 
+  if (!isOtpSent) {
+    return (
+      <div className="flex flex-col gap-4">
+        <Typography className="text-muted-foreground text-center text-sm">
+          Please click the button below to receive a verification code.
+        </Typography>
+        <Button onClick={handleResendOtp} className="w-full rounded-xl" size="lg" disabled={sendOtpLoading}>
+          {sendOtpLoading && <Spinner className="mr-2" />}
+          {sendOtpLoading ? "Sending Code..." : "Send Verification Code"}
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 flex flex-col gap-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 sm:gap-6">
         <FormField
           control={form.control}
           name="otp"
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <div className="flex justify-center">
+                <div className="flex w-full justify-center py-2 sm:py-4">
                   <InputOTP
                     maxLength={6}
                     {...field}
@@ -123,24 +133,24 @@ export const VerifyOtpForm = ({ email, token, onTokenUpdate, otpType, onSuccess 
                   </InputOTP>
                 </div>
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-center text-xs sm:text-sm" />
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="rounded-2xl" disabled={verifyOtpLoading || !form.watch("otp")}>
-          {verifyOtpLoading && <Spinner />}
-          {verifyOtpLoading ? "Verifying..." : "Verify OTP"}
+        <Button type="submit" className="rounded-xl" size="lg" disabled={verifyOtpLoading || !form.watch("otp")}>
+          {verifyOtpLoading && <Spinner className="mr-2" />}
+          <span className="text-sm sm:text-base">{verifyOtpLoading ? "Verifying..." : "Verify Email"}</span>
         </Button>
 
         <div className="text-center">
-          <Typography className="text-muted-foreground text-sm">
+          <Typography className="text-muted-foreground text-xs sm:text-sm">
             Didn't receive the code?{" "}
             <button
               type="button"
               onClick={handleResendOtp}
               disabled={sendOtpLoading}
-              className="link-primary disabled:opacity-50"
+              className="link-primary font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
             >
               {sendOtpLoading ? "Sending..." : "Resend OTP"}
             </button>

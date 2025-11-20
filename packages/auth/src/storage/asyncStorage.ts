@@ -1,4 +1,4 @@
-import { AnsospaceStorage, StorageKey } from "../types";
+import { AnsospaceStorage, AuthStorageKey, StorageValueType } from "../types";
 
 export class AsyncStorageAdapter implements AnsospaceStorage {
   private async getAsyncStorage() {
@@ -10,7 +10,7 @@ export class AsyncStorageAdapter implements AnsospaceStorage {
     }
   }
 
-  async get(key: StorageKey): Promise<string | undefined> {
+  async get(key: AuthStorageKey): Promise<StorageValueType> {
     try {
       const AsyncStorage = await this.getAsyncStorage();
       if (!AsyncStorage) return undefined;
@@ -20,17 +20,17 @@ export class AsyncStorageAdapter implements AnsospaceStorage {
     }
   }
 
-  async set(key: StorageKey, value: string): Promise<void> {
+  async set(key: AuthStorageKey, value: string | boolean): Promise<void> {
     try {
       const AsyncStorage = await this.getAsyncStorage();
       if (!AsyncStorage) return;
-      await AsyncStorage.setItem(key, value);
+      await AsyncStorage.setItem(key, String(value));
     } catch {
       // ignore
     }
   }
 
-  async remove(key: StorageKey): Promise<void> {
+  async remove(key: AuthStorageKey): Promise<void> {
     try {
       const AsyncStorage = await this.getAsyncStorage();
       if (!AsyncStorage) return;

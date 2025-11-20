@@ -1,13 +1,13 @@
-import { TokenType as ImportedTokenType } from "@ansospace/types";
+import { TokenType } from "@ansospace/types";
 
-export type StorageKey = ImportedTokenType | "user-id";
+export type AuthStorageKey = TokenType | "userId" | "userEmail" | "isUserVerified";
 
-export type OptionalString = string | undefined;
+export type StorageValueType = string | boolean | undefined;
 
 export interface AnsospaceStorage {
-  get: (key: StorageKey) => Promise<OptionalString>;
-  set: (key: StorageKey, value: string) => Promise<void>;
-  remove(key: StorageKey): Promise<void>;
+  get: (key: AuthStorageKey) => Promise<StorageValueType>;
+  set: (key: AuthStorageKey, value: string | boolean) => Promise<void>;
+  remove(key: AuthStorageKey): Promise<void>;
 }
 
 export interface AuthConfig {

@@ -1,17 +1,17 @@
-import { AnsospaceStorage, StorageKey } from "../types";
+import { AnsospaceStorage, AuthStorageKey, StorageValueType } from "../types";
 
 export class InMemoryStorageAdapter implements AnsospaceStorage {
-  private storage = new Map<StorageKey, string>();
+  private storage = new Map<AuthStorageKey, string | boolean>();
 
-  async get(key: StorageKey): Promise<string | undefined> {
+  async get(key: AuthStorageKey): Promise<StorageValueType> {
     return this.storage.get(key);
   }
 
-  async set(key: StorageKey, value: string): Promise<void> {
+  async set(key: AuthStorageKey, value: string | boolean): Promise<void> {
     this.storage.set(key, value);
   }
 
-  async remove(key: StorageKey): Promise<void> {
+  async remove(key: AuthStorageKey): Promise<void> {
     this.storage.delete(key);
   }
 }

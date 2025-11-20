@@ -106,7 +106,7 @@ export class AnsospaceAuth {
 
   public async isAuthenticated(): Promise<boolean> {
     const token = await this.storage.get("access");
-    if (!token) return false;
+    if (!token || typeof token !== "string") return false;
 
     try {
       // Optional: verify token structure or expiration if it’s a JWT
