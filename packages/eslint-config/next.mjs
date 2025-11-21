@@ -1,5 +1,6 @@
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import eslintPluginJsxA11y from "eslint-plugin-jsx-a11y";
 import { globalIgnores } from "eslint/config";
 
 import { baseConfig } from "./base.mjs";
@@ -14,6 +15,11 @@ export default [
   ...baseConfig, // base rules (TypeScript, Prettier, Turbo)
   ...nextVitals,
   ...nextTs,
+  {
+    rules: {
+      ...eslintPluginJsxA11y.flatConfigs.recommended.rules,
+    },
+  },
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
