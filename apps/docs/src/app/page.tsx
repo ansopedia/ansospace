@@ -8,7 +8,6 @@ import { env } from "../lib/env";
 export default function Home() {
   const newUsername = usernameSchema.parse("username");
   const newPassword = passwordSchema.parse("Password123!");
-
   const mongooseId = objectId.parse("68bda53ea5c0a2f0ac69dd3e");
 
   const user: RegisterSchema = {

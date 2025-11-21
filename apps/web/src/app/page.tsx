@@ -3,16 +3,15 @@ import { objectId, passwordSchema, registerSchema, usernameSchema } from "@ansos
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
-import { Users } from "../components/user";
-import { APP_CONFIG } from "../lib/constants";
-import { env } from "../lib/env";
+import { Users } from "../../components/user";
+import { APP_CONFIG } from "../../lib/constants";
+import { env } from "../../lib/env";
 
-export default function Page() {
+const page = () => {
   const newUsername = usernameSchema.parse("username");
   const newPassword = passwordSchema.parse("Password123!");
 
   const mongooseId = objectId.parse("68bda53ea5c0a2f0ac69dd3e");
-
   const user: RegisterSchema = {
     username: newUsername,
     email: "test@example.com",
@@ -66,4 +65,6 @@ export default function Page() {
       </div>
     </div>
   );
-}
+};
+
+export default page;

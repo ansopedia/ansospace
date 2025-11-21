@@ -3,8 +3,8 @@ import Link from "next/link";
 import { AnsospaceAuth, TokenManager } from "@ansospace/auth";
 import "@ansospace/ui/globals.css";
 
-import { env } from "../lib/env";
-import { ServerStorageAdapter } from "../lib/storage/ServerStorageAdapter";
+import { env } from "../../lib/env";
+import { ServerStorageAdapter } from "../../lib/storage/ServerStorageAdapter";
 import { Providers } from "./providers";
 
 export interface RootLayoutProps {
@@ -18,7 +18,7 @@ AnsospaceAuth.init({
 export default async function RootLayout({ children }: Readonly<RootLayoutProps>): Promise<React.ReactElement> {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased`}>
+      <body className={"font-sans antialiased"}>
         <Providers baseUrl={env.USER_SERVICE_URL}>
           <nav>
             <ul>

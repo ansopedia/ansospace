@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { AnsospaceAuth } from "@ansospace/auth";
 import { IApiResponse } from "@ansospace/types";
 
-import { Users } from "../../components/user";
+import { Users } from "../../../components/user";
 
 let response: IApiResponse<{
   permissions: string[];

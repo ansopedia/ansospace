@@ -7,10 +7,10 @@ export class ServerStorageAdapter implements AnsospaceStorage {
     return (await cookies()).get(key)?.value;
   }
 
-  async set(key: AuthStorageKey, value: string) {
+  async set(key: AuthStorageKey, value: string | boolean) {
     (await cookies()).set({
       name: key,
-      value,
+      value: String(value),
       httpOnly: true,
       secure: true,
       sameSite: "strict",

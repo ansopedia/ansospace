@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { FC } from "react";
 
 import { useRegister } from "@ansospace/auth/client";
 import { RegisterSchema, registerSchema } from "@ansospace/types";
@@ -11,17 +12,17 @@ import { useForm } from "react-hook-form";
 import { AuthFields } from "@/components/auth/AuthFields";
 import { AUTH_FORM_FIELDS } from "@/constants/auth-fields";
 
-export const RegisterForm = () => {
+export const RegisterForm: FC = () => {
   const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(registerSchema),
     mode: "onTouched",
     defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      username: "sanjayZuru",
+      email: "sanjaykumar.sah+1@zuru.com",
+      password: "Superusername@123",
+      confirmPassword: "Superusername@123",
     },
   });
 

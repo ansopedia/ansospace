@@ -13,7 +13,7 @@ import { AlertCircle, CheckCircle2, Mail, ShieldCheck } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { VerifyOtpForm } from "@/components/auth/VerifyOtpForm";
 
-export default function VerifyEmailPage() {
+export function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { userEmail, isAuthLoading, isUserVerified } = useUser();
@@ -142,7 +142,7 @@ export default function VerifyEmailPage() {
                 {isOtpSent ? (
                   <div className="text-muted-foreground flex items-center gap-2">
                     <Mail className="h-4 w-4" />
-                    <Typography className="text-sm">We've sent a 6-digit code to</Typography>
+                    <Typography className="text-sm">We&apos;ve sent a 6-digit code to</Typography>
                   </div>
                 ) : (
                   <Typography className="text-muted-foreground text-sm">

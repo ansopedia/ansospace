@@ -32,13 +32,13 @@ export const PasswordResetFlow = () => {
       {step === "otp" && token && (
         <VerifyOtpForm
           email={email}
-          token={token}
-          onTokenUpdate={(actionToken: string) => setActionToken(actionToken)}
           onSuccess={({ actionToken }) => {
             setStep("reset");
             setActionToken(actionToken);
           }}
           otpType={NotificationType.FORGET_PASSWORD_OTP}
+          isOtpSent={false}
+          onOtpSent={() => {}}
         />
       )}
       {step === "reset" && actionToken && (

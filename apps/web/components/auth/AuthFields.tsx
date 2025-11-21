@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from "@ansospace/ui/components";
 import { Eye, EyeOff } from "lucide-react";
@@ -26,7 +26,7 @@ interface AuthFieldsProps<T extends FieldValues> {
 /**
  * Generic AuthFields renderer that handles all input types and password toggles
  */
-export const AuthFields = <T extends FieldValues>({ form, fields, loading }: AuthFieldsProps<T>) => {
+export function AuthFields<T extends FieldValues>({ form, fields, loading }: AuthFieldsProps<T>) {
   // handle password visibility per field
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
 
@@ -80,4 +80,4 @@ export const AuthFields = <T extends FieldValues>({ form, fields, loading }: Aut
       })}
     </>
   );
-};
+}

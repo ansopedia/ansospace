@@ -1,5 +1,7 @@
 "use client";
 
+import { FC } from "react";
+
 import { useOtp } from "@ansospace/auth/client";
 import { NotificationType, otpSchema } from "@ansospace/types";
 import {
@@ -37,7 +39,7 @@ interface VerifyEmailFormProps {
 
 const REGEXP_ONLY_DIGITS: RegExp = /^\d+$/;
 
-export const VerifyOtpForm = ({ email, otpType, onSuccess, isOtpSent, onOtpSent }: VerifyEmailFormProps) => {
+export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSuccess, isOtpSent, onOtpSent }) => {
   const { verifyOtp, verifyOtpLoading, sendOtp, sendOtpLoading } = useOtp();
 
   const form = useForm({
@@ -145,7 +147,7 @@ export const VerifyOtpForm = ({ email, otpType, onSuccess, isOtpSent, onOtpSent 
 
         <div className="text-center">
           <Typography className="text-muted-foreground text-xs sm:text-sm">
-            Didn't receive the code?{" "}
+            Didn&apos;t receive the code?{" "}
             <button
               type="button"
               onClick={handleResendOtp}
