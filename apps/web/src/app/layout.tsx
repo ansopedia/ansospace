@@ -3,8 +3,8 @@ import Link from "next/link";
 import { AnsospaceAuth, TokenManager } from "@ansospace/auth";
 import "@ansospace/ui/globals.css";
 
-import { env } from "../../lib/env";
-import { ServerStorageAdapter } from "../../lib/storage/ServerStorageAdapter";
+import { env } from "../lib/env";
+import { ServerStorageAdapter } from "../lib/storage/ServerStorageAdapter";
 import { Providers } from "./providers";
 
 export interface RootLayoutProps {

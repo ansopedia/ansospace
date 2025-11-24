@@ -3,9 +3,9 @@ import { objectId, passwordSchema, registerSchema, usernameSchema } from "@ansos
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
-import { Users } from "../../components/user";
-import { APP_CONFIG } from "../../lib/constants";
-import { env } from "../../lib/env";
+import { Users } from "../components/user";
+import { APP_CONFIG } from "../lib/constants";
+import { env } from "../lib/env";
 
 const page = () => {
   const newUsername = usernameSchema.parse("username");

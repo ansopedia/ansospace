@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 import { AuthFields } from "@/components/auth/AuthFields";
-import { AUTH_FORM_FIELDS } from "@/constants/auth-fields";
+import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
 const schema = z.object({ email: emailSchema });
 type Values = z.infer<typeof schema>;
@@ -37,9 +37,9 @@ export function PasswordResetEmailForm({ onSuccess }: { onSuccess: (data: { toke
     <Form {...form}>
       <form className="flex flex-col gap-6" onSubmit={onSubmit}>
         <AuthFields form={form} fields={FORGOT_PASSWORD_FIELDS} loading={sendLoading} />
-        <Button type="submit" className="rounded-2xl" disabled={sendLoading}>
+        <Button type="submit" className="w-full rounded-xl" size="lg" disabled={sendLoading}>
           {sendLoading && <Spinner />}
-          {sendLoading ? "Sending..." : "Send OTP"}
+          {sendLoading ? "Sending Code..." : "Send Verification Code"}
         </Button>
       </form>
     </Form>

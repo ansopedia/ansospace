@@ -1,6 +1,6 @@
 import { NotificationType } from "@ansospace/types";
-import { Card } from "@ansospace/ui/components";
 
+import { AuthFlowCard } from "@/components/auth/AuthFlowCard";
 import { VerifyOtpForm } from "@/components/auth/VerifyOtpForm";
 
 interface VerificationFormProps {
@@ -12,16 +12,14 @@ interface VerificationFormProps {
 
 export function VerificationForm({ userEmail, isOtpSent, onOtpSent, onSuccess }: VerificationFormProps) {
   return (
-    <Card className="border-border/50 bg-card/95 hover:shadow-3xl shadow-2xl backdrop-blur-sm transition-all">
-      <div className="p-6 sm:p-8">
-        <VerifyOtpForm
-          email={userEmail}
-          onSuccess={onSuccess}
-          otpType={NotificationType.EMAIL_VERIFICATION_OTP}
-          isOtpSent={isOtpSent}
-          onOtpSent={onOtpSent}
-        />
-      </div>
-    </Card>
+    <AuthFlowCard>
+      <VerifyOtpForm
+        email={userEmail}
+        onSuccess={onSuccess}
+        otpType={NotificationType.EMAIL_VERIFICATION_OTP}
+        isOtpSent={isOtpSent}
+        onOtpSent={onOtpSent}
+      />
+    </AuthFlowCard>
   );
 }

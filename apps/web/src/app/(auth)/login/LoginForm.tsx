@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { AuthFields } from "@/components/auth/AuthFields";
-import { AUTH_FORM_FIELDS } from "@/constants/auth-fields";
+import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
 export const LoginForm = () => {
   const router = useRouter();

@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 
 import { useUser } from "@ansospace/auth/client";
 
-import { AuthLayout } from "@/components/auth/AuthLayout";
+import { AuthFlowLayout } from "@/components/auth/AuthFlowLayout";
 
 import { LoadingState } from "./LoadingState";
 import { SessionExpiredState } from "./SessionExpiredState";
@@ -90,25 +90,15 @@ export function VerifyEmailContent() {
 
   // Main Verification State
   return (
-    <AuthLayout showCard={false}>
-      <div className="flex w-full max-w-5xl items-center justify-center gap-16 lg:gap-20">
-        {/* Main Content */}
-        <div className="w-full sm:w-2/3 md:w-2/4 lg:w-2/5">
-          <div className="space-y-10">
-            <VerificationHeader isOtpSent={isOtpSent} userEmail={userEmail} />
-            <VerificationForm
-              userEmail={userEmail}
-              isOtpSent={isOtpSent}
-              onOtpSent={() => setIsOtpSent(true)}
-              onSuccess={handleVerificationSuccess}
-            />
-            <VerificationFooter />
-          </div>
-        </div>
-
-        {/* Illustration */}
-        <VerificationIllustration />
-      </div>
-    </AuthLayout>
+    <AuthFlowLayout illustration={<VerificationIllustration />}>
+      <VerificationHeader isOtpSent={isOtpSent} userEmail={userEmail} />
+      <VerificationForm
+        userEmail={userEmail}
+        isOtpSent={isOtpSent}
+        onOtpSent={() => setIsOtpSent(true)}
+        onSuccess={handleVerificationSuccess}
+      />
+      <VerificationFooter />
+    </AuthFlowLayout>
   );
 }

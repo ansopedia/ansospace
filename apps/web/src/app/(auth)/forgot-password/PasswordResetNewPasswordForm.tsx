@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { AuthFields } from "@/components/auth/AuthFields";
-import { AUTH_FORM_FIELDS } from "@/constants/auth-fields";
+import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
 const RESET_PASSWORD_FIELDS = AUTH_FORM_FIELDS.filter((f) => ["password", "confirmPassword"].includes(f.name));
 
@@ -37,12 +37,12 @@ export function PasswordResetNewPasswordForm({
 
   return (
     <Form {...form}>
-      <form className="mt-10 flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
         <AuthFields form={form} fields={RESET_PASSWORD_FIELDS} loading={resetLoading} />
 
-        <Button type="submit" className="rounded-2xl" disabled={resetLoading} onSubmit={console.log}>
+        <Button type="submit" className="w-full rounded-xl" size="lg" disabled={resetLoading}>
           {resetLoading && <Spinner />}
-          {resetLoading ? "Resetting..." : "Reset Password"}
+          {resetLoading ? "Resetting Password..." : "Reset Password"}
         </Button>
       </form>
     </Form>
