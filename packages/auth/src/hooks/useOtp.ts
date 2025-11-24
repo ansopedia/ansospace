@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 
 import type { OtpEvent, OtpVerifyEvent, SendOtpResponse, VerifyOtpResponse } from "@ansospace/types";
-import { IApiResponse } from "@ansospace/types";
+import { IApiResponse, NotificationType } from "@ansospace/types";
 
 import { useAuthProviderContext } from "../providers/AuthProvider";
 
@@ -43,7 +43,7 @@ export const useOtp = () => {
       try {
         const response = await verifyOtpFn(body);
         setVerifyOtpData(response);
-        if (response.status === "success" && body.otpType === "EMAIL_VERIFICATION_OTP") {
+        if (response.status === "success" && body.otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
           await autoLoginFn({ actionToken: response.data.actionToken });
         }
         return response;

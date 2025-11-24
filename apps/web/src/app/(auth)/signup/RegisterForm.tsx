@@ -19,10 +19,10 @@ export const RegisterForm: FC = () => {
     resolver: zodResolver(registerSchema),
     mode: "onTouched",
     defaultValues: {
-      username: "sanjayZuru",
-      email: "sanjaykumar.sah+1@zuru.com",
-      password: "Superusername@123",
-      confirmPassword: "Superusername@123",
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
@@ -32,7 +32,7 @@ export const RegisterForm: FC = () => {
     const response = await handleRegister(body);
     if (response.status === "success") {
       toast.success(response.message);
-      setTimeout(() => router.push("/verify-email?sent=true"), 1000);
+      setTimeout(() => router.push("/verify-email?from=signup"), 1000);
     } else {
       toast.error(response.message);
     }

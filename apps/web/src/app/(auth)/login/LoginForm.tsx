@@ -22,8 +22,8 @@ export const LoginForm = () => {
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "sanjaykumar.sah+1@zuru.com",
-      password: "Superusername@123",
+      email: "",
+      password: "",
     },
   });
 
@@ -33,7 +33,7 @@ export const LoginForm = () => {
       router.replace("/dashboard");
     } else {
       if (response.code === "email_not_verified") {
-        setTimeout(() => router.push("/verify-email"), 1000);
+        setTimeout(() => router.push("/verify-email?from=login"), 1000);
       }
       toast.error(response.message);
     }
