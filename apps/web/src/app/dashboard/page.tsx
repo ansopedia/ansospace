@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 
-import { AnsospaceAuth } from "@ansospace/auth";
+import { AnsospaceSDK, InMemoryStorageAdapter, TokenManager } from "@ansospace/sdk";
 import { IApiResponse } from "@ansospace/types";
 
 import { Users } from "../../components/user";
+import { env } from "../../lib/env";
 
 let response: IApiResponse<{
   permissions: string[];
@@ -11,9 +12,12 @@ let response: IApiResponse<{
 
 const page = async () => {
   try {
-    // const authManger = AnsospaceAuth.init({ baseUrl: "http://localhost:8000/" });
-    response = await AnsospaceAuth.instance.auth.getPermissions();
-    // response = await AnsospaceAuth.instance.apiClient.GET("/api/v1/permissions");
+    // For server-side, create SDK instance directly
+    const sdk = new AnsospaceSDK({
+      baseUrl: env.USER_SERVICE_URL,
+      storage: new TokenManager(new InMemoryStorageAdapter()), // Server-side uses in-memory
+    });
+    response = await sdk.auth.getPermissions();
     console.log({ response });
   } catch (error) {
     console.log({ error });

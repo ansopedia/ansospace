@@ -1,20 +1,14 @@
 import Link from "next/link";
 
-import { AnsospaceAuth, TokenManager } from "@ansospace/auth";
 import "@ansospace/ui/globals.css";
 
 import { env } from "../lib/env";
-import { ServerStorageAdapter } from "../lib/storage/ServerStorageAdapter";
 import { Providers } from "./providers";
 
 export interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-AnsospaceAuth.init({
-  baseUrl: env.USER_SERVICE_URL,
-  storage: new TokenManager(new ServerStorageAdapter()),
-});
 export default async function RootLayout({ children }: Readonly<RootLayoutProps>): Promise<React.ReactElement> {
   return (
     <html lang="en" suppressHydrationWarning>

@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 
-import { useOtp } from "@ansospace/auth/client";
+import { useOtp } from "@ansospace/react";
 import { NotificationType, otpSchema } from "@ansospace/types";
 import {
   Button,

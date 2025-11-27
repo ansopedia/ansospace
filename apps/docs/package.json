@@ -12,18 +12,20 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ansospace/react": "workspace:*",
+    "@ansospace/sdk": "workspace:*",
     "@ansospace/ui": "workspace:*",
     "lucide-react": "0.554.0",
     "next": "16.0.3",
     "next-themes": "0.4.6",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "zod": "4.1.12",
-    "@ansospace/types": "^0.4.2"
+    "zod": "4.1.12"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",
     "@ansospace/eslint-config": "workspace:*",
+    "@ansospace/types": "workspace:*",
     "@ansospace/typescript-config": "workspace:*",
     "@next/eslint-plugin-next": "16.0.3",
     "@types/node": "24.10.1",

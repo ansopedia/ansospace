@@ -5,5 +5,6 @@ export * from "./notification";
 export * from "./otp";
 export * from "./platform";
 export * from "./socket";
+export * from "./storage";
 export * from "./token";
 export * from "./user";

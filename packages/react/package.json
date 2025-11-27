@@ -1,0 +1,66 @@
+{
+  "name": "@ansospace/react",
+  "version": "0.1.0",
+  "description": "React integration for AnsoSpace SDK - hooks, providers, and context",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "REACT_NATIVE_SETUP.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "test": "jest",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "@tanstack/react-query": "^5.90.10"
+  },
+  "dependencies": {
+    "@ansospace/sdk": "workspace:*",
+    "@ansospace/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@ansospace/eslint-config": "workspace:*",
+    "@ansospace/typescript-config": "workspace:*",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.6",
+    "@typescript-eslint/eslint-plugin": "^8.47.0",
+    "@typescript-eslint/parser": "^8.47.0",
+    "eslint": "^9.39.1",
+    "jest": "^30.2.0",
+    "react": "^19.2.0",
+    "@tanstack/react-query": "^5.90.10",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ansopedia/ansospace"
+  },
+  "bugs": {
+    "url": "https://github.com/ansopedia/ansospace/issues"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "context",
+    "ansospace",
+    "authentication",
+    "typescript"
+  ],
+  "license": "MIT"
+}

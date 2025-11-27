@@ -29,12 +29,14 @@ export const Users = () => {
 
   return (
     <div>
+      Fetching users permissions from client side:
       {user?.totalUsers}
       {/* Users ${userId?.toString()} */}
       <div>
         <p>{JSON.stringify(user?.user)}</p>
       </div>
       <div>{JSON.stringify(user)}</div>
+      End of user component
       {/* <User /> */}
     </div>
   );

@@ -32,18 +32,28 @@ Ansospace aims to become the foundational ecosystem powering all current and fut
 
 > Frontend foundation & plugin SDKs
 
-- **apps/web**: public-facing frontends
-- **apps/dashboard**: global super-admin dashboard
-- **tools/**: publishable, reusable SDKs (auth, notifications, gamification, etc.)
-- **packages/**: design system (`ui`), shared types, shared config
+- **apps/web**: public-facing frontends | domain (ansospace.com)
+- **apps/dashboard**: global super-admin dashboard (app.ansospace.com)
+- **apps/accounts**: global authentication pages (login, register, account management) (account.ansospace.com (profile page dashboard), account.ansospace.com/login, account.ansospace.com/signup, ...)
+- **apps/docs**: documentation site
+- **packages/**: publishable, reusable SDKs and shared libraries
 
-#### Core Tools under `tools/`
+#### Core Packages under `packages/`
 
-- `@ansospace/auth`: replace Clerk/Auth0 with your own
-- `@ansospace/notify`: self-hostable Mailgun/OneSignal alternative
-- `gamification-kit`: leaderboards, XP, badges
-- `@ansospace/chat`: reusable internal chat layer
-- `seo-kit`, `analytics-kit`: for metadata and business intelligence
+- `@ansospace/sdk`: Platform-agnostic SDK for all data fetching (replaces Clerk/Auth0)
+  - HTTP client with automatic token management
+  - Modular resource-based architecture (AuthResource, UserResource, etc.)
+  - Works on Node.js, Web, and Mobile
+- `@ansospace/react`: React integration layer
+  - Hooks (useLogin, useUser, useOtp, etc.)
+  - Context providers (AnsospaceProvider)
+  - Platform-specific storage adapters (BrowserStorageAdapter)
+- `@ansospace/types`: Shared TypeScript types and Zod schemas
+- `@ansospace/ui`: Design system and UI components
+- `@ansospace/notify`: self-hostable Mailgun/OneSignal alternative (planned)
+- `gamification-kit`: leaderboards, XP, badges (planned)
+- `@ansospace/chat`: reusable internal chat layer (planned)
+- `analytics-kit`: for metadata and business intelligence (planned)
 
 > ⚡ **Note:** `ansospace` is an internal-use-only foundation and landing site for platform marketing.
 
@@ -64,9 +74,9 @@ Each is independently deployable, versioned, and language-agnostic.
 Each service:
 
 - Exposes a REST/gRPC/OpenAPI interface
-- Uses Zod/Schema contracts in `shared-types`
-- Auth via `auth-kit`
-- Traced via `analytics-kit`
+- Uses Zod/Schema contracts from `@ansospace/types`
+- Auth via `@ansospace/sdk`
+- Traced via `analytics-kit` (planned)
 
 ### 3. **Modular Product Apps (Polyrepos per Product)**
 
@@ -99,7 +109,8 @@ ansomobile/
 │   ├── school-app/         # School management mobile
 ├── packages/
 │   ├── ui/                 # Reusable native components
-│   ├── auth-kit/           # Shared mobile auth SDK
+│   ├── sdk/                # Platform-agnostic SDK (shared with ansospace)
+│   ├── react/              # React Native integration (hooks, providers)
 │   ├── notification-kit/   # Mobile notifications + Firebase
 │   └── types/              # Shared types with ansospace
 ├── README.md
@@ -111,23 +122,23 @@ Organize your GitHub repos into **teams/folders** using GitHub Projects or namin
 
 #### ⬇️ Recommended Repo Naming
 
-| Scope        | Example Repo                            | Purpose                            |
-| ------------ | --------------------------------------- | ---------------------------------- |
-| Shared Infra | `ansospace`                             | Internal monorepo + landing        |
-| SDKs/Plugins | `auth-kit`, `chat-kit`, etc.            | Independent toolkits (npm-publish) |
-| Mobile       | `ansomobile`                            | React Native workspace             |
-| LMS          | `lms-platform`, `lms-service`           | Product polyrepo                   |
-| Delivery     | `delivery-platform`, `delivery-service` | Delivery business logic            |
-| School       | `school-platform`, `school-service`     | School management system           |
-| Services     | `user-service`, `notification-service`  | Core backend microservices         |
+| Scope        | Example Repo                                           | Purpose                            |
+| ------------ | ------------------------------------------------------ | ---------------------------------- |
+| Shared Infra | `ansospace`                                            | Internal monorepo + landing        |
+| SDKs/Plugins | `@ansospace/sdk`, `@ansospace/react`, `chat-kit`, etc. | Independent toolkits (npm-publish) |
+| Mobile       | `ansomobile`                                           | React Native workspace             |
+| LMS          | `lms-platform`, `lms-service`                          | Product polyrepo                   |
+| Delivery     | `delivery-platform`, `delivery-service`                | Delivery business logic            |
+| School       | `school-platform`, `school-service`                    | School management system           |
+| Services     | `user-service`, `notification-service`                 | Core backend microservices         |
 
 > ✅ Use `platform` suffix for polyrepo apps
 > ✅ Use `service` suffix for backends
 
 ## 🔐 Security by Default
 
-- Zod-based runtime validation for all configs
-- JWT & RBAC handled in `auth-kit`
+- Zod-based runtime validation for all configs (via `@ansospace/types`)
+- JWT & RBAC handled in `@ansospace/sdk`
 - Role-level UI in `apps/dashboard`
 - Use OAuth2 PKCE flows for native apps
 - API gateway restricts service exposure
@@ -145,21 +156,25 @@ Organize your GitHub repos into **teams/folders** using GitHub Projects or namin
 
 Each new app should:
 
-- Consume from `@ansospace/*` SDKs (tools)
+- Consume from `@ansospace/*` SDKs:
+  - `@ansospace/sdk` for platform-agnostic data fetching
+  - `@ansospace/react` for React hooks and state management (web)
+  - `@ansospace/types` for shared type definitions
 - Share UI via `@ansospace/ui`
 - Deploy from own polyrepo with shared internal deps
 - Integrate with base microservices (user, media, analytics, etc.)
-- Ship mobile using `ansomobile` workspace
+- Ship mobile using `ansomobile` workspace (uses `@ansospace/sdk` + React Native adapters)
 
 ### Example: School Management System
 
 Uses:
 
-- `auth-kit`, `user-service`
-- `notification-kit` for report cards
+- `@ansospace/sdk` + `@ansospace/react` for authentication
+- `user-service` for user management
+- `notification-kit` for report cards (planned)
 - `quiz-service` for assessments
 - `cms` for content
-- `chat-kit` for parent-teacher chat
+- `chat-kit` for parent-teacher chat (planned)
 - `billing-service` for fees
 - Mobile app from `ansomobile/school-app`
 

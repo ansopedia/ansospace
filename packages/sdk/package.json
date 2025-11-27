@@ -1,0 +1,56 @@
+{
+  "name": "@ansospace/sdk",
+  "version": "0.1.0",
+  "description": "Platform-agnostic SDK for AnsoSpace API - handles all data fetching",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "test": "jest",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "@ansospace/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@ansospace/eslint-config": "workspace:*",
+    "@ansospace/typescript-config": "workspace:*",
+    "@types/jest": "^30.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.47.0",
+    "@typescript-eslint/parser": "^8.47.0",
+    "eslint": "^9.39.1",
+    "jest": "^30.2.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ansopedia/ansospace"
+  },
+  "bugs": {
+    "url": "https://github.com/ansopedia/ansospace/issues"
+  },
+  "keywords": [
+    "sdk",
+    "api",
+    "http-client",
+    "ansospace",
+    "typescript"
+  ],
+  "license": "MIT"
+}

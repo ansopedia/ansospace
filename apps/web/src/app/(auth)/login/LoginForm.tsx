@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useLogin } from "@ansospace/auth/client";
+import { useLogin } from "@ansospace/react";
 import type { Login } from "@ansospace/types";
 import { loginSchema } from "@ansospace/types";
 import { Button, Checkbox, Form, Spinner, toast } from "@ansospace/ui/components";
@@ -22,8 +22,8 @@ export const LoginForm = () => {
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "sanjaykumar.sah+1@zuru.com",
+      password: "Superusername@123",
     },
   });
 

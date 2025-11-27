@@ -1,6 +1,6 @@
 "use client";
 
-import { usePasswordReset } from "@ansospace/auth/client";
+import { usePasswordReset } from "@ansospace/react";
 import { NotificationType, emailSchema } from "@ansospace/types";
 import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 
-import { useRegister } from "@ansospace/auth/client";
+import { useRegister } from "@ansospace/react";
 import { RegisterSchema, registerSchema } from "@ansospace/types";
 import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,10 +19,10 @@ export const RegisterForm: FC = () => {
     resolver: zodResolver(registerSchema),
     mode: "onTouched",
     defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      username: "sanjayZuru",
+      email: "sanjaykumar.sah+1@zuru.com",
+      password: "Superusername@123",
+      confirmPassword: "Superusername@123",
     },
   });
 

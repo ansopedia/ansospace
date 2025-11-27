@@ -5,8 +5,7 @@
       "@/*": ["./*"],
       "@/components/*": ["./src/components/*"],
       "@ansospace/eslint-config/*": ["../../packages/eslint-config/*"],
-      "@ansospace/ui/*": ["../../packages/ui/src/*"],
-      "@ansospace/auth/*": ["../../packages/auth/dist/*"]
+      "@ansospace/ui/*": ["../../packages/ui/src/*"]
     },
     "plugins": [
       {

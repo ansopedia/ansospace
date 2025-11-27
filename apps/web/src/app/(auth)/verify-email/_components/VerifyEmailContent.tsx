@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
 
-import { useUser } from "@ansospace/auth/client";
+import { useUser } from "@ansospace/react";
 
 import { AuthFlowLayout } from "@/components/auth/AuthFlowLayout";
 
