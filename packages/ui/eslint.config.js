@@ -1,4 +1,3 @@
-import { reactConfig } from "@ansospace/eslint-config/react-internal";
+import { reactConfig } from "@ansospace/eslint-config/react";
 
-/** @type {import("eslint").Linter.Config} */
 export default reactConfig;

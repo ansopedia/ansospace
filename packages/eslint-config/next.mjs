@@ -6,12 +6,11 @@ import { globalIgnores } from "eslint/config";
 import { baseConfig } from "./base.mjs";
 
 /**
- * Shared ESLint config for Next.js projects.
- * This does NOT depend on `next` being installed.
- *
- * @type {import("eslint").Linter.Config[]}
+ * ESLint configuration for Next.js projects.
+ * Extends base configuration with Next.js specific rules.
+ * Note: This does NOT depend on `next` being installed.
  */
-export default [
+export const nextConfig = [
   ...baseConfig, // base rules (TypeScript, Prettier, Turbo)
   ...nextVitals,
   ...nextTs,

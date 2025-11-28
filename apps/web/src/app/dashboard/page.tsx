@@ -11,22 +11,16 @@ let response: IApiResponse<{
 }>;
 
 const page = async () => {
-  try {
-    // For server-side, create SDK instance directly
-    const sdk = new AnsospaceSDK({
-      baseUrl: env.USER_SERVICE_URL,
-      storage: new TokenManager(new InMemoryStorageAdapter()), // Server-side uses in-memory
-    });
-    response = await sdk.auth.getPermissions();
-    console.log({ response });
-  } catch (error) {
-    console.log({ error });
-  }
-  // const authManger = AuthManager.instance;
+  // For server-side, create SDK instance directly
+  const sdk = new AnsospaceSDK({
+    baseUrl: env.USER_SERVICE_URL,
+    storage: new TokenManager(new InMemoryStorageAdapter()), // Server-side uses in-memory
+  });
+  response = await sdk.auth.getPermissions();
 
-  // if (response.status === "success") {
-  //   return <div>Dashboard server side {JSON.stringify(response)}</div>;
-  // }
+  if (response.status === "success") {
+    return <div>Dashboard server side {JSON.stringify(response)}</div>;
+  }
 
   return (
     <div>

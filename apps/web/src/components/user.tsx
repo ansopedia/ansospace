@@ -17,15 +17,10 @@ export const Users = () => {
       if (user.status === "success") {
         setUser(user.data);
       }
-      console.log(user);
     };
 
     fetchUser();
   }, [sdk]);
-
-  console.log("user", user);
-
-  // if (!user?.totalUsers) return "loading";
 
   return (
     <div>

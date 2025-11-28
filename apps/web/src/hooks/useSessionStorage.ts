@@ -13,8 +13,7 @@ export const useSessionStorage = <K extends string, V>(key: K, initialValue: V):
     try {
       const item = window.sessionStorage.getItem(key);
       return item ? (JSON.parse(item) as V) : initialValue;
-    } catch (error) {
-      console.error(`Error reading sessionStorage key “${key}”:`, error);
+    } catch {
       return initialValue;
     }
   };
@@ -26,8 +25,8 @@ export const useSessionStorage = <K extends string, V>(key: K, initialValue: V):
       const valueToStore = value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       window.sessionStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.error(`Error setting sessionStorage key “${key}”:`, error);
+    } catch {
+      // Silently fail - storage errors are non-critical
     }
   };
 

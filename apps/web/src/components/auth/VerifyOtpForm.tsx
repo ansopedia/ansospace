@@ -20,7 +20,7 @@ import {
   toast,
 } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 const verifyEmailSchema = z.object({
@@ -49,6 +49,11 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
     },
   });
 
+  const otpValue = useWatch({
+    control: form.control,
+    name: "otp",
+  });
+
   const onSubmit = async (data: VerifyEmailSchema) => {
     const otpBody = {
       otp: data.otp,
@@ -66,7 +71,7 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
         form.reset();
       }
     } catch (error) {
-      toast.error("OTP verification failed");
+      toast.error(`OTP verification failed: ${error instanceof Error ? error.message : "Unknown error"}`);
       form.reset();
     }
   };
@@ -87,7 +92,7 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
         toast.error(response.message);
       }
     } catch (error) {
-      toast.error("Failed to send OTP");
+      toast.error(`Failed to send OTP: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
@@ -140,7 +145,7 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
           )}
         />
 
-        <Button type="submit" className="rounded-xl" size="lg" disabled={verifyOtpLoading || !form.watch("otp")}>
+        <Button type="submit" className="rounded-xl" size="lg" disabled={verifyOtpLoading || !otpValue}>
           {verifyOtpLoading && <Spinner className="mr-2" />}
           <span className="text-sm sm:text-base">{verifyOtpLoading ? "Verifying..." : "Verify Email"}</span>
         </Button>

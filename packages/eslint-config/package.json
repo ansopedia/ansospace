@@ -1,13 +1,40 @@
 {
   "name": "@ansospace/eslint-config",
   "version": "0.0.1",
+  "description": "Shared ESLint configuration for AnsoSpace projects with TypeScript, SonarJS, React, Next.js, and Node.js support",
   "type": "module",
-  "private": true,
+  "main": "./base.mjs",
   "exports": {
     "./base": "./base.mjs",
     "./next-js": "./next.mjs",
-    "./react-internal": "./react-internal.mjs"
+    "./react": "./react.mjs",
+    "./node": "./node.mjs"
   },
+  "files": [
+    "base.mjs",
+    "next.mjs",
+    "react.mjs",
+    "node.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "typescript",
+    "sonarjs",
+    "react",
+    "nextjs",
+    "nodejs",
+    "express"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ansopedia/ansospace"
+  },
+  "bugs": {
+    "url": "https://github.com/ansopedia/ansospace/issues"
+  },
+  "license": "MIT",
   "devDependencies": {
     "@eslint/js": "9.39.1",
     "@next/eslint-plugin-next": "16.0.3",
@@ -18,16 +45,25 @@
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-sonarjs": "3.0.5",
     "eslint-plugin-turbo": "2.6.1",
     "globals": "16.5.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.47.0"
   },
   "peerDependencies": {
-    "eslint": "9.39.1",
-    "typescript": "5.9.3"
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   },
   "optionalDependencies": {
     "eslint-config-next": "16.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

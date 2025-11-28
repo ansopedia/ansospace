@@ -19,10 +19,10 @@ export const RegisterForm: FC = () => {
     resolver: zodResolver(registerSchema),
     mode: "onTouched",
     defaultValues: {
-      username: "sanjayZuru",
-      email: "sanjaykumar.sah+1@zuru.com",
-      password: "Superusername@123",
-      confirmPassword: "Superusername@123",
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
