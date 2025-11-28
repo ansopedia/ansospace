@@ -84,7 +84,7 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
 
     try {
       const response = await sendOtp({ otpType: NotificationType.EMAIL_VERIFICATION_OTP, email });
-      if (response.status === "success" && response.data?.token) {
+      if (response.status === "success" && response.data?.actionToken) {
         toast.success("OTP sent to your email");
         onOtpSent();
         form.reset();

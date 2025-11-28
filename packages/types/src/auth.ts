@@ -2,6 +2,10 @@ import z from "zod";
 
 import { DeviceId, ObjectId, deviceId, deviceInfoSchema, objectId } from "./common";
 
+// ============================================================================
+// BASE SCHEMAS - Foundational validation schemas
+// ============================================================================
+
 export const usernameSchema = z
   .string()
   .min(3, "Username must be at least 3 characters")
@@ -18,7 +22,7 @@ export const passwordSchema = z
   .min(8, "Password must be at least 8 characters long")
   .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
   .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-  .regex(/[0-9]/, "Password must contain at least one numeric digit")
+  .regex(/\d/, "Password must contain at least one numeric digit")
   .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character")
   .refine(
     (password) => {
@@ -40,11 +44,11 @@ export const emailSchema = z
 
 export type Email = z.infer<typeof emailSchema>;
 
-export const otpSchema = z.string().length(6).brand<"Otp">();
+// ============================================================================
+// AUTHENTICATION REQUEST SCHEMAS
+// ============================================================================
 
-export type Otp = z.infer<typeof otpSchema>;
-
-export const loginSchema = z
+export const loginRequestSchema = z
   .object({
     email: emailSchema.optional(),
     username: usernameSchema.optional(),
@@ -67,15 +71,61 @@ export const loginSchema = z
     }
   });
 
-export type Login = z.infer<typeof loginSchema>;
+export type LoginRequest = z.infer<typeof loginRequestSchema>;
 
-export const authTokenSchema = z.object({
-  userId: objectId,
-  accessToken: z.string(),
+export const autoLoginRequestSchema = z.object({
+  actionToken: z.string().min(1, "Action token is required"),
+});
+
+export type AutoLoginRequest = z.infer<typeof autoLoginRequestSchema>;
+
+export const refreshTokenRequestSchema = z.object({
   refreshToken: z.string(),
 });
 
-export type AuthToken = z.infer<typeof authTokenSchema>;
+export type RefreshTokenRequest = z.infer<typeof refreshTokenRequestSchema>;
+
+// Register request schemas (moved from user.ts for better grouping)
+const createUserWithEmailAndPasswordSchema = z
+  .object({
+    email: emailSchema,
+    username: usernameSchema,
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Confirm password does not match password",
+    path: ["confirmPassword"],
+  });
+
+const createUserWithGoogleSchema = z.object({
+  email: emailSchema,
+  username: usernameSchema,
+  isEmailVerified: z.boolean(),
+  googleId: z.string(),
+});
+
+export const registerRequestSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
+
+export type RegisterRequest = z.infer<typeof registerRequestSchema>;
+
+// Reset password request schema (moved from user.ts for better grouping)
+export const resetPasswordRequestSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+    actionToken: z.string().min(1, "Action token is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Confirm password does not match password",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
+
+// ============================================================================
+// AUTHENTICATION RESPONSE SCHEMAS
+// ============================================================================
 
 export const loginResponseSchema = z.object({
   userId: objectId,
@@ -90,12 +140,17 @@ export const registerResponseSchema = z.object({
 
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;
 
-export type AuthenticatedUser = {
-  userId: ObjectId;
-  permissions: string[];
-  deviceId: DeviceId;
-  tokenVersion: number;
-};
+// ============================================================================
+// AUTHENTICATION ENTITY SCHEMAS
+// ============================================================================
+
+export const authTokenSchema = z.object({
+  userId: objectId,
+  accessToken: z.string(),
+  refreshToken: z.string(),
+});
+
+export type AuthToken = z.infer<typeof authTokenSchema>;
 
 export const sessionSchema = z.object({
   id: objectId,
@@ -112,8 +167,13 @@ export const sessionSchema = z.object({
 
 export type Session = z.infer<typeof sessionSchema>;
 
-export const refreshTokenRequestSchema = z.object({
-  refreshToken: z.string(),
-});
+// ============================================================================
+// AUTHENTICATION TYPES
+// ============================================================================
 
-export type RefreshTokenRequest = z.infer<typeof refreshTokenRequestSchema>;
+export type AuthenticatedUser = {
+  userId: ObjectId;
+  permissions: string[];
+  deviceId: DeviceId;
+  tokenVersion: number;
+};

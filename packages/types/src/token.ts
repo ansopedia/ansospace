@@ -3,10 +3,25 @@ import z from "zod";
 import { deviceId, objectId } from "./common";
 import { userActionTypeSchema } from "./notification";
 
+/**
+ * Token types used for both HTTP headers and storage keys
+ * This ensures consistency between backend communication and frontend storage
+ */
 export const TokenType = {
-  ACCESS: "access",
-  REFRESH: "refresh",
-  ACTION: "action",
+  /**
+   * Access token - used in "authorization" header and storage
+   */
+  AUTHORIZATION: "authorization",
+
+  /**
+   * Refresh token - used in "refresh-token" header and storage
+   */
+  REFRESH: "refresh-token",
+
+  /**
+   * Action token - used for email verification, password reset, etc.
+   */
+  ACTION: "action-token",
 } as const;
 
 export type TokenType = (typeof TokenType)[keyof typeof TokenType];

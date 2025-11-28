@@ -25,9 +25,9 @@ export function PasswordResetEmailForm({ onSuccess }: { onSuccess: (data: { toke
 
   const onSubmit = form.handleSubmit(async ({ email }) => {
     const resp = await sendPasswordResetOtp({ otpType: NotificationType.FORGET_PASSWORD_OTP, email });
-    if (resp.status === "success" && resp.data?.token) {
+    if (resp.status === "success" && resp.data?.actionToken) {
       toast.success("OTP sent to your email");
-      onSuccess({ token: resp.data.token, email });
+      onSuccess({ token: resp.data.actionToken, email });
     } else {
       toast.error(resp.message);
     }

@@ -5,14 +5,21 @@ import { ReactNode, createContext, useContext, useEffect, useState } from "react
 import { AnsospaceSDK } from "@ansospace/sdk";
 import type {
   AnsospaceStorage,
+  AutoLoginRequest,
   Email,
   GetPermission,
-  Login,
+  IApiResponse,
+  LoginRequest,
+  LoginResponse,
   ObjectId,
-  OtpEvent,
-  OtpVerifyEvent,
-  RegisterSchema,
+  RegisterRequest,
+  RegisterResponse,
+  SendOtpRequest,
+  SendOtpResponse,
+  VerifyOtpRequest,
+  VerifyOtpResponse,
 } from "@ansospace/types";
+import { TokenType } from "@ansospace/types";
 
 export interface AuthState {
   userId: ObjectId | null;
@@ -24,19 +31,11 @@ export interface AuthState {
 }
 
 export interface AuthContextValue extends AuthState {
-  login: (body: Login) => Promise<import("@ansospace/types").IApiResponse<import("@ansospace/types").LoginResponse>>;
-  register: (
-    body: RegisterSchema
-  ) => Promise<import("@ansospace/types").IApiResponse<import("@ansospace/types").RegisterResponse>>;
-  sendOtp: (
-    body: OtpEvent
-  ) => Promise<import("@ansospace/types").IApiResponse<import("@ansospace/types").SendOtpResponse>>;
-  verifyOtp: (
-    body: Omit<OtpVerifyEvent, "token">
-  ) => Promise<import("@ansospace/types").IApiResponse<import("@ansospace/types").VerifyOtpResponse>>;
-  autoLogin: (body: {
-    actionToken: string;
-  }) => Promise<import("@ansospace/types").IApiResponse<import("@ansospace/types").LoginResponse>>;
+  login: (body: LoginRequest) => Promise<IApiResponse<LoginResponse>>;
+  register: (body: RegisterRequest) => Promise<IApiResponse<RegisterResponse>>;
+  sendOtp: (body: SendOtpRequest) => Promise<IApiResponse<SendOtpResponse>>;
+  verifyOtp: (body: Omit<VerifyOtpRequest, "actionToken">) => Promise<IApiResponse<VerifyOtpResponse>>;
+  autoLogin: (body: AutoLoginRequest) => Promise<IApiResponse<LoginResponse>>;
   logout: () => Promise<void>;
   setPermissions: (permissions: GetPermission[]) => void;
   sdk: AnsospaceSDK;
@@ -91,7 +90,7 @@ export const AnsospaceProvider = ({ children, config }: { children: ReactNode; c
   }, [config.storage]);
 
   // ✅ Login Handler
-  const login = async (body: Login) => {
+  const login = async (body: LoginRequest) => {
     const response = await sdk.auth.login(body);
 
     if (response.status === "success") {
@@ -112,7 +111,7 @@ export const AnsospaceProvider = ({ children, config }: { children: ReactNode; c
   };
 
   // ✅ Register Handler
-  const register = async (body: RegisterSchema) => {
+  const register = async (body: RegisterRequest) => {
     const response = await sdk.auth.register(body);
 
     if (response.status === "success") {
@@ -121,19 +120,19 @@ export const AnsospaceProvider = ({ children, config }: { children: ReactNode; c
       setUserEmail(body.email);
       setIsVerified(false);
       await config.storage.set("userId", userId.toString());
-      await config.storage.set("action", actionToken);
+      await config.storage.set(TokenType.ACTION, actionToken);
       await config.storage.set("userEmail", body.email);
       await config.storage.set("isUserVerified", false);
     }
     return response;
   };
 
-  const sendOtp = async (body: OtpEvent) => {
+  const sendOtp = async (body: SendOtpRequest) => {
     const response = await sdk.auth.sendOtp(body);
 
     if (response.status === "success") {
-      const { token } = response.data;
-      await config.storage.set("action", token);
+      const { actionToken } = response.data;
+      await config.storage.set(TokenType.ACTION, actionToken);
       if (body.email) {
         setUserEmail(body.email);
         await config.storage.set("userEmail", body.email);
@@ -143,25 +142,29 @@ export const AnsospaceProvider = ({ children, config }: { children: ReactNode; c
   };
 
   // IMPORTANT: Update verification status after successful OTP
-  const verifyOtp = async (body: Omit<OtpVerifyEvent, "token">) => {
-    const token = await config.storage.get("action");
-    if (!token) {
+  const verifyOtp = async (body: Omit<VerifyOtpRequest, "actionToken">) => {
+    const actionToken = await config.storage.get(TokenType.ACTION);
+    if (!actionToken) {
       throw new Error("Action token not found");
     }
-    const response = await sdk.auth.verifyOtp({ ...body, token: token as string });
+    const verifyOtpBody: VerifyOtpRequest = {
+      ...body,
+      actionToken: actionToken as string,
+    };
+    const response = await sdk.auth.verifyOtp(verifyOtpBody);
 
     // Update state and storage synchronously after async API call success
     if (response.status === "success") {
       setIsVerified(true);
       setUserEmail(null);
       await config.storage.remove("isUserVerified");
-      await config.storage.remove("action");
+      await config.storage.remove(TokenType.ACTION);
       await config.storage.remove("userEmail");
     }
     return response;
   };
 
-  const autoLogin = async (body: { actionToken: string }) => {
+  const autoLogin = async (body: AutoLoginRequest) => {
     const response = await sdk.auth.autoLogin(body);
     if (response.status === "success") {
       const { userId } = response.data;

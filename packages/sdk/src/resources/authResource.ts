@@ -1,13 +1,15 @@
 import type {
+  AutoLoginRequest,
   IApiResponse,
-  Login,
+  LoginRequest,
   LoginResponse,
-  OtpEvent,
-  OtpVerifyEvent,
+  RefreshTokenRequest,
+  RegisterRequest,
   RegisterResponse,
-  RegisterSchema,
-  ResetPassword,
+  ResetPasswordRequest,
+  SendOtpRequest,
   SendOtpResponse,
+  VerifyOtpRequest,
   VerifyOtpResponse,
 } from "@ansospace/types";
 
@@ -26,7 +28,7 @@ export class AuthResource {
   /**
    * Login user
    */
-  async login(body: Login): Promise<IApiResponse<LoginResponse>> {
+  async login(body: LoginRequest): Promise<IApiResponse<LoginResponse>> {
     const url = "/api/v1/auth/login";
     return this.httpClient.POST<LoginResponse>(url, { body });
   }
@@ -34,7 +36,7 @@ export class AuthResource {
   /**
    * Register new user
    */
-  async register(body: RegisterSchema): Promise<IApiResponse<RegisterResponse>> {
+  async register(body: RegisterRequest): Promise<IApiResponse<RegisterResponse>> {
     const url = "/api/v1/auth/register";
     return this.httpClient.POST<RegisterResponse>(url, { body });
   }
@@ -50,7 +52,7 @@ export class AuthResource {
   /**
    * Verify OTP
    */
-  async verifyOtp(body: OtpVerifyEvent): Promise<IApiResponse<VerifyOtpResponse>> {
+  async verifyOtp(body: VerifyOtpRequest): Promise<IApiResponse<VerifyOtpResponse>> {
     const url = "/api/v1/otp/verify";
     return this.httpClient.POST<VerifyOtpResponse>(url, { body });
   }
@@ -58,7 +60,7 @@ export class AuthResource {
   /**
    * Send OTP
    */
-  async sendOtp(body: OtpEvent): Promise<IApiResponse<SendOtpResponse>> {
+  async sendOtp(body: SendOtpRequest): Promise<IApiResponse<SendOtpResponse>> {
     const url = "/api/v1/otp";
     return this.httpClient.POST<SendOtpResponse>(url, { body });
   }
@@ -66,7 +68,7 @@ export class AuthResource {
   /**
    * Reset password
    */
-  async resetPassword(body: ResetPassword): Promise<IApiResponse<void>> {
+  async resetPassword(body: ResetPasswordRequest): Promise<IApiResponse<void>> {
     const url = "/api/v1/auth/reset-password";
     return this.httpClient.POST<void>(url, { body });
   }
@@ -74,9 +76,18 @@ export class AuthResource {
   /**
    * Auto login with action token
    */
-  async autoLogin(body: { actionToken: string }): Promise<IApiResponse<LoginResponse>> {
+  async autoLogin(body: AutoLoginRequest): Promise<IApiResponse<LoginResponse>> {
     const url = "/api/v1/auth/auto-login";
     return this.httpClient.POST<LoginResponse>(url, { body });
+  }
+
+  /**
+   * Refresh access token using refresh token
+   * Note: This method uses publicRequest to avoid token injection and handles token extraction manually
+   */
+  async refreshToken(body: RefreshTokenRequest): Promise<IApiResponse<void>> {
+    const url = "/api/v1/auth/refresh";
+    return this.httpClient.POST<void>(url, { body });
   }
 
   /**

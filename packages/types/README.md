@@ -30,12 +30,12 @@ Import the types and schemas as needed:
 
 ```ts
 // Import specific types
-import type { User, RegisterSchema } from "@ansospace/types";
-import { registerSchema, usernameSchema, validateProfileSchema } from "@ansospace/types";
+import type { User, RegisterRequest } from "@ansospace/types";
+import { registerRequestSchema, usernameSchema, validateProfileSchema } from "@ansospace/types";
 
 // Use branded types by parsing through schemas
 const user: User = { ... };
-const validUser = registerSchema.parse(userData); // For simple schemas
+const validUser = registerRequestSchema.parse(userData); // For simple schemas
 
 // For complex schemas with custom validation, use validate functions
 const validProfile = validateProfileSchema(profileData);
@@ -46,7 +46,7 @@ const uname: Username = usernameSchema.parse("validusername");
 
 ### Available Modules
 
-- `auth`: Authentication-related types and schemas (Username, Password, Email, Login, Session, etc.)
+- `auth`: Authentication-related types and schemas (Username, Password, Email, LoginRequest, Session, etc.)
 - `user`: User management (User, Role, Permission, Profile, etc.)
 - `notification`: Notification types and email validation schemas
 - `otp`: OTP-related schemas and events

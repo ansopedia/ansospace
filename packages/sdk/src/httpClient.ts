@@ -1,4 +1,5 @@
 import type { AnsospaceStorage, IApiResponse } from "@ansospace/types";
+import { HttpHeaders, TokenType } from "@ansospace/types";
 
 import type { HttpMethod, RequestOptions } from "./types";
 
@@ -43,17 +44,16 @@ export class HttpClient {
   /**
    * Process queued requests after token refresh
    */
-  private processQueue(error: unknown, accessToken: string | null = null): void {
+  private processQueue(error: unknown, accessToken?: string): void {
     this.failedQueue.forEach((prom) => {
       if (error) {
         prom.reject(error);
       } else {
+        const headers = new Headers(prom.options.headers);
+        headers.set(HttpHeaders.AUTHORIZATION, `Bearer ${accessToken}`);
         this.request(prom.method, prom.url, {
           ...prom.options,
-          headers: {
-            ...prom.options.headers,
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers,
           _retry: true,
         })
           .then((value) => prom.resolve(value as IApiResponse<unknown>))
@@ -68,14 +68,14 @@ export class HttpClient {
    * Handle HTTP response and parse JSON
    */
   private async handleResponse<T>(response: Response): Promise<IApiResponse<T>> {
-    const data = await response.json();
-    return data;
+    return await response.json();
   }
 
   /**
-   * Extract tokens from response headers and save them
+   * Extract tokens and device ID from response headers and save them
+   * Direct mapping: authorization header → TokenType.AUTHORIZATION, refresh-token header → TokenType.REFRESH
    */
-  private async extractAndSaveTokens(response: Response, url: string): Promise<void> {
+  private async extractAndSaveTokens(response: Response, url: string) {
     // Save tokens from auth endpoints
     if (
       url.includes("/auth/login") ||
@@ -83,50 +83,61 @@ export class HttpClient {
       url.includes("/otp/verify") ||
       url.includes("/auth/auto-login")
     ) {
-      const newAccessToken = response.headers.get("authorization");
-      const newRefreshToken = response.headers.get("refresh-token");
+      const newAccessToken = response.headers.get(HttpHeaders.AUTHORIZATION);
+      const newRefreshToken = response.headers.get(HttpHeaders.REFRESH_TOKEN);
+      const newDeviceId = response.headers.get(HttpHeaders.X_DEVICE_ID);
 
       if (newAccessToken) {
-        await this.storage.set("access", newAccessToken);
+        await this.storage.set(TokenType.AUTHORIZATION, newAccessToken);
       }
       if (newRefreshToken) {
-        await this.storage.set("refresh", newRefreshToken);
+        await this.storage.set(TokenType.REFRESH, newRefreshToken);
+      }
+      if (newDeviceId) {
+        // Store device ID using same key as header name for consistency
+        await this.storage.set(HttpHeaders.X_DEVICE_ID, newDeviceId);
       }
     }
   }
 
   /**
    * Refresh access token using refresh token
+   * Follows the SDK pattern: uses POST method structure but bypasses token injection
+   * to avoid circular dependency (refresh endpoint doesn't require auth)
    */
-  private async refreshToken(): Promise<string> {
-    const refreshToken = await this.storage.get("refresh");
+  private async refreshToken() {
+    // Use type-safe storage key constant
+    const refreshTokenValue = await this.storage.get(TokenType.REFRESH);
 
-    if (!refreshToken || typeof refreshToken !== "string") {
+    if (!refreshTokenValue || typeof refreshTokenValue !== "string") {
       throw new Error("Unauthorized User. Please log in again.");
     }
 
-    const refreshResponse = await fetch(`${this.baseUrl}/api/v1/auth/refresh`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ refreshToken }),
+    // Follow SDK pattern: use same structure as POST but without token injection
+    const body: { refreshToken: string } = { refreshToken: refreshTokenValue };
+
+    const headers = new Headers({
+      ...this.defaultHeaders,
     });
 
-    if (!refreshResponse.ok) {
+    // Set Content-Type following SDK pattern
+    if (!headers.has(HttpHeaders.CONTENT_TYPE)) {
+      headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
+    }
+
+    // Make request following SDK pattern (POST method)
+    const response = await fetch(`${this.baseUrl}/api/v1/auth/refresh`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
       throw new Error("Refresh token failed");
     }
 
-    const newAccessToken = refreshResponse.headers.get("authorization");
-    const newRefreshToken = refreshResponse.headers.get("refresh-token");
-
-    if (newAccessToken && newRefreshToken) {
-      await this.storage.set("access", newAccessToken);
-      await this.storage.set("refresh", newRefreshToken);
-      return newAccessToken;
-    } else {
-      throw new Error("Refresh token response missing tokens");
-    }
+    // Use existing extractAndSaveTokens method to handle token extraction and storage
+    await this.extractAndSaveTokens(response, "/api/v1/auth/refresh");
   }
 
   /**
@@ -136,20 +147,30 @@ export class HttpClient {
     try {
       const { body, _retry, ...fetchOptions } = options;
 
-      const accessTokenValue = await this.storage.get("access");
+      // Use type-safe storage key constant
+      const accessTokenValue = await this.storage.get(TokenType.AUTHORIZATION);
       const accessToken = accessTokenValue ? String(accessTokenValue) : null;
+
+      // Get device ID from storage
+      const deviceIdValue = await this.storage.get(HttpHeaders.X_DEVICE_ID);
+      const deviceId = deviceIdValue ? String(deviceIdValue) : null;
 
       const headers = new Headers({
         ...this.defaultHeaders,
         ...fetchOptions.headers,
       });
 
-      if (!headers.has("Content-Type") && method !== "GET") {
-        headers.set("Content-Type", "application/json");
+      if (!headers.has(HttpHeaders.CONTENT_TYPE) && method !== "GET") {
+        headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
       }
 
-      if (accessToken && !headers.has("Authorization")) {
-        headers.set("Authorization", `Bearer ${accessToken}`);
+      if (accessToken && !headers.has(HttpHeaders.AUTHORIZATION)) {
+        headers.set(HttpHeaders.AUTHORIZATION, `Bearer ${accessToken}`);
+      }
+
+      // Send device ID in request headers if available
+      if (deviceId && !headers.has(HttpHeaders.X_DEVICE_ID)) {
+        headers.set(HttpHeaders.X_DEVICE_ID, deviceId);
       }
 
       const response = await fetch(`${this.baseUrl}${url}`, {
@@ -185,11 +206,18 @@ export class HttpClient {
         this.isRefreshing = true;
 
         try {
-          const newAccessToken = await this.refreshToken();
-          this.processQueue(null, newAccessToken);
+          await this.refreshToken();
+
+          const accessTokenValue = await this.storage.get(TokenType.AUTHORIZATION);
+
+          if (accessTokenValue && typeof accessTokenValue === "string") {
+            this.processQueue(null, accessTokenValue);
+          } else {
+            this.processQueue(new Error("Access token not found"), undefined);
+          }
           return this.request<T>(method, url, { ...options, _retry: true });
         } catch (refreshError) {
-          this.processQueue(refreshError, null);
+          this.processQueue(refreshError, undefined);
           throw refreshError;
         } finally {
           this.isRefreshing = false;
@@ -268,8 +296,8 @@ export class HttpClient {
       ...fetchOptions.headers,
     });
 
-    if (!headers.has("Content-Type") && method !== "GET") {
-      headers.set("Content-Type", "application/json");
+    if (!headers.has(HttpHeaders.CONTENT_TYPE) && method !== "GET") {
+      headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
     }
 
     const response = await fetch(`${this.baseUrl}${url}`, {
@@ -300,7 +328,8 @@ export class HttpClient {
    * Check if user is authenticated (has valid access token)
    */
   public async isAuthenticated(): Promise<boolean> {
-    const token = await this.storage.get("access");
+    // Use type-safe storage key constant
+    const token = await this.storage.get(TokenType.AUTHORIZATION);
     return !!token && typeof token === "string";
   }
 }

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { FC } from "react";
 
 import { useRegister } from "@ansospace/react";
-import { RegisterSchema, registerSchema } from "@ansospace/types";
+import { RegisterRequest, registerRequestSchema } from "@ansospace/types";
 import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,7 +16,7 @@ export const RegisterForm: FC = () => {
   const router = useRouter();
 
   const form = useForm({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(registerRequestSchema),
     mode: "onTouched",
     defaultValues: {
       username: "",
@@ -28,7 +28,7 @@ export const RegisterForm: FC = () => {
 
   const { loading, register: handleRegister } = useRegister();
 
-  const onSubmit = async (body: RegisterSchema) => {
+  const onSubmit = async (body: RegisterRequest) => {
     const response = await handleRegister(body);
     if (response.status === "success") {
       toast.success(response.message);

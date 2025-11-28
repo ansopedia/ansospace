@@ -1,6 +1,13 @@
 import Image from "next/image";
 
-import { Otp, RegisterSchema, objectId, passwordSchema, registerSchema, usernameSchema } from "@ansospace/types";
+import {
+  Otp,
+  RegisterRequest,
+  objectId,
+  passwordSchema,
+  registerRequestSchema,
+  usernameSchema,
+} from "@ansospace/types";
 import { Button } from "@ansospace/ui/components/button";
 
 import { env } from "../lib/env";
@@ -11,7 +18,7 @@ export default function Home() {
   const newPassword = passwordSchema.parse("Password123!");
   const mongooseId = objectId.parse("68bda53ea5c0a2f0ac69dd3e");
 
-  const user: RegisterSchema = {
+  const user: RegisterRequest = {
     username: newUsername,
     email: "test@example.com",
     password: newPassword,
@@ -30,7 +37,7 @@ export default function Home() {
         {mongooseId.toString()}
         <Users />
         {/* Validation test */}
-        <p>Validation test: {JSON.stringify(registerSchema.parse(user))}</p>
+        <p>Validation test: {JSON.stringify(registerRequestSchema.parse(user))}</p>
         <p>User is only available in the server component in next.js</p>
         <Button />
         <ol className="list-inside list-decimal text-center font-[family-name:var(--font-geist-mono)] text-sm/6 sm:text-left">

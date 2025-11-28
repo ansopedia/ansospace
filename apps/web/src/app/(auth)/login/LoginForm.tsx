@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { useLogin } from "@ansospace/react";
-import type { Login } from "@ansospace/types";
-import { loginSchema } from "@ansospace/types";
+import type { LoginRequest } from "@ansospace/types";
+import { loginRequestSchema } from "@ansospace/types";
 import { Button, Checkbox, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,14 +20,14 @@ export const LoginForm = () => {
   const [rememberMe, setRememberMe] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginRequestSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = async (body: Login) => {
+  const onSubmit = async (body: LoginRequest) => {
     const response = await login(body);
     if (response.status === "success") {
       router.replace("/dashboard");

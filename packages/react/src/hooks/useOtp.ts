@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import type { OtpEvent, OtpVerifyEvent, SendOtpResponse, VerifyOtpResponse } from "@ansospace/types";
+import type { SendOtpRequest, SendOtpResponse, VerifyOtpRequest, VerifyOtpResponse } from "@ansospace/types";
 import { IApiResponse, NotificationType } from "@ansospace/types";
 
 import { useAuthContext } from "../providers/AuthProvider";
@@ -16,7 +16,7 @@ export const useOtp = () => {
   const [verifyOtpData, setVerifyOtpData] = useState<IApiResponse<VerifyOtpResponse> | null>(null);
 
   const sendOtp = useCallback(
-    async (body: OtpEvent): Promise<IApiResponse<SendOtpResponse>> => {
+    async (body: SendOtpRequest): Promise<IApiResponse<SendOtpResponse>> => {
       setSendOtpLoading(true);
       setSendOtpError(null);
       setSendOtpData(null);
@@ -36,7 +36,7 @@ export const useOtp = () => {
   );
 
   const verifyOtp = useCallback(
-    async (body: Omit<OtpVerifyEvent, "token">): Promise<IApiResponse<{ actionToken: string }>> => {
+    async (body: Omit<VerifyOtpRequest, "actionToken">): Promise<IApiResponse<{ actionToken: string }>> => {
       setVerifyOtpLoading(true);
       setVerifyOtpError(null);
       setVerifyOtpData(null);

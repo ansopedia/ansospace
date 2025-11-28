@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 
-import { IApiResponse, RegisterResponse, RegisterSchema } from "@ansospace/types";
+import { IApiResponse, RegisterRequest, RegisterResponse } from "@ansospace/types";
 
 import { useAuthContext } from "../providers/AuthProvider";
 
 interface UseRegisterResult {
-  register: (body: RegisterSchema) => Promise<IApiResponse<RegisterResponse>>;
+  register: (body: RegisterRequest) => Promise<IApiResponse<RegisterResponse>>;
   loading: boolean;
   error: Error | null;
   data: IApiResponse<RegisterResponse> | null;
@@ -18,7 +18,7 @@ export const useRegister = (): UseRegisterResult => {
   const [data, setData] = useState<IApiResponse<RegisterResponse> | null>(null);
 
   const register = useCallback(
-    async (body: RegisterSchema): Promise<IApiResponse<RegisterResponse>> => {
+    async (body: RegisterRequest): Promise<IApiResponse<RegisterResponse>> => {
       setLoading(true);
       setError(null);
       setData(null);

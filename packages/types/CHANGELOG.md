@@ -1,10 +1,46 @@
 # @ansospace/types
 
-## 0.4.2
+## 0.5.0
 
-- Replace signup terminology with register
-  - `signUpResponseSchema` => `registerResponseSchema`
-  - `SignUpResponse` => `RegisterResponse`
+### Minor Changes
+
+- **BREAKING:** Standardized naming convention for request types and schemas
+  - All request types now follow the `*Request` naming pattern
+  - All request schemas now follow the `*RequestSchema` naming pattern
+  - Response types continue to use the `*Response` pattern
+  - **Type renames:**
+    - `SignUpResponse` => `RegisterResponse`
+    - `Login` → `LoginRequest`
+    - `RegisterSchema` → `RegisterRequest`
+    - `OtpEvent` → `SendOtpRequest`
+    - `OtpVerifyEvent` → `VerifyOtpRequest`
+    - `ResetPassword` → `ResetPasswordRequest`
+  - **Schema renames:**
+    - `signUpResponseSchema` => `registerResponseSchema`
+    - `loginSchema` → `loginRequestSchema`
+    - `registerSchema` → `registerRequestSchema`
+    - `otpEventSchema` → `sendOtpRequestSchema`
+    - `otpVerifyEventSchema` → `verifyOtpRequestSchema`
+    - `resetPasswordSchema` → `resetPasswordRequestSchema`
+  - **Added missing type:**
+    - `AutoLoginRequest` (previously used inline `{ actionToken: string }`)
+- **BREAKING:** Improved naming for better readability and consistency
+  - `verifyOtpRequestSchema.token` → `verifyOtpRequestSchema.actionToken`
+  - `sendOtpResponseSchema.token` → `sendOtpResponseSchema.actionToken`
+  - `resetPasswordRequestSchema.token` → `resetPasswordRequestSchema.actionToken`
+  - All OTP-related token fields now use `actionToken` for clarity
+- Added shared HTTP header constants (`HttpHeaders`) for consistent header naming across frontend and backend
+  - `HttpHeaders.AUTHORIZATION` - "Authorization" (for request headers)
+  - `HttpHeaders.AUTHORIZATION_LOWERCASE` - "authorization" (for response headers)
+  - `HttpHeaders.REFRESH_TOKEN` - "refresh-token" (for response headers)
+  - `HttpHeaders.CONTENT_TYPE` - "Content-Type" (for request headers)
+  - Replaces hardcoded header strings with type-safe constants
+- Reorganized and grouped types for better maintainability
+  - Grouped related types by purpose (Base, Request, Response, Entity)
+  - Moved `RegisterRequest` and `ResetPasswordRequest` from `user.ts` to `auth.ts`
+  - Moved `otpSchema` from `auth.ts` to `otp.ts` for better organization
+  - Added clear section headers for improved readability
+- Added ESLint configuration to the types package for code quality and consistency
 
 ## 0.4.2
 

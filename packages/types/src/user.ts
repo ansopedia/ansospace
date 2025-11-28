@@ -3,12 +3,57 @@ import z from "zod";
 import { emailSchema, passwordSchema, usernameSchema } from "./auth";
 import { objectId } from "./common";
 
-export const userRoleSchema = z.object({
-  userId: objectId,
-  roleId: objectId,
+// ============================================================================
+// USER ENTITY SCHEMAS
+// ============================================================================
+
+export const userSchema = z.object({
+  id: objectId,
+  googleId: z.string().optional(),
+  username: usernameSchema,
+  email: emailSchema,
+  password: passwordSchema,
+  confirmPassword: passwordSchema,
+  isEmailVerified: z.boolean().default(false),
+  isDeleted: z.boolean().default(false),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
 
-export type UserRole = z.infer<typeof userRoleSchema>;
+export type User = z.infer<typeof userSchema>;
+
+// ============================================================================
+// USER REQUEST SCHEMAS
+// ============================================================================
+
+export const updateUserSchema = userSchema
+  .partial() // Make all keys optional
+  .refine((data) => {
+    // Check if at least one key is present
+    const hasValues = Object.values(data).some((value) => value !== undefined);
+    if (!hasValues) {
+      throw new Error("At least one field is required for user update");
+    }
+    return true;
+  });
+
+export type UpdateUser = z.infer<typeof updateUserSchema>;
+
+// ============================================================================
+// USER RESPONSE SCHEMAS
+// ============================================================================
+
+export const getUserSchema = userSchema.omit({
+  password: true,
+  confirmPassword: true,
+  isDeleted: true,
+});
+
+export type GetUser = z.infer<typeof getUserSchema>;
+
+// ============================================================================
+// ROLE ENTITY SCHEMAS
+// ============================================================================
 
 const roleSchema = z.object({
   id: objectId,
@@ -27,6 +72,12 @@ const roleSchema = z.object({
   updatedBy: objectId,
 });
 
+export type Role = z.infer<typeof roleSchema>;
+
+// ============================================================================
+// ROLE REQUEST SCHEMAS
+// ============================================================================
+
 export const createRoleSchema = roleSchema.omit({
   id: true,
   createdAt: true,
@@ -34,13 +85,21 @@ export const createRoleSchema = roleSchema.omit({
   updatedBy: true,
 });
 
-export const validateRoleNameSchema = roleSchema.pick({ name: true });
+export type CreateRole = z.infer<typeof createRoleSchema>;
 
 export const updateRoleSchema = roleSchema.partial({
   name: true,
   description: true,
   updatedBy: true,
 });
+
+export type UpdateRole = z.infer<typeof updateRoleSchema>;
+
+export const validateRoleNameSchema = roleSchema.pick({ name: true });
+
+// ============================================================================
+// ROLE RESPONSE SCHEMAS
+// ============================================================================
 
 export const getRoleSchema = roleSchema.omit({
   createdBy: true,
@@ -49,9 +108,11 @@ export const getRoleSchema = roleSchema.omit({
   isSystemRole: true,
 });
 
-export type Role = z.infer<typeof roleSchema>;
-export type CreateRole = z.infer<typeof createRoleSchema>;
 export type GetRole = z.infer<typeof getRoleSchema>;
+
+// ============================================================================
+// PERMISSION ENTITY SCHEMAS
+// ============================================================================
 
 export const PermissionCategory = {
   USER_MANAGEMENT: "USER_MANAGEMENT",
@@ -63,9 +124,6 @@ export const PermissionCategory = {
   COURSE_MANAGEMENT: "COURSE_MANAGEMENT",
   PERMISSION_MANAGEMENT: "PERMISSION_MANAGEMENT",
 } as const;
-
-export const Genders = ["male", "female", "non-binary", "other"] as const;
-export const Pronouns = ["he/him", "she/her", "they/them", "other"] as const;
 
 const permissionSchema = z.object({
   id: objectId,
@@ -84,6 +142,12 @@ const permissionSchema = z.object({
   updatedBy: objectId,
 });
 
+export type Permission = z.infer<typeof permissionSchema>;
+
+// ============================================================================
+// PERMISSION REQUEST SCHEMAS
+// ============================================================================
+
 export const createPermissionSchema = permissionSchema.omit({
   id: true,
   createdAt: true,
@@ -91,7 +155,13 @@ export const createPermissionSchema = permissionSchema.omit({
   updatedBy: true,
 });
 
+export type CreatePermission = z.infer<typeof createPermissionSchema>;
+
 export const validatePermissionNameSchema = permissionSchema.pick({ name: true });
+
+// ============================================================================
+// PERMISSION RESPONSE SCHEMAS
+// ============================================================================
 
 export const getPermissionSchema = permissionSchema.omit({
   createdBy: true,
@@ -99,9 +169,18 @@ export const getPermissionSchema = permissionSchema.omit({
   isDeleted: true,
 });
 
-export type Permission = z.infer<typeof permissionSchema>;
-export type CreatePermission = z.infer<typeof createPermissionSchema>;
 export type GetPermission = z.infer<typeof getPermissionSchema>;
+
+// ============================================================================
+// ROLE-PERMISSION RELATIONSHIP SCHEMAS
+// ============================================================================
+
+export const userRoleSchema = z.object({
+  userId: objectId,
+  roleId: objectId,
+});
+
+export type UserRole = z.infer<typeof userRoleSchema>;
 
 export const rolePermissionSchema = z.object({
   roleId: objectId,
@@ -110,97 +189,12 @@ export const rolePermissionSchema = z.object({
 
 export type RolePermission = z.infer<typeof rolePermissionSchema>;
 
-export const userSchema = z.object({
-  id: objectId,
-  googleId: z.string().optional(),
-  username: usernameSchema,
-  email: emailSchema,
-  password: passwordSchema,
-  confirmPassword: passwordSchema,
-  isEmailVerified: z.boolean().default(false),
-  isDeleted: z.boolean().default(false),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
+// ============================================================================
+// PROFILE SCHEMAS
+// ============================================================================
 
-const createUserWithGoogleSchema = userSchema
-  .extend({
-    googleId: z.string(),
-  })
-  .pick({
-    email: true,
-    username: true,
-    isEmailVerified: true,
-    googleId: true,
-  });
-
-const createUserWithEmailAndPasswordSchema = userSchema
-  .pick({
-    email: true,
-    username: true,
-    password: true,
-    confirmPassword: true,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Confirm password does not match password",
-    path: ["confirmPassword"],
-  });
-
-export const registerSchema = z.union([createUserWithEmailAndPasswordSchema, createUserWithGoogleSchema]);
-
-export const updateUserSchema = userSchema
-  .partial() // Make all keys optional
-  .refine((data) => {
-    // Check if at least one key is present
-    const hasValues = Object.values(data).some((value) => value !== undefined);
-    if (!hasValues) {
-      throw new Error("At least one field is required for user update");
-    }
-    return true;
-  });
-
-export const getUserSchema = userSchema.omit({
-  password: true,
-  confirmPassword: true,
-  isDeleted: true,
-});
-
-export const resetPasswordSchema = userSchema
-  .pick({ password: true, confirmPassword: true })
-  .extend({
-    token: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Confirm password does not match password",
-    path: ["confirmPassword"],
-  });
-
-export type User = z.infer<typeof userSchema>;
-export type RegisterSchema = z.infer<typeof registerSchema>;
-export type UpdateUser = z.infer<typeof updateUserSchema>;
-export type GetUser = z.infer<typeof getUserSchema>;
-export type ResetPassword = z.infer<typeof resetPasswordSchema>;
-
-export interface UserRolePermission {
-  _id: string;
-  username: string;
-  email: string;
-  roles: {
-    roleId: string;
-    roleName: string;
-    roleDescription: string;
-    permissions: {
-      _id: string;
-      name: string;
-      description: string;
-    }[];
-  }[];
-  allPermissions: {
-    _id: string;
-    name: string;
-    description: string;
-  }[];
-}
+export const Genders = ["male", "female", "non-binary", "other"] as const;
+export const Pronouns = ["he/him", "she/her", "they/them", "other"] as const;
 
 export const profileSchema = z.object({
   userId: objectId,
@@ -230,6 +224,9 @@ export const profileSchema = z.object({
   isPublic: z.boolean().optional(),
 });
 
+export type ProfileData = z.infer<typeof profileSchema>;
+export type CreateProfileData = Omit<ProfileData, "userId">;
+
 export const toggleVisibilitySchema = z.object({
   isPublic: z.boolean(),
 });
@@ -253,5 +250,27 @@ export const validateProfileSchema = (data: ProfileData) => {
   return profileSchema.parse(data);
 };
 
-export type ProfileData = z.infer<typeof profileSchema>;
-export type CreateProfileData = Omit<ProfileData, "userId">;
+// ============================================================================
+// USER ROLE PERMISSION AGGREGATE TYPE
+// ============================================================================
+
+export interface UserRolePermission {
+  _id: string;
+  username: string;
+  email: string;
+  roles: {
+    roleId: string;
+    roleName: string;
+    roleDescription: string;
+    permissions: {
+      _id: string;
+      name: string;
+      description: string;
+    }[];
+  }[];
+  allPermissions: {
+    _id: string;
+    name: string;
+    description: string;
+  }[];
+}

@@ -1,37 +1,67 @@
 import z from "zod";
 
-import { emailSchema, otpSchema } from "./auth";
+import { emailSchema } from "./auth";
 import { objectId } from "./common";
 import { NotificationType, notificationTypeSchema } from "./notification";
 
+// ============================================================================
+// BASE OTP SCHEMA
+// ============================================================================
+
+export const otpSchema = z.string().length(6).brand<"Otp">();
+
+export type Otp = z.infer<typeof otpSchema>;
+
+// ============================================================================
+// OTP REQUEST SCHEMAS
+// ============================================================================
+
 // Define separate schemas for each OTP type
-const emailVerificationOtpSchema = z.object({
+const emailVerificationOtpRequestSchema = z.object({
   otpType: z.literal(NotificationType.EMAIL_VERIFICATION_OTP),
   email: emailSchema,
 });
 
-const forgetPasswordOtpSchema = z.object({
+const forgetPasswordOtpRequestSchema = z.object({
   otpType: z.literal(NotificationType.FORGET_PASSWORD_OTP),
   email: emailSchema,
 });
 
-// const phoneVerificationOtpSchema = z.object({
-//   otpType: z.literal(NotificationType.PHONE_VERIFICATION),
-//   phoneNumber: z.string().min(1, "Phone number is required"),
-// });
-
 // Use discriminatedUnion with the separate schemas
-export const otpEventSchema = z.discriminatedUnion("otpType", [
-  emailVerificationOtpSchema,
-  forgetPasswordOtpSchema,
-  // phoneVerificationOtpSchema,
+export const sendOtpRequestSchema = z.discriminatedUnion("otpType", [
+  emailVerificationOtpRequestSchema,
+  forgetPasswordOtpRequestSchema,
 ]);
 
-export const otpVerifyEventSchema = z.object({
+export type SendOtpRequest = z.infer<typeof sendOtpRequestSchema>;
+
+export const verifyOtpRequestSchema = z.object({
   otp: otpSchema,
   otpType: notificationTypeSchema,
-  token: z.string().min(1, "Token is required"),
+  actionToken: z.string().min(1, "Action token is required"),
 });
+
+export type VerifyOtpRequest = z.infer<typeof verifyOtpRequestSchema>;
+
+// ============================================================================
+// OTP RESPONSE SCHEMAS
+// ============================================================================
+
+export const sendOtpResponseSchema = z.object({
+  actionToken: z.string(),
+});
+
+export type SendOtpResponse = z.infer<typeof sendOtpResponseSchema>;
+
+export const verifyOtpResponseSchema = z.object({
+  actionToken: z.string(),
+});
+
+export type VerifyOtpResponse = z.infer<typeof verifyOtpResponseSchema>;
+
+// ============================================================================
+// OTP RECORD SCHEMAS (Database entities)
+// ============================================================================
 
 export const otpRecordSchema = z.object({
   id: objectId,
@@ -41,25 +71,23 @@ export const otpRecordSchema = z.object({
   otpType: notificationTypeSchema,
 });
 
+export type OtpRecord = z.infer<typeof otpRecordSchema>;
+
+// ============================================================================
+// OTP RECORD REQUEST SCHEMAS
+// ============================================================================
+
 export const saveOtpSchema = otpRecordSchema.omit({ id: true });
+
+export type SaveOtp = z.infer<typeof saveOtpSchema>;
+
+// ============================================================================
+// OTP RECORD RESPONSE SCHEMAS
+// ============================================================================
+
 export const getOtpSchema = otpRecordSchema.pick({
   userId: true,
   otpType: true,
 });
 
-export const sendOtpResponse = z.object({
-  token: z.string(),
-});
-
-export const verifyOtpResponse = z.object({
-  actionToken: z.string(),
-});
-
-// Update types based on the new schemas
-export type OtpRecord = z.infer<typeof otpRecordSchema>;
-export type OtpEvent = z.infer<typeof otpEventSchema>;
 export type GetOtp = z.infer<typeof getOtpSchema>;
-export type SaveOtp = z.infer<typeof saveOtpSchema>;
-export type OtpVerifyEvent = z.infer<typeof otpVerifyEventSchema>;
-export type SendOtpResponse = z.infer<typeof sendOtpResponse>;
-export type VerifyOtpResponse = z.infer<typeof verifyOtpResponse>;

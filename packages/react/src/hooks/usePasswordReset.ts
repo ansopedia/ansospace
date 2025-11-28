@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import type { OtpEvent, OtpVerifyEvent, ResetPassword, SendOtpResponse } from "@ansospace/types";
+import type { ResetPasswordRequest, SendOtpRequest, SendOtpResponse, VerifyOtpRequest } from "@ansospace/types";
 import { IApiResponse } from "@ansospace/types";
 
 import { useAuthContext } from "../providers/AuthProvider";
@@ -21,7 +21,7 @@ export const usePasswordReset = () => {
   const [resetData, setResetData] = useState<IApiResponse<void> | null>(null);
 
   const sendPasswordResetOtp = useCallback(
-    async (body: OtpEvent): Promise<IApiResponse<SendOtpResponse>> => {
+    async (body: SendOtpRequest): Promise<IApiResponse<SendOtpResponse>> => {
       setSendLoading(true);
       setSendError(null);
       setSendData(null);
@@ -41,7 +41,7 @@ export const usePasswordReset = () => {
   );
 
   const verifyPasswordResetOtp = useCallback(
-    async (body: Omit<OtpVerifyEvent, "token">): Promise<IApiResponse<{ actionToken: string }>> => {
+    async (body: Omit<VerifyOtpRequest, "actionToken">): Promise<IApiResponse<{ actionToken: string }>> => {
       setVerifyLoading(true);
       setVerifyError(null);
       setVerifyData(null);
@@ -62,7 +62,7 @@ export const usePasswordReset = () => {
   );
 
   const resetPassword = useCallback(
-    async (body: ResetPassword): Promise<IApiResponse<void>> => {
+    async (body: ResetPasswordRequest): Promise<IApiResponse<void>> => {
       setResetLoading(true);
       setResetError(null);
       setResetData(null);

@@ -1,6 +1,7 @@
 import z from "zod";
 
-import { emailSchema, otpSchema } from "./auth";
+import { emailSchema } from "./auth";
+import { otpSchema } from "./otp";
 
 export const NotificationType = {
   // Email verification
@@ -32,7 +33,7 @@ export const NotificationType = {
   // NEWSLETTER_OPT_IN :"newsletterOptIn",
   // ACCOUNT_LOCKOUT :"accountLockout",
   // PASSWORD_EXPIRATION_REMINDER :"passwordExpirationReminder",
-};
+} as const;
 
 export const otpValidatorSchema = z.string().length(6, "OTP must be exactly 6 characters");
 
@@ -128,6 +129,7 @@ export type EmailVerificationOtpPayload = z.infer<typeof emailVerificationOtpPay
 export const UserActionType = {
   // Authentication actions
   VERIFY_EMAIL: "verifyEmail",
+  // eslint-disable-next-line -- Not a hardcoded password, just an action type identifier
   RESET_PASSWORD: "resetPassword",
   AUTO_LOGIN: "autoLogin",
   DELETE_ACCOUNT: "deleteAccount",

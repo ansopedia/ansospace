@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 
-import { IApiResponse, IApiResponseFailed, Login, LoginResponse } from "@ansospace/types";
+import { IApiResponse, IApiResponseFailed, LoginRequest, LoginResponse } from "@ansospace/types";
 
 import { useAuthContext } from "../providers/AuthProvider";
 
 interface UseLoginResult {
-  login: (body: Login) => Promise<IApiResponse<LoginResponse>>;
+  login: (body: LoginRequest) => Promise<IApiResponse<LoginResponse>>;
   loading: boolean;
   error: IApiResponseFailed | Error | null;
   data: IApiResponse<LoginResponse> | null;
@@ -18,7 +18,7 @@ export const useLogin = (): UseLoginResult => {
   const [data, setData] = useState<IApiResponse<LoginResponse> | null>(null);
 
   const login = useCallback(
-    async (body: Login): Promise<IApiResponse<LoginResponse>> => {
+    async (body: LoginRequest): Promise<IApiResponse<LoginResponse>> => {
       setLoading(true);
       setError(null);
       setData(null);

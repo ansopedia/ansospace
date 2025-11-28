@@ -1,7 +1,7 @@
 "use client";
 
 import { usePasswordReset } from "@ansospace/react";
-import { ResetPassword, resetPasswordSchema } from "@ansospace/types";
+import { ResetPasswordRequest, resetPasswordRequestSchema } from "@ansospace/types";
 import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,12 +21,12 @@ export function PasswordResetNewPasswordForm({
   const { resetPassword, resetLoading } = usePasswordReset();
 
   const form = useForm({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { password: "", confirmPassword: "", token: "" },
+    resolver: zodResolver(resetPasswordRequestSchema),
+    defaultValues: { password: "", confirmPassword: "", actionToken: "" },
   });
 
-  const onSubmit = async ({ password, confirmPassword }: Omit<ResetPassword, "token">) => {
-    const resp = await resetPassword({ token: actionToken, password, confirmPassword });
+  const onSubmit = async ({ password, confirmPassword }: Omit<ResetPasswordRequest, "actionToken">) => {
+    const resp = await resetPassword({ actionToken, password, confirmPassword });
     if (resp.status === "success") {
       toast.success("Password reset successful. Please login");
       onSuccess();
