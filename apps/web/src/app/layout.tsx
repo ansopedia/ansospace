@@ -1,34 +1,35 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 
 import "@ansospace/ui/globals.css";
 
 import { env } from "../lib/env";
 import { Providers } from "./providers";
 
-export interface RootLayoutProps {
-  children: React.ReactNode;
-}
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
-export default async function RootLayout({ children }: Readonly<RootLayoutProps>): Promise<React.ReactElement> {
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "AnsoSpace",
+  description: "AnsoSpace - Your learning platform for comprehensive education and skill development",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={"font-sans antialiased"}>
-        <Providers baseUrl={env.USER_SERVICE_URL}>
-          <nav>
-            <ul>
-              <li>
-                <Link href="/">Home</Link>
-              </li>
-              <li>
-                <Link href="/login">login</Link>
-              </li>
-              <li>
-                <Link href="/dashboard">dashboard</Link>
-              </li>
-            </ul>
-          </nav>
-          {children}
-        </Providers>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Providers baseUrl={env.USER_SERVICE_URL}>{children}</Providers>
       </body>
     </html>
   );
