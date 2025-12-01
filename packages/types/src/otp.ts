@@ -2,7 +2,7 @@ import z from "zod";
 
 import { emailSchema } from "./auth";
 import { objectId } from "./common";
-import { NotificationType, notificationTypeSchema } from "./notification";
+import { NotificationType, notificationTypeSchema } from "./notificationTypes";
 
 // ============================================================================
 // BASE OTP SCHEMA

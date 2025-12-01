@@ -60,8 +60,8 @@
     }
   },
   "optionalDependencies": {
-    "eslint-config-next": "16.0.3",
-    "@next/eslint-plugin-next": "16.0.5"
+    "eslint-config-next": "16.0.6",
+    "@next/eslint-plugin-next": "16.0.6"
   },
   "publishConfig": {
     "access": "public"

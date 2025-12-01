@@ -1,4 +1,4 @@
 pnpm format
 pnpm lint
-pnpm build
 pnpm typecheck
+pnpm build

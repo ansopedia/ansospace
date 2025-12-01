@@ -1,7 +1,7 @@
 import z from "zod";
 
 import { deviceId, objectId } from "./common";
-import { userActionTypeSchema } from "./notification";
+import { userActionTypeSchema } from "./notificationTypes";
 
 /**
  * Token types used for both HTTP headers and storage keys
