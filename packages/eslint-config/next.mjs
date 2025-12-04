@@ -11,7 +11,7 @@ import { baseConfig } from "./base.mjs";
  * Note: This does NOT depend on `next` being installed.
  */
 export const nextConfig = [
-  ...baseConfig, // base rules (TypeScript, Prettier, Turbo)
+  ...baseConfig, // base rules (TypeScript, SonarJS, Prettier)
   ...nextVitals,
   ...nextTs,
   {

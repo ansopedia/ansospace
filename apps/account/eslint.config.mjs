@@ -1,3 +1,6 @@
 import { nextConfig } from "@ansospace/eslint-config/next-js";
+import turboConfig from "@ansospace/eslint-config/turbo";
 
-export default nextConfig;
+const config = [...turboConfig, ...nextConfig];
+
+export default config;

@@ -1,3 +1,6 @@
 import { reactConfig } from "@ansospace/eslint-config/react";
+import turboConfig from "@ansospace/eslint-config/turbo";
 
-export default reactConfig;
+const config = [...turboConfig, ...reactConfig];
+
+export default config;

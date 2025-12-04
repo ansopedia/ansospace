@@ -22,13 +22,13 @@ yarn add -D @ansospace/eslint-config
 - **Next.js Support**: Next.js specific rules via `next-js` config
 - **Node.js/Express Support**: Node.js and Express.js optimized config via `node` config
 - **Prettier Integration**: Prevents conflicts with Prettier formatting
-- **Turbo Support**: Turbo-specific rules for monorepo optimization
+- **Turbo Support**: Optional Turbo-specific rules for Turborepo monorepos via `turbo` config
 
 ## Configurations
 
 ### Base Configuration
 
-The base configuration includes TypeScript, SonarJS, and common rules.
+The base configuration includes TypeScript, SonarJS, and common rules. Use this for non-Turborepo projects.
 
 ```javascript
 // eslint.config.js (ESLint 9+ flat config)
@@ -36,6 +36,8 @@ import { baseConfig } from "@ansospace/eslint-config/base";
 
 export default [...baseConfig];
 ```
+
+**Note:** If you're in a Turborepo monorepo, you can add Turbo support on top of any config. See the Turborepo section below.
 
 ### React Libraries
 
@@ -65,6 +67,47 @@ For Node.js and Express.js backend applications:
 import { nodeConfig } from "@ansospace/eslint-config/node";
 
 export default [...nodeConfig];
+```
+
+### Turborepo Monorepos
+
+For Turborepo monorepos, you have two options:
+
+#### Option 1: Use the turbo config directly
+
+```javascript
+import turboConfig from "@ansospace/eslint-config/turbo";
+
+export default turboConfig;
+```
+
+#### Option 2: Combine turbo config with framework-specific configs
+
+For React projects in a Turborepo:
+
+```javascript
+import { reactConfig } from "@ansospace/eslint-config/react";
+import turboConfig from "@ansospace/eslint-config/turbo";
+
+export default [...turboConfig, ...reactConfig];
+```
+
+For Next.js projects in a Turborepo:
+
+```javascript
+import { nextConfig } from "@ansospace/eslint-config/next-js";
+import turboConfig from "@ansospace/eslint-config/turbo";
+
+export default [...turboConfig, ...nextConfig];
+```
+
+For Node.js projects in a Turborepo:
+
+```javascript
+import { nodeConfig } from "@ansospace/eslint-config/node";
+import turboConfig from "@ansospace/eslint-config/turbo";
+
+export default [...turboConfig, ...nodeConfig];
 ```
 
 #### What's Included
@@ -163,7 +206,7 @@ export default [
 ];
 ```
 
-#### TypeScript Support
+#### TypeScript Support in Node.js
 
 For TypeScript files, the config automatically:
 
@@ -210,6 +253,7 @@ The config automatically ignores:
 - `react`: For React libraries and components
 - `next-js`: For Next.js applications
 - `node`: For Node.js and Express.js backend applications
+- `turbo`: For Turborepo monorepos (optional, only use if you have a turbo.json)
 
 ## SonarJS Rules
 

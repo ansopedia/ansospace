@@ -1,3 +1,3 @@
-import { baseConfig } from "@ansospace/eslint-config/base";
+import turboConfig from "@ansospace/eslint-config/turbo";
 
-export default [...baseConfig];
+export default turboConfig;

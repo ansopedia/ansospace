@@ -1,7 +1,6 @@
 import js from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import sonarjsPlugin from "eslint-plugin-sonarjs";
-import turboPlugin from "eslint-plugin-turbo";
 import tseslint from "typescript-eslint";
 
 /**
@@ -15,11 +14,8 @@ export const baseConfig = [
   {
     plugins: {
       sonarjs: sonarjsPlugin,
-      turbo: turboPlugin,
     },
     rules: {
-      // Turbo rules
-      "turbo/no-undeclared-env-vars": "warn",
       // Code style rules
       semi: ["error"],
       "no-console": ["warn"],
