@@ -40,7 +40,8 @@ export type Password = z.infer<typeof passwordSchema>;
 export const emailSchema = z
   .email({ message: "Invalid email format" })
   .min(1, { message: "Email is required" })
-  .transform((val) => val.toLowerCase().trim());
+  .transform((val) => val.toLowerCase().trim())
+  .brand<"Email">();
 
 export type Email = z.infer<typeof emailSchema>;
 

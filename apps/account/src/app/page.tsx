@@ -1,5 +1,5 @@
 import type { Otp, RegisterRequest } from "@ansospace/types";
-import { objectId, passwordSchema, registerRequestSchema, usernameSchema } from "@ansospace/types";
+import { emailSchema, objectId, passwordSchema, registerRequestSchema, usernameSchema } from "@ansospace/types";
 import { Button } from "@ansospace/ui/components";
 import { ThemeToggle } from "@ansospace/ui/theme";
 
@@ -10,11 +10,12 @@ import { env } from "../lib/env";
 const page = () => {
   const newUsername = usernameSchema.parse("username");
   const newPassword = passwordSchema.parse("Password123!");
+  const newEmail = emailSchema.parse("test@example.com");
 
   const mongooseId = objectId.parse("68bda53ea5c0a2f0ac69dd3e");
   const user: RegisterRequest = {
     username: newUsername,
-    email: "test@example.com",
+    email: newEmail,
     password: newPassword,
     confirmPassword: newPassword,
   };

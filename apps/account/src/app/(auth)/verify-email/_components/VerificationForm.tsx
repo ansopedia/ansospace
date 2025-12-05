@@ -1,10 +1,10 @@
-import { NotificationType } from "@ansospace/types";
+import { Email, NotificationType } from "@ansospace/types";
 
 import { AuthFlowCard } from "@/components/auth/AuthFlowCard";
 import { VerifyOtpForm } from "@/components/auth/VerifyOtpForm";
 
 interface VerificationFormProps {
-  userEmail: string;
+  userEmail: Email;
   isOtpSent: boolean;
   onOtpSent: () => void;
   onSuccess: () => void;

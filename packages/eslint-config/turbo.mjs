@@ -7,7 +7,7 @@ import { baseConfig } from "./base.mjs";
  * Extends base config with Turbo-specific rules.
  * Use this config only if your project uses Turborepo.
  */
-export default [
+export const turboConfig = [
   ...baseConfig,
   {
     plugins: {

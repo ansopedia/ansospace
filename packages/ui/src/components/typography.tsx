@@ -53,7 +53,8 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement>, Vari
 }
 
 const Typography = ({ className, variant, as, asChild, ...props }: TypographyProps) => {
-  const Comp = asChild ? Slot : (as ?? (variant ? variantElementMap[variant] : "p"));
+  const element = variant ? variantElementMap[variant] : "p";
+  const Comp = asChild ? Slot : (as ?? element);
   return <Comp className={cn(typographyVariants({ variant, className }))} {...props} />;
 };
 

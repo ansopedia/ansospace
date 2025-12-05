@@ -1,7 +1,7 @@
 "use client";
 
 import { usePasswordReset } from "@ansospace/react";
-import { NotificationType, emailSchema } from "@ansospace/types";
+import { Email, NotificationType, emailSchema } from "@ansospace/types";
 import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -11,13 +11,12 @@ import { AuthFields } from "@/components/auth/AuthFields";
 import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
 const schema = z.object({ email: emailSchema });
-type Values = z.infer<typeof schema>;
 
 const FORGOT_PASSWORD_FIELDS = AUTH_FORM_FIELDS.filter((f) => ["email"].includes(f.name));
 
-export function PasswordResetEmailForm({ onSuccess }: { onSuccess: (data: { token: string; email: string }) => void }) {
+export function PasswordResetEmailForm({ onSuccess }: { onSuccess: (data: { token: string; email: Email }) => void }) {
   const { sendPasswordResetOtp, sendLoading } = usePasswordReset();
-  const form = useForm<Values>({
+  const form = useForm({
     resolver: zodResolver(schema),
     mode: "onTouched",
     defaultValues: { email: "" },

@@ -176,19 +176,37 @@ export type GetPermission = z.infer<typeof getPermissionSchema>;
 // ============================================================================
 
 export const userRoleSchema = z.object({
+  id: objectId,
   userId: objectId,
   roleId: objectId,
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
 
 export type UserRole = z.infer<typeof userRoleSchema>;
 
 export const rolePermissionSchema = z.object({
+  id: objectId,
   roleId: objectId,
   permissionId: objectId,
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
 
 export type RolePermission = z.infer<typeof rolePermissionSchema>;
 
+export const createRolePermissionBodySchema = z.object({
+  permissionIds: z.array(objectId).min(1, "At least one permission is required"),
+});
+
+export type CreateRolePermissionBody = z.infer<typeof createRolePermissionBodySchema>;
+
+
+export const assignUserRoleBodySchema = z.object({
+  roleIds: z.array(objectId).min(1, "At least one Role ID is required"),
+});
+
+export type AssignUserRoleBody = z.infer<typeof assignUserRoleBodySchema>;
 // ============================================================================
 // PROFILE SCHEMAS
 // ============================================================================
@@ -224,7 +242,10 @@ export const profileSchema = z.object({
   isPublic: z.boolean().optional(),
 });
 
+
 export type ProfileData = z.infer<typeof profileSchema>;
+
+export const createProfileBodySchema= profileSchema.omit({userId: true});
 export type CreateProfileData = Omit<ProfileData, "userId">;
 
 export const toggleVisibilitySchema = z.object({

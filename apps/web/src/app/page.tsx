@@ -3,6 +3,7 @@ import Image from "next/image";
 import {
   Otp,
   RegisterRequest,
+  emailSchema,
   objectId,
   passwordSchema,
   registerRequestSchema,
@@ -17,10 +18,11 @@ export default function Home() {
   const newUsername = usernameSchema.parse("username");
   const newPassword = passwordSchema.parse("Password123!");
   const mongooseId = objectId.parse("68bda53ea5c0a2f0ac69dd3e");
+  const newEmail = emailSchema.parse("test@example.com");
 
   const user: RegisterRequest = {
     username: newUsername,
-    email: "test@example.com",
+    email: newEmail,
     password: newPassword,
     confirmPassword: newPassword,
   };

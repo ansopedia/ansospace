@@ -141,37 +141,112 @@ export class HttpClient {
   }
 
   /**
+   * Prepare headers with tokens and device ID
+   */
+  private async prepareHeaders(method: HttpMethod, fetchOptions: RequestOptions): Promise<Headers> {
+    const accessTokenValue = await this.storage.get(TokenType.AUTHORIZATION);
+    const accessToken = accessTokenValue ? String(accessTokenValue) : null;
+
+    const deviceIdValue = await this.storage.get(HttpHeaders.X_DEVICE_ID);
+    const deviceId = deviceIdValue ? String(deviceIdValue) : null;
+
+    const headers = new Headers({
+      ...this.defaultHeaders,
+      ...fetchOptions.headers,
+    });
+
+    if (!headers.has(HttpHeaders.CONTENT_TYPE) && method !== "GET") {
+      headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
+    }
+
+    if (accessToken && !headers.has(HttpHeaders.AUTHORIZATION)) {
+      headers.set(HttpHeaders.AUTHORIZATION, `Bearer ${accessToken}`);
+    }
+
+    if (deviceId && !headers.has(HttpHeaders.X_DEVICE_ID)) {
+      headers.set(HttpHeaders.X_DEVICE_ID, deviceId);
+    }
+
+    return headers;
+  }
+
+  /**
+   * Handle 401 response with token refresh
+   */
+  private async handle401Error<T>(
+    method: HttpMethod,
+    url: string,
+    options: RequestOptions,
+    _retry: boolean
+  ): Promise<IApiResponse<T> | null> {
+    if (url.includes("/auth/login")) {
+      return null;
+    }
+
+    if (this.isRefreshing) {
+      return new Promise<IApiResponse<T>>((resolve, reject) => {
+        this.failedQueue.push({
+          url,
+          method,
+          options,
+          resolve: resolve as (value: IApiResponse<unknown>) => void,
+          reject,
+        });
+      });
+    }
+
+    this.isRefreshing = true;
+
+    try {
+      await this.refreshToken();
+
+      const accessTokenValue = await this.storage.get(TokenType.AUTHORIZATION);
+
+      if (accessTokenValue && typeof accessTokenValue === "string") {
+        this.processQueue(null, accessTokenValue);
+      } else {
+        this.processQueue(new Error("Access token not found"), undefined);
+      }
+      return this.request<T>(method, url, { ...options, _retry: true });
+    } catch (refreshError) {
+      this.processQueue(refreshError, undefined);
+      throw refreshError;
+    } finally {
+      this.isRefreshing = false;
+    }
+  }
+
+  /**
+   * Handle network errors
+   */
+  private handleNetworkError<T>(error: unknown): IApiResponse<T> | null {
+    if (error instanceof Error) {
+      if (error.cause && (error.cause as { code?: string }).code === "ECONNREFUSED") {
+        return {
+          status: "failed",
+          message: "Could not connect to the server. Please check your network connection and try again.",
+          code: "network_error",
+        } as IApiResponse<T>;
+      }
+      if (error.message === "Failed to fetch") {
+        return {
+          status: "failed",
+          message: "Could not connect to the server. Please check your network connection and try again.",
+          code: "network_error",
+        } as IApiResponse<T>;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Main request method with automatic token injection and refresh
    */
   async request<T>(method: HttpMethod, url: string, options: RequestOptions = {}): Promise<IApiResponse<T>> {
     try {
-      const { body, _retry, ...fetchOptions } = options;
+      const { body, _retry = false, ...fetchOptions } = options;
 
-      // Use type-safe storage key constant
-      const accessTokenValue = await this.storage.get(TokenType.AUTHORIZATION);
-      const accessToken = accessTokenValue ? String(accessTokenValue) : null;
-
-      // Get device ID from storage
-      const deviceIdValue = await this.storage.get(HttpHeaders.X_DEVICE_ID);
-      const deviceId = deviceIdValue ? String(deviceIdValue) : null;
-
-      const headers = new Headers({
-        ...this.defaultHeaders,
-        ...fetchOptions.headers,
-      });
-
-      if (!headers.has(HttpHeaders.CONTENT_TYPE) && method !== "GET") {
-        headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
-      }
-
-      if (accessToken && !headers.has(HttpHeaders.AUTHORIZATION)) {
-        headers.set(HttpHeaders.AUTHORIZATION, `Bearer ${accessToken}`);
-      }
-
-      // Send device ID in request headers if available
-      if (deviceId && !headers.has(HttpHeaders.X_DEVICE_ID)) {
-        headers.set(HttpHeaders.X_DEVICE_ID, deviceId);
-      }
+      const headers = await this.prepareHeaders(method, fetchOptions);
 
       const response = await fetch(`${this.baseUrl}${url}`, {
         method,
@@ -182,45 +257,12 @@ export class HttpClient {
 
       const result = await this.handleResponse<T>(response);
 
-      // Extract and save tokens from response
       await this.extractAndSaveTokens(response, url);
 
-      // 401 Handling and Refresh Token Logic
       if (response.status === 401 && !_retry) {
-        if (url.includes("/auth/login")) {
-          return result;
-        }
-
-        if (this.isRefreshing) {
-          return new Promise<IApiResponse<T>>((resolve, reject) => {
-            this.failedQueue.push({
-              url,
-              method,
-              options,
-              resolve: resolve as (value: IApiResponse<unknown>) => void,
-              reject,
-            });
-          });
-        }
-
-        this.isRefreshing = true;
-
-        try {
-          await this.refreshToken();
-
-          const accessTokenValue = await this.storage.get(TokenType.AUTHORIZATION);
-
-          if (accessTokenValue && typeof accessTokenValue === "string") {
-            this.processQueue(null, accessTokenValue);
-          } else {
-            this.processQueue(new Error("Access token not found"), undefined);
-          }
-          return this.request<T>(method, url, { ...options, _retry: true });
-        } catch (refreshError) {
-          this.processQueue(refreshError, undefined);
-          throw refreshError;
-        } finally {
-          this.isRefreshing = false;
+        const errorResponse = await this.handle401Error<T>(method, url, options, _retry);
+        if (errorResponse !== null) {
+          return errorResponse as IApiResponse<T>;
         }
       }
 
@@ -230,21 +272,9 @@ export class HttpClient {
 
       return result;
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        if (error.cause && (error.cause as { code?: string }).code === "ECONNREFUSED") {
-          return {
-            status: "failed",
-            message: "Could not connect to the server. Please check your network connection and try again.",
-            code: "network_error",
-          } as IApiResponse<T>;
-        }
-        if (error.message === "Failed to fetch") {
-          return {
-            status: "failed",
-            message: "Could not connect to the server. Please check your network connection and try again.",
-            code: "network_error",
-          } as IApiResponse<T>;
-        }
+      const networkError = this.handleNetworkError<T>(error);
+      if (networkError !== null) {
+        return networkError;
       }
       throw error;
     }

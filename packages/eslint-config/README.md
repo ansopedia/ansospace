@@ -76,7 +76,7 @@ For Turborepo monorepos, you have two options:
 #### Option 1: Use the turbo config directly
 
 ```javascript
-import turboConfig from "@ansospace/eslint-config/turbo";
+import { turboConfig } from "@ansospace/eslint-config/turbo";
 
 export default turboConfig;
 ```
@@ -87,7 +87,7 @@ For React projects in a Turborepo:
 
 ```javascript
 import { reactConfig } from "@ansospace/eslint-config/react";
-import turboConfig from "@ansospace/eslint-config/turbo";
+import { turboConfig } from "@ansospace/eslint-config/turbo";
 
 export default [...turboConfig, ...reactConfig];
 ```
@@ -96,7 +96,7 @@ For Next.js projects in a Turborepo:
 
 ```javascript
 import { nextConfig } from "@ansospace/eslint-config/next-js";
-import turboConfig from "@ansospace/eslint-config/turbo";
+import { turboConfig } from "@ansospace/eslint-config/turbo";
 
 export default [...turboConfig, ...nextConfig];
 ```
@@ -105,7 +105,7 @@ For Node.js projects in a Turborepo:
 
 ```javascript
 import { nodeConfig } from "@ansospace/eslint-config/node";
-import turboConfig from "@ansospace/eslint-config/turbo";
+import { turboConfig } from "@ansospace/eslint-config/turbo";
 
 export default [...turboConfig, ...nodeConfig];
 ```

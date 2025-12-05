@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { NotificationType } from "@ansospace/types";
+import { Email, NotificationType } from "@ansospace/types";
 import { KeyRound, Lock, Mail } from "lucide-react";
 
 import { AuthFlowCard } from "@/components/auth/AuthFlowCard";
@@ -15,7 +15,7 @@ import { PasswordResetNewPasswordForm } from "./PasswordResetNewPasswordForm";
 
 export const PasswordResetFlow = () => {
   const [step, setStep] = useState<"email" | "otp" | "reset" | "success">("email");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState<Email>();
   const [token, setToken] = useState<string | null>(null);
   const [actionToken, setActionToken] = useState<string | null>(null);
 
@@ -43,7 +43,7 @@ export const PasswordResetFlow = () => {
   }
 
   // OTP Verification Step
-  if (step === "otp" && token) {
+  if (step === "otp" && token && email) {
     return (
       <>
         <AuthFlowHeader

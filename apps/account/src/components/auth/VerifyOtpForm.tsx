@@ -3,7 +3,7 @@
 import { FC } from "react";
 
 import { useOtp } from "@ansospace/react";
-import { NotificationType, otpSchema } from "@ansospace/types";
+import { Email, NotificationType, otpSchema } from "@ansospace/types";
 import {
   Button,
   Form,
@@ -30,7 +30,7 @@ const verifyEmailSchema = z.object({
 type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;
 
 interface VerifyEmailFormProps {
-  email: string;
+  email: Email;
   otpType: NotificationType;
   onSuccess: (data: { actionToken: string }) => void;
   isOtpSent: boolean;
