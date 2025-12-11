@@ -33,19 +33,13 @@ export function VerifyEmailContent() {
 
   // Check if OTP is already sent (from signup or login)
   const fromParam = searchParams.get(SEARCH_PARAMS.FROM_SIGNUP);
-  const isOtpAlreadySent = fromParam === PARAM_VALUES.SIGNUP;
+  const fromSignup = fromParam === PARAM_VALUES.SIGNUP;
+  const customRedirect = searchParams.get(SEARCH_PARAMS.REDIRECT_TO);
 
-  const [isOtpSent, setIsOtpSent] = useState(isOtpAlreadySent);
+  const [isOtpSent, setIsOtpSent] = useState(fromSignup);
 
   // Determine redirect destination based on user journey
   const getRedirectPath = useCallback(() => {
-    // Check if user came from signup (indicated by query param)
-    const fromParam = searchParams.get(SEARCH_PARAMS.FROM_SIGNUP);
-    const fromSignup = fromParam === PARAM_VALUES.SIGNUP;
-
-    // Check for custom redirect path
-    const customRedirect = searchParams.get(SEARCH_PARAMS.REDIRECT_TO);
-
     // Priority 1: Custom redirect path (if provided and valid)
     if (customRedirect && customRedirect.startsWith("/")) {
       return customRedirect;
@@ -63,7 +57,7 @@ export function VerifyEmailContent() {
 
     // Default fallback: redirect to login
     return "/login";
-  }, [searchParams, userId]);
+  }, [customRedirect, fromSignup, userId]);
 
   // Handle successful OTP verification
   const handleVerificationSuccess = useCallback(() => {

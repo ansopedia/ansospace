@@ -6,6 +6,7 @@ export * from "./notification";
 export * from "./notificationTypes";
 export * from "./otp";
 export * from "./platform";
+export * from "./rbac";
 export * from "./socket";
 export * from "./storage";
 export * from "./token";
