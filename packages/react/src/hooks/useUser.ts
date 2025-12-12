@@ -1,23 +1,66 @@
+import { useCallback } from "react";
+
 import { useAuthContext } from "../providers/AuthProvider";
 
-/**
- * Custom hook to access all current user data, status, and permissions synchronously.
- */
 export const useUser = () => {
-  const context = useAuthContext();
+  // 1. Get the "Source of Truth" from the Context
+  const { user, isAuthLoading } = useAuthContext();
 
-  // All these properties are now direct synchronous state variables from the context
+  // 2. Derive Status Flags
+  const isAuthenticated = user.kind === "AUTHENTICATED";
+  const isGuest = user.kind === "GUEST";
+
+  // 3. Safe Property Accessors (Handle Union Type)
+  // These properties only exist on Authenticated users
+  const roles = user.kind === "AUTHENTICATED" ? user.roles : [];
+  const permissions = user.kind === "AUTHENTICATED" ? user.permissions : [];
+
+  // ID and Email exist on both PARTIAL and AUTHENTICATED users
+  const id = "id" in user ? user.id : null;
+  const email = "email" in user ? user.email : null;
+
+  /**
+   * Helper: Check if user has a specific permission
+   */
+  const can = useCallback(
+    (permission: string) => {
+      if (user.kind !== "AUTHENTICATED") return false;
+      // Admin Override: super-admin can do anything
+      if (user.roles.includes("super-admin")) return true;
+      return user.permissions.includes(permission);
+    },
+    [user]
+  );
+
+  /**
+   * Helper: Check if user has a specific role
+   */
+  const is = useCallback(
+    (role: string) => {
+      if (user.kind !== "AUTHENTICATED") return false;
+      return user.roles.includes(role);
+    },
+    [user]
+  );
+
   return {
-    userId: context.userId,
-    isAuthenticated: context.isAuthenticated,
-    isAuthLoading: context.isAuthLoading, // Use this to check if data is ready
-    isUserVerified: context.isVerified, // This is now SYNCHRONOUS!
-    permissions: context.permissions,
-    userEmail: context.userEmail,
-    // Add roles, profile, etc., here once available in AuthContext
+    // Data Objects
+    user, // The full discriminated union object
 
-    // Exposed methods
-    logout: context.logout,
-    // ...
+    // Flat Data (Safe defaults)
+    id,
+    email,
+    roles,
+    permissions,
+
+    // Status Flags
+    isAuthenticated,
+    isGuest,
+    isLoading: isAuthLoading,
+    isVerified: "isVerified" in user ? user.isVerified : false,
+
+    // Helpers
+    can,
+    is,
   };
 };

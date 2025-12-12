@@ -40,7 +40,7 @@ interface VerifyEmailFormProps {
 const REGEXP_ONLY_DIGITS: RegExp = /^\d+$/;
 
 export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSuccess, isOtpSent, onOtpSent }) => {
-  const { verifyOtp, verifyOtpLoading, sendOtp, sendOtpLoading } = useOtp();
+  const { sendMutation, verifyOtpMutation } = useOtp();
 
   const form = useForm({
     resolver: zodResolver(verifyEmailSchema),
@@ -61,7 +61,7 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
     };
 
     try {
-      const response = await verifyOtp(otpBody);
+      const response = await verifyOtpMutation.mutateAsync(otpBody);
       if (response.status === "success") {
         toast.success(response.message);
         // Auto-login happens inside verifyOtp hook; redirect to dashboard
@@ -83,7 +83,7 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
     }
 
     try {
-      const response = await sendOtp({ otpType: NotificationType.EMAIL_VERIFICATION_OTP, email });
+      const response = await sendMutation.mutateAsync({ otpType: NotificationType.EMAIL_VERIFICATION_OTP, email });
       if (response.status === "success" && response.data?.actionToken) {
         toast.success("OTP sent to your email");
         onOtpSent();
@@ -102,9 +102,9 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
         <Typography className="text-muted-foreground text-center text-sm">
           Please click the button below to receive a verification code.
         </Typography>
-        <Button onClick={handleResendOtp} className="w-full rounded-xl" size="lg" disabled={sendOtpLoading}>
-          {sendOtpLoading && <Spinner className="mr-2" />}
-          {sendOtpLoading ? "Sending Code..." : "Send Verification Code"}
+        <Button onClick={handleResendOtp} className="w-full rounded-xl" size="lg" disabled={sendMutation.isPending}>
+          {sendMutation.isPending && <Spinner className="mr-2" />}
+          {sendMutation.isPending ? "Sending Code..." : "Send Verification Code"}
         </Button>
       </div>
     );
@@ -145,9 +145,9 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
           )}
         />
 
-        <Button type="submit" className="rounded-xl" size="lg" disabled={verifyOtpLoading || !otpValue}>
-          {verifyOtpLoading && <Spinner className="mr-2" />}
-          <span className="text-sm sm:text-base">{verifyOtpLoading ? "Verifying..." : "Verify Email"}</span>
+        <Button type="submit" className="rounded-xl" size="lg" disabled={verifyOtpMutation.isPending || !otpValue}>
+          {verifyOtpMutation.isPending && <Spinner className="mr-2" />}
+          <span className="text-sm sm:text-base">{verifyOtpMutation.isPending ? "Verifying..." : "Verify Email"}</span>
         </Button>
 
         <div className="text-center">
@@ -156,10 +156,10 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
             <button
               type="button"
               onClick={handleResendOtp}
-              disabled={sendOtpLoading}
+              disabled={sendMutation.isPending}
               className="link-primary font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {sendOtpLoading ? "Sending..." : "Resend OTP"}
+              {sendMutation.isPending ? "Sending..." : "Resend OTP"}
             </button>
           </Typography>
         </div>

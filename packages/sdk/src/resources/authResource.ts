@@ -9,6 +9,8 @@ import type {
   ResetPasswordRequest,
   SendOtpRequest,
   SendOtpResponse,
+  Session,
+  UserAccessControlProfile,
   VerifyOtpRequest,
   VerifyOtpResponse,
 } from "@ansospace/types";
@@ -39,14 +41,6 @@ export class AuthResource {
   async register(body: RegisterRequest): Promise<IApiResponse<RegisterResponse>> {
     const url = "/api/v1/auth/register";
     return this.httpClient.POST<RegisterResponse>(url, { body });
-  }
-
-  /**
-   * Logout user
-   */
-  async logout(): Promise<IApiResponse<void>> {
-    const url = "/api/v1/auth/logout";
-    return this.httpClient.POST<void>(url);
   }
 
   /**
@@ -91,10 +85,81 @@ export class AuthResource {
   }
 
   /**
-   * Get user permissions
+   * Fetches the master list of ALL available permissions in the system.
+   * Usage: Admin "Create Role" screens to render checkboxes.
    */
-  async getPermissions(): Promise<IApiResponse<{ permissions: string[] }>> {
+  async getAllSystemPermissions(): Promise<IApiResponse<{ permissions: string[] }>> {
     const url = "/api/v1/permissions";
     return this.httpClient.GET<{ permissions: string[] }>(url);
+  }
+
+  /**
+   * Fetches the current user's complete authorization context (Identity + Roles + Permissions).
+   * Usage: App initialization to hide/show UI elements.
+   */
+  async getMyAccessProfile(): Promise<IApiResponse<UserAccessControlProfile>> {
+    const url = "/api/v1/profile/access-control";
+    return this.httpClient.GET<UserAccessControlProfile>(url);
+  }
+
+  /**
+   * Fetches the access control profile for a specific user.
+   * Usage: Admin Debugging/Support (View what a user sees).
+   * @param userId - The ID of the user to inspect
+   */
+  async getUserAccessProfile(userId: string): Promise<IApiResponse<UserAccessControlProfile>> {
+    const url = `/api/v1/users/${userId}/access-control`;
+    return this.httpClient.GET<UserAccessControlProfile>(url);
+  }
+
+  /**
+   * Fetches a list of all active sessions (devices) for the current user.
+   * Usage: Display "Active Devices" list in Settings/Profile page.
+   * Route: GET /api/v1/sessions
+   */
+  async getActiveSessions(): Promise<IApiResponse<Session[]>> {
+    const url = "/api/v1/sessions";
+    return this.httpClient.GET<Session[]>(url);
+  }
+
+  /**
+   * Logs out the current device only.
+   * Usage: Standard "Logout" button in the Navbar/Sidebar.
+   * Route: DELETE /api/v1/sessions/current
+   */
+  async logout(): Promise<IApiResponse<void>> {
+    const url = "/api/v1/sessions/current";
+    return this.httpClient.DELETE<void>(url);
+  }
+
+  /**
+   * Revokes all active sessions for the user (Nuclear Option).
+   * Usage: "Log out of all devices" security button (e.g., after password change).
+   * Route: DELETE /api/v1/sessions
+   */
+  async revokeAllSessions(): Promise<IApiResponse<void>> {
+    const url = "/api/v1/sessions";
+    return this.httpClient.DELETE<void>(url);
+  }
+
+  /**
+   * Revokes all sessions EXCEPT the current one.
+   * Usage: "Sign out of other devices" button.
+   * Route: DELETE /api/v1/sessions/others
+   */
+  async revokeOtherSessions(): Promise<IApiResponse<void>> {
+    const url = "/api/v1/sessions/others";
+    return this.httpClient.DELETE<void>(url);
+  }
+
+  /**
+   * Revokes a specific session by its ID.
+   * Usage: Clicking "Remove" next to a specific "iPhone 12" in the device list.
+   * Route: DELETE /api/v1/sessions/:sessionId
+   */
+  async revokeSessionById(sessionId: string): Promise<IApiResponse<void>> {
+    // const url = `/api/v1/sessions/${sessionId}`;
+    // return this.httpClient.DELETE<void>(url);
+    throw new Error("Method not implemented.");
   }
 }

@@ -1,11 +1,11 @@
 import { AuthFlowSuccessState } from "@/components/auth/AuthFlowSuccessState";
 
 interface VerifiedStateProps {
-  isUserVerified: boolean;
+  isVerified: boolean;
 }
 
-export function VerifiedState({ isUserVerified }: VerifiedStateProps) {
-  if (!isUserVerified) return null;
+export function VerifiedState({ isVerified }: VerifiedStateProps) {
+  if (!isVerified) return null;
 
   return (
     <AuthFlowSuccessState

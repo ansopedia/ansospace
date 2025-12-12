@@ -19,14 +19,14 @@ export const RegisterForm: FC = () => {
     resolver: zodResolver(registerRequestSchema),
     mode: "onTouched",
     defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      username: "sanjay",
+      email: "sanjaykumar.sah+0@zuru.com",
+      password: "Superusername@123",
+      confirmPassword: "Superusername@123",
     },
   });
 
-  const { loading, register: handleRegister } = useRegister();
+  const { isPending: loading, mutateAsync: handleRegister } = useRegister();
 
   const onSubmit = async (body: RegisterRequest) => {
     const response = await handleRegister(body);

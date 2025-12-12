@@ -1,98 +1,21 @@
-import { useCallback, useState } from "react";
-
-import type { ResetPasswordRequest, SendOtpRequest, SendOtpResponse, VerifyOtpRequest } from "@ansospace/types";
-import { IApiResponse } from "@ansospace/types";
+import type { ResetPasswordRequest } from "@ansospace/types";
+import { TokenType } from "@ansospace/types";
+import { useMutation } from "@tanstack/react-query";
 
 import { useAuthContext } from "../providers/AuthProvider";
 
 export const usePasswordReset = () => {
-  const { sendOtp: sendOtpFn, verifyOtp: verifyOtpFn, sdk } = useAuthContext();
+  const { sdk, storage } = useAuthContext();
 
-  const [sendLoading, setSendLoading] = useState(false);
-  const [verifyLoading, setVerifyLoading] = useState(false);
-  const [resetLoading, setResetLoading] = useState(false);
+  return useMutation({
+    mutationFn: async (body: Omit<ResetPasswordRequest, "actionToken">) => {
+      const actionToken = await storage.get(TokenType.ACTION);
+      if (!actionToken) throw new Error("Action token missing. Please resend OTP.");
 
-  const [sendError, setSendError] = useState<Error | null>(null);
-  const [verifyError, setVerifyError] = useState<Error | null>(null);
-  const [resetError, setResetError] = useState<Error | null>(null);
-
-  const [sendData, setSendData] = useState<IApiResponse<SendOtpResponse> | null>(null);
-  const [verifyData, setVerifyData] = useState<IApiResponse<{ actionToken: string }> | null>(null);
-  const [resetData, setResetData] = useState<IApiResponse<void> | null>(null);
-
-  const sendPasswordResetOtp = useCallback(
-    async (body: SendOtpRequest): Promise<IApiResponse<SendOtpResponse>> => {
-      setSendLoading(true);
-      setSendError(null);
-      setSendData(null);
-      try {
-        const response = await sendOtpFn(body);
-        setSendData(response);
-        return response;
-      } catch (err) {
-        const e = err instanceof Error ? err : new Error("Send password reset OTP failed");
-        setSendError(e);
-        throw e;
-      } finally {
-        setSendLoading(false);
-      }
+      return await sdk.auth.resetPassword({
+        ...body,
+        actionToken: actionToken as string,
+      });
     },
-    [sendOtpFn]
-  );
-
-  const verifyPasswordResetOtp = useCallback(
-    async (body: Omit<VerifyOtpRequest, "actionToken">): Promise<IApiResponse<{ actionToken: string }>> => {
-      setVerifyLoading(true);
-      setVerifyError(null);
-      setVerifyData(null);
-      try {
-        // verifyOtpFn from context already handles getting the token from storage
-        const response = await verifyOtpFn(body);
-        setVerifyData(response);
-        return response as IApiResponse<{ actionToken: string }>;
-      } catch (err) {
-        const e = err instanceof Error ? err : new Error("Verify password reset OTP failed");
-        setVerifyError(e);
-        throw e;
-      } finally {
-        setVerifyLoading(false);
-      }
-    },
-    [verifyOtpFn]
-  );
-
-  const resetPassword = useCallback(
-    async (body: ResetPasswordRequest): Promise<IApiResponse<void>> => {
-      setResetLoading(true);
-      setResetError(null);
-      setResetData(null);
-      try {
-        const response = await sdk.auth.resetPassword(body);
-        setResetData(response);
-        return response;
-      } catch (err) {
-        const e = err instanceof Error ? err : new Error("Reset password failed");
-        setResetError(e);
-        throw e;
-      } finally {
-        setResetLoading(false);
-      }
-    },
-    [sdk]
-  );
-
-  return {
-    sendPasswordResetOtp,
-    verifyPasswordResetOtp,
-    resetPassword,
-    sendLoading,
-    verifyLoading,
-    resetLoading,
-    sendError,
-    verifyError,
-    resetError,
-    sendData,
-    verifyData,
-    resetData,
-  };
+  });
 };

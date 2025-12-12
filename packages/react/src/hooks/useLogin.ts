@@ -1,45 +1,45 @@
-import { useCallback, useState } from "react";
-
-import { IApiResponse, IApiResponseFailed, LoginRequest, LoginResponse } from "@ansospace/types";
+import { LoginRequest } from "@ansospace/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useAuthContext } from "../providers/AuthProvider";
 
-interface UseLoginResult {
-  login: (body: LoginRequest) => Promise<IApiResponse<LoginResponse>>;
-  loading: boolean;
-  error: IApiResponseFailed | Error | null;
-  data: IApiResponse<LoginResponse> | null;
-}
+export const useLogin = () => {
+  const { sdk, storage, updateUser } = useAuthContext();
+  const queryClient = useQueryClient();
 
-export const useLogin = (): UseLoginResult => {
-  const { login: loginUser } = useAuthContext();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<IApiResponseFailed | Error | null>(null);
-  const [data, setData] = useState<IApiResponse<LoginResponse> | null>(null);
+  return useMutation({
+    mutationFn: (body: LoginRequest) => sdk.auth.login(body),
+    onSuccess: async (response, variables) => {
+      if (response.status === "success") {
+        const { userId } = response.data;
 
-  const login = useCallback(
-    async (body: LoginRequest): Promise<IApiResponse<LoginResponse>> => {
-      setLoading(true);
-      setError(null);
-      setData(null);
-      try {
-        const response = await loginUser(body);
-        if (response.status === "failed") {
-          setError(response);
-        } else {
-          setData(response);
+        await storage.set("userId", userId.toString());
+        await storage.set("isUserVerified", true);
+
+        updateUser({
+          kind: "AUTHENTICATED",
+          id: userId,
+          isVerified: true,
+        });
+
+        // We tell React Query: "The 'auth session' is dirty, refetch it."
+        // This automatically updates the user state in AuthProvider.
+        await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
+      } else {
+        const emailToSave = variables.email;
+
+        if (emailToSave) {
+          await storage.set("userEmail", emailToSave);
         }
-        return response;
-      } catch (err) {
-        const e = err instanceof Error ? err : new Error("Login failed");
-        setError(e);
-        throw e;
-      } finally {
-        setLoading(false);
+
+        await storage.set("isUserVerified", false);
+
+        updateUser({
+          kind: "PARTIAL",
+          email: emailToSave,
+          isVerified: false,
+        });
       }
     },
-    [loginUser]
-  );
-
-  return { login, loading, error, data };
+  });
 };

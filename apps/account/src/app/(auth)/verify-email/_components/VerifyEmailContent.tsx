@@ -29,7 +29,9 @@ const PARAM_VALUES = {
 export function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { userEmail, isAuthLoading, isUserVerified, userId } = useUser();
+  const { email, isLoading, isVerified, id: userId } = useUser();
+
+  console.log("VerifyEmailContent", { email, isLoading, isVerified, userId });
 
   // Check if OTP is already sent (from signup or login)
   const fromParam = searchParams.get(SEARCH_PARAMS.FROM_SIGNUP);
@@ -70,24 +72,24 @@ export function VerifyEmailContent() {
   }, [getRedirectPath, router]);
 
   // Handle different states
-  if (isAuthLoading) {
+  if (isLoading) {
     return <LoadingState />;
   }
 
-  if (isUserVerified) {
-    return <VerifiedState isUserVerified={isUserVerified} />;
+  if (isVerified) {
+    return <VerifiedState isVerified={isVerified} />;
   }
 
-  if (!userEmail) {
+  if (!email) {
     return <SessionExpiredState />;
   }
 
   // Main Verification State
   return (
     <AuthFlowLayout illustration={<VerificationIllustration />}>
-      <VerificationHeader isOtpSent={isOtpSent} userEmail={userEmail} />
+      <VerificationHeader isOtpSent={isOtpSent} userEmail={email} />
       <VerificationForm
-        userEmail={userEmail}
+        userEmail={email}
         isOtpSent={isOtpSent}
         onOtpSent={() => setIsOtpSent(true)}
         onSuccess={handleVerificationSuccess}

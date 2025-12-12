@@ -32,8 +32,8 @@ const page = () => {
 
         <h2>User Components</h2>
         {/* <Suspense fallback={"Loading"}> */}
-        <Users />
         {/* </Suspense> */}
+        <Users />
         <br />
         <br />
         <br />

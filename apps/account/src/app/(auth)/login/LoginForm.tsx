@@ -16,30 +16,35 @@ import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
 export const LoginForm = () => {
   const router = useRouter();
-  const { login, loading } = useLogin();
+
+  const { mutateAsync: login, isPending: loading } = useLogin();
+
   const [rememberMe, setRememberMe] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(loginRequestSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "sanjaykumar.sah+0@zuru.com",
+      password: "Superusername@123",
     },
   });
 
   const onSubmit = async (body: LoginRequest) => {
     const response = await login(body);
     if (response.status === "success") {
+      toast.success("Welcome back!");
       router.replace("/dashboard");
     } else {
+      // Handle logical errors (like unverified email) returned by API
       if (response.code === "email_not_verified") {
+        toast.warning("Please verify your email.");
         setTimeout(() => router.push("/verify-email?from=login"), 1000);
+      } else {
+        toast.error(response.message || "Login failed");
       }
-      toast.error(response.message);
     }
   };
 
-  // Reuse only email + password
   const LOGIN_FIELDS = AUTH_FORM_FIELDS.filter((f) => ["email", "password"].includes(f.name));
 
   return (

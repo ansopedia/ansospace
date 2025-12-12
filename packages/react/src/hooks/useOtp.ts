@@ -1,71 +1,71 @@
-import { useCallback, useState } from "react";
-
-import type { SendOtpRequest, SendOtpResponse, VerifyOtpRequest, VerifyOtpResponse } from "@ansospace/types";
-import { IApiResponse, NotificationType } from "@ansospace/types";
+import type { SendOtpRequest, VerifyOtpRequest } from "@ansospace/types";
+import { NotificationType, TokenType } from "@ansospace/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useAuthContext } from "../providers/AuthProvider";
 
 export const useOtp = () => {
-  const { sendOtp: sendOtpFn, verifyOtp: verifyOtpFn, autoLogin: autoLoginFn } = useAuthContext();
+  const { sdk, storage, updateUser } = useAuthContext();
+  const queryClient = useQueryClient();
 
-  const [sendOtpLoading, setSendOtpLoading] = useState(false);
-  const [verifyOtpLoading, setVerifyOtpLoading] = useState(false);
-  const [sendOtpError, setSendOtpError] = useState<Error | null>(null);
-  const [verifyOtpError, setVerifyOtpError] = useState<Error | null>(null);
-  const [sendOtpData, setSendOtpData] = useState<IApiResponse<SendOtpResponse> | null>(null);
-  const [verifyOtpData, setVerifyOtpData] = useState<IApiResponse<VerifyOtpResponse> | null>(null);
-
-  const sendOtp = useCallback(
-    async (body: SendOtpRequest): Promise<IApiResponse<SendOtpResponse>> => {
-      setSendOtpLoading(true);
-      setSendOtpError(null);
-      setSendOtpData(null);
-      try {
-        const response = await sendOtpFn(body);
-        setSendOtpData(response);
-        return response;
-      } catch (err) {
-        const e = err instanceof Error ? err : new Error("Send OTP failed");
-        setSendOtpError(e);
-        throw e;
-      } finally {
-        setSendOtpLoading(false);
-      }
-    },
-    [sendOtpFn]
-  );
-
-  const verifyOtp = useCallback(
-    async (body: Omit<VerifyOtpRequest, "actionToken">): Promise<IApiResponse<{ actionToken: string }>> => {
-      setVerifyOtpLoading(true);
-      setVerifyOtpError(null);
-      setVerifyOtpData(null);
-      try {
-        const response = await verifyOtpFn(body);
-        setVerifyOtpData(response);
-        if (response.status === "success" && body.otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
-          await autoLoginFn({ actionToken: response.data.actionToken });
+  const sendMutation = useMutation({
+    mutationFn: (body: SendOtpRequest) => sdk.auth.sendOtp(body),
+    onSuccess: async (response, variables) => {
+      if (response.status === "success") {
+        // Save token for the verify step
+        await storage.set(TokenType.ACTION, response.data.actionToken);
+        if (variables.email) {
+          await storage.set("userEmail", variables.email);
         }
-        return response;
-      } catch (err) {
-        const e = err instanceof Error ? err : new Error("Verify OTP failed");
-        setVerifyOtpError(e);
-        throw e;
-      } finally {
-        setVerifyOtpLoading(false);
       }
     },
-    [verifyOtpFn, autoLoginFn]
-  );
+  });
+
+  // 🔹 Mutation 2: Verify OTP (With Auto-Login Logic)
+  const verifyOtpMutation = useMutation({
+    mutationFn: async (body: Omit<VerifyOtpRequest, "actionToken">) => {
+      const actionToken = await storage.get(TokenType.ACTION);
+      if (!actionToken) throw new Error("Action token missing. Please resend OTP.");
+
+      return sdk.auth.verifyOtp({
+        ...body,
+        actionToken: actionToken as string,
+      });
+    },
+    onSuccess: async (response, variables) => {
+      if (response.status === "success") {
+        // Cleanup OTP token
+        await storage.remove(TokenType.ACTION);
+
+        // 🔥 LOGIC: If Email Verification, Auto-Login the user
+        if (variables.otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
+          const { actionToken: loginToken } = response.data;
+
+          // Perform Auto Login immediately
+          const loginRes = await sdk.auth.autoLogin({ actionToken: loginToken });
+
+          if (loginRes.status === "success") {
+            const { userId } = loginRes.data;
+            // Persist Session
+            await storage.set("userId", userId.toString());
+            await storage.set("isUserVerified", true);
+
+            updateUser({
+              kind: "AUTHENTICATED",
+              id: userId,
+              isVerified: true,
+            });
+
+            // Update Global State
+            await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
+          }
+        }
+      }
+    },
+  });
 
   return {
-    sendOtp,
-    verifyOtp,
-    sendOtpLoading,
-    verifyOtpLoading,
-    sendOtpError,
-    verifyOtpError,
-    sendOtpData,
-    verifyOtpData,
+    sendMutation,
+    verifyOtpMutation,
   };
 };
