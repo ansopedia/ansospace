@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { Email, NotificationType } from "@ansospace/types";
+import { useStorage, useUser } from "@ansospace/react";
+import { NotificationType } from "@ansospace/types";
 import { KeyRound, Lock, Mail } from "lucide-react";
 
 import { AuthFlowCard } from "@/components/auth/AuthFlowCard";
@@ -14,10 +15,16 @@ import { PasswordResetEmailForm } from "./PasswordResetEmailForm";
 import { PasswordResetNewPasswordForm } from "./PasswordResetNewPasswordForm";
 
 export const PasswordResetFlow = () => {
+  const storage = useStorage();
   const [step, setStep] = useState<"email" | "otp" | "reset" | "success">("email");
-  const [email, setEmail] = useState<Email>();
-  const [token, setToken] = useState<string | null>(null);
-  const [actionToken, setActionToken] = useState<string | null>(null);
+  const { email } = useUser();
+
+  useEffect(() => {
+    (async () => {
+      const step = await storage.get("passwordResetStep");
+      setStep((step as "email" | "otp" | "reset" | "success") || "email");
+    })();
+  }, [storage]);
 
   // Email Step
   if (step === "email") {
@@ -31,10 +38,9 @@ export const PasswordResetFlow = () => {
         />
         <AuthFlowCard>
           <PasswordResetEmailForm
-            onSuccess={({ token, email }) => {
-              setToken(token);
-              setEmail(email);
+            onSuccess={async () => {
               setStep("otp");
+              await storage.set("passwordResetStep", "otp");
             }}
           />
         </AuthFlowCard>
@@ -43,7 +49,7 @@ export const PasswordResetFlow = () => {
   }
 
   // OTP Verification Step
-  if (step === "otp" && token && email) {
+  if (step === "otp") {
     return (
       <>
         <AuthFlowHeader
@@ -54,14 +60,12 @@ export const PasswordResetFlow = () => {
         />
         <AuthFlowCard>
           <VerifyOtpForm
-            email={email}
-            onSuccess={({ actionToken }) => {
+            onSuccess={async () => {
               setStep("reset");
-              setActionToken(actionToken);
+              await storage.set("passwordResetStep", "reset");
             }}
             otpType={NotificationType.FORGET_PASSWORD_OTP}
             isOtpSent={true}
-            onOtpSent={() => {}}
           />
         </AuthFlowCard>
       </>
@@ -69,14 +73,14 @@ export const PasswordResetFlow = () => {
   }
 
   // New Password Step
-  if (step === "reset" && actionToken) {
+  if (step === "reset") {
     return (
       <>
         <AuthFlowHeader icon={Lock} title="Reset" highlightedText="Password" description="Enter your new password" />
         <AuthFlowCard>
           <PasswordResetNewPasswordForm
-            actionToken={actionToken}
-            onSuccess={() => {
+            onSuccess={async () => {
+              await storage.remove("passwordResetStep");
               setStep("success");
             }}
           />

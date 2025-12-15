@@ -1,4 +1,4 @@
-import type { ResetPasswordRequest } from "@ansospace/types";
+import type { IApiResponse, ResetPasswordRequest } from "@ansospace/types";
 import { TokenType } from "@ansospace/types";
 import { useMutation } from "@tanstack/react-query";
 
@@ -8,14 +8,26 @@ export const usePasswordReset = () => {
   const { sdk, storage } = useAuthContext();
 
   return useMutation({
-    mutationFn: async (body: Omit<ResetPasswordRequest, "actionToken">) => {
+    mutationFn: async (body: Omit<ResetPasswordRequest, "actionToken">): Promise<IApiResponse<void>> => {
       const actionToken = await storage.get(TokenType.ACTION);
-      if (!actionToken) throw new Error("Action token missing. Please resend OTP.");
+
+      if (!actionToken || typeof actionToken !== "string") {
+        return {
+          status: "failed",
+          code: "session_expired",
+          message: "Your reset session has expired. Please request a new code.",
+        };
+      }
 
       return await sdk.auth.resetPassword({
         ...body,
-        actionToken: actionToken as string,
+        actionToken,
       });
+    },
+    onSuccess: async (response) => {
+      if (response.status === "success") {
+        await storage.remove(TokenType.ACTION);
+      }
     },
   });
 };

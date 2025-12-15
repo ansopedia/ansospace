@@ -201,7 +201,6 @@ export const createRolePermissionBodySchema = z.object({
 
 export type CreateRolePermissionBody = z.infer<typeof createRolePermissionBodySchema>;
 
-
 export const assignUserRoleBodySchema = z.object({
   roleIds: z.array(objectId).min(1, "At least one Role ID is required"),
 });
@@ -242,10 +241,9 @@ export const profileSchema = z.object({
   isPublic: z.boolean().optional(),
 });
 
-
 export type ProfileData = z.infer<typeof profileSchema>;
 
-export const createProfileBodySchema= profileSchema.omit({userId: true});
+export const createProfileBodySchema = profileSchema.omit({ userId: true });
 export type CreateProfileData = Omit<ProfileData, "userId">;
 
 export const toggleVisibilitySchema = z.object({

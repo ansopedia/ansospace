@@ -63,7 +63,7 @@ export class AuthResource {
    * Reset password
    */
   async resetPassword(body: ResetPasswordRequest): Promise<IApiResponse<void>> {
-    const url = "/api/v1/auth/reset-password";
+    const url = "/api/v1/auth/password-reset";
     return this.httpClient.POST<void>(url, { body });
   }
 

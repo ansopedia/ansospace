@@ -6,7 +6,7 @@ import { TokenType } from "./token";
  * - User data: "userId", "userEmail", "isUserVerified"
  * - Device tracking: "x-device-id" (matches HttpHeaders.X_DEVICE_ID)
  */
-export type AuthStorageKey = TokenType | "userId" | "userEmail" | "isUserVerified" | "x-device-id";
+export type AuthStorageKey = TokenType | "userId" | "userEmail" | "isUserVerified" | "x-device-id" | (string & {});
 
 export type StorageValueType = string | boolean | undefined;
 

@@ -2,8 +2,8 @@
 
 import { FC } from "react";
 
-import { useOtp } from "@ansospace/react";
-import { Email, NotificationType, otpSchema } from "@ansospace/types";
+import { useOtp, useUser } from "@ansospace/react";
+import { NotificationType, otpSchema } from "@ansospace/types";
 import {
   Button,
   Form,
@@ -30,17 +30,17 @@ const verifyEmailSchema = z.object({
 type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;
 
 interface VerifyEmailFormProps {
-  email: Email;
   otpType: NotificationType;
-  onSuccess: (data: { actionToken: string }) => void;
+  onSuccess: () => void;
   isOtpSent: boolean;
-  onOtpSent: () => void;
+  onOtpSent?: () => void;
 }
 
 const REGEXP_ONLY_DIGITS: RegExp = /^\d+$/;
 
-export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSuccess, isOtpSent, onOtpSent }) => {
+export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ otpType, onSuccess, isOtpSent, onOtpSent }) => {
   const { sendMutation, verifyOtpMutation } = useOtp();
+  const { email } = useUser();
 
   const form = useForm({
     resolver: zodResolver(verifyEmailSchema),
@@ -65,7 +65,7 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
       if (response.status === "success") {
         toast.success(response.message);
         // Auto-login happens inside verifyOtp hook; redirect to dashboard
-        onSuccess(response.data);
+        onSuccess();
       } else {
         toast.error(response.message);
         form.reset();
@@ -86,7 +86,7 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ email, otpType, onSucc
       const response = await sendMutation.mutateAsync({ otpType: NotificationType.EMAIL_VERIFICATION_OTP, email });
       if (response.status === "success" && response.data?.actionToken) {
         toast.success("OTP sent to your email");
-        onOtpSent();
+        onOtpSent?.();
         form.reset();
       } else {
         toast.error(response.message);

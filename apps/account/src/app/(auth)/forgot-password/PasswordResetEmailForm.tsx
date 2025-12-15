@@ -1,6 +1,6 @@
 "use client";
 
-import { usePasswordReset } from "@ansospace/react";
+import { useOtp } from "@ansospace/react";
 import { Email, NotificationType, emailSchema } from "@ansospace/types";
 import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,8 +14,14 @@ const schema = z.object({ email: emailSchema });
 
 const FORGOT_PASSWORD_FIELDS = AUTH_FORM_FIELDS.filter((f) => ["email"].includes(f.name));
 
-export function PasswordResetEmailForm({ onSuccess }: { onSuccess: (data: { token: string; email: Email }) => void }) {
-  const { sendPasswordResetOtp, sendLoading } = usePasswordReset();
+interface PasswordResetEmailFormProps {
+  onSuccess: (data: { email: Email }) => void;
+}
+
+export function PasswordResetEmailForm({ onSuccess }: PasswordResetEmailFormProps) {
+  const {
+    sendMutation: { mutateAsync, isPending },
+  } = useOtp();
   const form = useForm({
     resolver: zodResolver(schema),
     mode: "onTouched",
@@ -23,10 +29,10 @@ export function PasswordResetEmailForm({ onSuccess }: { onSuccess: (data: { toke
   });
 
   const onSubmit = form.handleSubmit(async ({ email }) => {
-    const resp = await sendPasswordResetOtp({ otpType: NotificationType.FORGET_PASSWORD_OTP, email });
+    const resp = await mutateAsync({ otpType: NotificationType.FORGET_PASSWORD_OTP, email });
     if (resp.status === "success" && resp.data?.actionToken) {
       toast.success("OTP sent to your email");
-      onSuccess({ token: resp.data.actionToken, email });
+      onSuccess({ email });
     } else {
       toast.error(resp.message);
     }
@@ -35,10 +41,10 @@ export function PasswordResetEmailForm({ onSuccess }: { onSuccess: (data: { toke
   return (
     <Form {...form}>
       <form className="flex flex-col gap-6" onSubmit={onSubmit}>
-        <AuthFields form={form} fields={FORGOT_PASSWORD_FIELDS} loading={sendLoading} />
-        <Button type="submit" className="w-full rounded-xl" size="lg" disabled={sendLoading}>
-          {sendLoading && <Spinner />}
-          {sendLoading ? "Sending Code..." : "Send Verification Code"}
+        <AuthFields form={form} fields={FORGOT_PASSWORD_FIELDS} loading={isPending} />
+        <Button type="submit" className="w-full rounded-xl" size="lg" disabled={isPending}>
+          {isPending && <Spinner />}
+          {isPending ? "Sending Code..." : "Send Verification Code"}
         </Button>
       </form>
     </Form>

@@ -12,7 +12,6 @@ import {
 import { Button } from "@ansospace/ui/components/button";
 
 import { env } from "../lib/env";
-import { Users } from "./user";
 
 export default function Home() {
   const newUsername = usernameSchema.parse("username");
@@ -37,7 +36,7 @@ export default function Home() {
         <p className="text-sm text-gray-500">{env.NODE_ENV}</p>
         <p>{otp}</p>
         {mongooseId.toString()}
-        <Users />
+        {/* <Users /> */}
         {/* Validation test */}
         <p>Validation test: {JSON.stringify(registerRequestSchema.parse(user))}</p>
         <p>User is only available in the server component in next.js</p>

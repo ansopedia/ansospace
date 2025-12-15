@@ -2,7 +2,8 @@
 
 import * as React from "react";
 
-import { AnsospaceProvider, BrowserStorageAdapter, TokenManager } from "@ansospace/react";
+import { AnsospaceProvider, BrowserStorageAdapter } from "@ansospace/react";
+import { TokenManager } from "@ansospace/sdk";
 import { Toaster } from "@ansospace/ui/components";
 import { ThemeProvider as NextThemesProvider } from "@ansospace/ui/theme";
 

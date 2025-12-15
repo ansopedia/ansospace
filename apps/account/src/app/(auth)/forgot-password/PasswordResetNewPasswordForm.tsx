@@ -11,22 +11,20 @@ import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
 const RESET_PASSWORD_FIELDS = AUTH_FORM_FIELDS.filter((f) => ["password", "confirmPassword"].includes(f.name));
 
-export function PasswordResetNewPasswordForm({
-  actionToken,
-  onSuccess,
-}: {
-  actionToken: string;
+interface PasswordResetNewPasswordFormProps {
   onSuccess: () => void;
-}) {
-  const { resetPassword, resetLoading } = usePasswordReset();
+}
+export function PasswordResetNewPasswordForm({ onSuccess }: PasswordResetNewPasswordFormProps) {
+  const { mutateAsync, isPending } = usePasswordReset();
 
   const form = useForm({
-    resolver: zodResolver(resetPasswordRequestSchema),
-    defaultValues: { password: "", confirmPassword: "", actionToken: "" },
+    resolver: zodResolver(resetPasswordRequestSchema.pick({ password: true, confirmPassword: true })),
+    defaultValues: { password: "", confirmPassword: "" },
   });
 
   const onSubmit = async ({ password, confirmPassword }: Omit<ResetPasswordRequest, "actionToken">) => {
-    const resp = await resetPassword({ actionToken, password, confirmPassword });
+    const resp = await mutateAsync({ password, confirmPassword });
+
     if (resp.status === "success") {
       toast.success("Password reset successful. Please login");
       onSuccess();
@@ -38,11 +36,11 @@ export function PasswordResetNewPasswordForm({
   return (
     <Form {...form}>
       <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
-        <AuthFields form={form} fields={RESET_PASSWORD_FIELDS} loading={resetLoading} />
+        <AuthFields form={form} fields={RESET_PASSWORD_FIELDS} loading={isPending} />
 
-        <Button type="submit" className="w-full rounded-xl" size="lg" disabled={resetLoading}>
-          {resetLoading && <Spinner />}
-          {resetLoading ? "Resetting Password..." : "Reset Password"}
+        <Button type="submit" className="w-full rounded-xl" size="lg" disabled={isPending}>
+          {isPending && <Spinner />}
+          {isPending ? "Resetting Password..." : "Reset Password"}
         </Button>
       </form>
     </Form>

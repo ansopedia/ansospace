@@ -16,6 +16,10 @@ export const useOtp = () => {
         await storage.set(TokenType.ACTION, response.data.actionToken);
         if (variables.email) {
           await storage.set("userEmail", variables.email);
+          updateUser({
+            kind: "PARTIAL",
+            email: variables.email,
+          });
         }
       }
     },
@@ -59,6 +63,9 @@ export const useOtp = () => {
             // Update Global State
             await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
           }
+        } else if (variables.otpType === NotificationType.FORGET_PASSWORD_OTP) {
+          // For Forget Password OTP, just mark user as PARTIAL
+          await storage.set(TokenType.ACTION, response.data.actionToken);
         }
       }
     },

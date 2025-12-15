@@ -1,8 +1,8 @@
 import { AuthFlowIllustration } from "@/components/auth/AuthFlowIllustration";
 import { AuthFlowLayout } from "@/components/auth/AuthFlowLayout";
 
+import { AuthFlowFooter } from "../../../components/auth/AuthFlowFooter";
 import { PasswordResetFlow } from "./PasswordResetFlow";
-import { PasswordResetFooter } from "./PasswordResetFooter";
 
 export default function ForgotPasswordPage() {
   return (
@@ -12,7 +12,15 @@ export default function ForgotPasswordPage() {
       }
     >
       <PasswordResetFlow />
-      <PasswordResetFooter />
+      <AuthFlowFooter
+        links={[
+          {
+            text: "Remembered your password?",
+            linkText: "Login",
+            href: "/login",
+          },
+        ]}
+      />
     </AuthFlowLayout>
   );
 }
