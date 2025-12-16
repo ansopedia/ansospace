@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import { useUser } from "@ansospace/react";
 
 import { AuthFlowLayout } from "@/components/auth/AuthFlowLayout";
+import { RedirectAfterLogin } from "@/lib/constants";
 
 import { LoadingState } from "./LoadingState";
 import { SessionExpiredState } from "./SessionExpiredState";
@@ -31,8 +32,6 @@ export function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const { email, isLoading, isVerified, id: userId } = useUser();
 
-  console.log("VerifyEmailContent", { email, isLoading, isVerified, userId });
-
   // Check if OTP is already sent (from signup or login)
   const fromParam = searchParams.get(SEARCH_PARAMS.FROM_SIGNUP);
   const fromSignup = fromParam === PARAM_VALUES.SIGNUP;
@@ -49,12 +48,12 @@ export function VerifyEmailContent() {
 
     // Priority 2: If user has userId (already logged in or auto-logged in), go to dashboard
     if (userId) {
-      return "/dashboard";
+      return RedirectAfterLogin;
     }
 
     // Priority 3: If coming from signup flow, auto-login will happen, so go to dashboard
     if (fromSignup) {
-      return "/dashboard";
+      return RedirectAfterLogin;
     }
 
     // Default fallback: redirect to login
@@ -89,7 +88,6 @@ export function VerifyEmailContent() {
     <AuthFlowLayout illustration={<VerificationIllustration />}>
       <VerificationHeader isOtpSent={isOtpSent} userEmail={email} />
       <VerificationForm
-        userEmail={email}
         isOtpSent={isOtpSent}
         onOtpSent={() => setIsOtpSent(true)}
         onSuccess={handleVerificationSuccess}

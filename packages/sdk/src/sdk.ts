@@ -68,11 +68,4 @@ export class AnsospaceSDK {
   getConfig(): AnsospaceConfig {
     return { ...this.config };
   }
-
-  /**
-   * Check if user is authenticated
-   */
-  async isAuthenticated(): Promise<boolean> {
-    return this.httpClient.isAuthenticated();
-  }
 }

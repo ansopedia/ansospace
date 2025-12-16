@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useUser } from "@ansospace/react";
 import { Separator } from "@ansospace/ui/components/separator";
 import {
   Sidebar,
@@ -44,6 +45,11 @@ const navigation = [
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
+  const { isAuthenticated } = useUser();
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <SidebarProvider>

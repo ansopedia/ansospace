@@ -4,6 +4,7 @@
     "paths": {
       "@/*": ["./*"],
       "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
       "@ansospace/eslint-config/*": ["../../packages/eslint-config/*"],
       "@ansospace/ui/*": ["../../packages/ui/src/*"]
     },

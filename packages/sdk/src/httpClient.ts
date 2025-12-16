@@ -353,13 +353,4 @@ export class HttpClient {
   public getBaseUrl(): string {
     return this.baseUrl;
   }
-
-  /**
-   * Check if user is authenticated (has valid access token)
-   */
-  public async isAuthenticated(): Promise<boolean> {
-    // Use type-safe storage key constant
-    const token = await this.storage.get(TokenType.AUTHORIZATION);
-    return !!token && typeof token === "string";
-  }
 }

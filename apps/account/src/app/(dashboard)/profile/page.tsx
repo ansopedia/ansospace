@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { useUser } from "@ansospace/react";
+import { emailSchema } from "@ansospace/types";
 import {
   Avatar,
   AvatarFallback,
@@ -28,7 +30,7 @@ import { z } from "zod";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
+  email: emailSchema,
 });
 
 const passwordFormSchema = z
@@ -46,13 +48,14 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 const ProfilePage = () => {
+  const { email, user } = useUser();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
-  const profileForm = useForm<ProfileFormValues>({
+  const profileForm = useForm({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: "John Doe",
-      email: "john.doe@example.com",
+      name: user.kind === "AUTHENTICATED" ? user.username : "",
+      email,
     },
   });
 

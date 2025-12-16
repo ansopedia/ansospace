@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { AuthFields } from "@/components/auth/AuthFields";
+import { RedirectAfterLogin } from "@/lib/constants";
 import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
 export const LoginForm = () => {
@@ -24,8 +25,8 @@ export const LoginForm = () => {
   const form = useForm({
     resolver: zodResolver(loginRequestSchema),
     defaultValues: {
-      email: "sanjaykumar.sah+0@zuru.com",
-      password: "Superusername@123",
+      email: "",
+      password: "",
     },
   });
 
@@ -33,7 +34,7 @@ export const LoginForm = () => {
     const response = await login(body);
     if (response.status === "success") {
       toast.success("Welcome back!");
-      router.replace("/dashboard");
+      router.replace(RedirectAfterLogin);
     } else {
       // Handle logical errors (like unverified email) returned by API
       if (response.code === "email_not_verified") {

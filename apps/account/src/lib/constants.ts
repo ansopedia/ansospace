@@ -236,3 +236,5 @@ export const ENV_CONFIG = {
   isProduction: process.env.NODE_ENV === "production",
   isTest: process.env.NODE_ENV === "test",
 } as const;
+
+export const RedirectAfterLogin = "/";
