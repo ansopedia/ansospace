@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useAuthContext } from "../providers/AuthProvider";
+import { useAuthContext } from "../../providers/AuthProvider";
 
 export const useUser = () => {
   // 1. Get the "Source of Truth" from the Context

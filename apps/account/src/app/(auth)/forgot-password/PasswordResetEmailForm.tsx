@@ -1,7 +1,7 @@
 "use client";
 
-import { useOtp } from "@ansospace/react";
-import { Email, NotificationType, emailSchema } from "@ansospace/types";
+import { useOtpActions } from "@ansospace/react";
+import { Email, emailSchema, otpEvents } from "@ansospace/types";
 import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,9 +19,7 @@ interface PasswordResetEmailFormProps {
 }
 
 export function PasswordResetEmailForm({ onSuccess }: PasswordResetEmailFormProps) {
-  const {
-    sendMutation: { mutateAsync, isPending },
-  } = useOtp();
+  const { sendOtp, isPending } = useOtpActions();
   const form = useForm({
     resolver: zodResolver(schema),
     mode: "onTouched",
@@ -29,7 +27,7 @@ export function PasswordResetEmailForm({ onSuccess }: PasswordResetEmailFormProp
   });
 
   const onSubmit = form.handleSubmit(async ({ email }) => {
-    const resp = await mutateAsync({ otpType: NotificationType.FORGET_PASSWORD_OTP, email });
+    const resp = await sendOtp({ eventType: otpEvents.enum.FORGET_PASSWORD, email });
     if (resp.status === "success" && resp.data?.actionToken) {
       toast.success("OTP sent to your email");
       onSuccess({ email });

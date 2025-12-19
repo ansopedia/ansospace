@@ -1,7 +1,7 @@
 import { TokenType } from "@ansospace/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { useAuthContext } from "../providers/AuthProvider";
+import { useAuthContext } from "../../providers/AuthProvider";
 
 export const useLogout = () => {
   const { sdk, storage } = useAuthContext();

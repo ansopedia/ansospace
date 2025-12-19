@@ -2,7 +2,7 @@ import z from "zod";
 
 import { emailSchema } from "./auth";
 import { objectId } from "./common";
-import { NotificationType, notificationTypeSchema } from "./notificationTypes";
+import { otpEvents } from "./events";
 
 // ============================================================================
 // BASE OTP SCHEMA
@@ -17,27 +17,17 @@ export type Otp = z.infer<typeof otpSchema>;
 // ============================================================================
 
 // Define separate schemas for each OTP type
-const emailVerificationOtpRequestSchema = z.object({
-  otpType: z.literal(NotificationType.EMAIL_VERIFICATION_OTP),
+
+export const sendOtpRequestSchema = z.object({
+  eventType: otpEvents,
   email: emailSchema,
 });
-
-const forgetPasswordOtpRequestSchema = z.object({
-  otpType: z.literal(NotificationType.FORGET_PASSWORD_OTP),
-  email: emailSchema,
-});
-
-// Use discriminatedUnion with the separate schemas
-export const sendOtpRequestSchema = z.discriminatedUnion("otpType", [
-  emailVerificationOtpRequestSchema,
-  forgetPasswordOtpRequestSchema,
-]);
 
 export type SendOtpRequest = z.infer<typeof sendOtpRequestSchema>;
 
 export const verifyOtpRequestSchema = z.object({
   otp: otpSchema,
-  otpType: notificationTypeSchema,
+  eventType: otpEvents,
   actionToken: z.string().min(1, "Action token is required"),
 });
 
@@ -68,7 +58,7 @@ export const otpRecordSchema = z.object({
   otp: otpSchema,
   userId: objectId,
   expiryTime: z.date(),
-  otpType: notificationTypeSchema,
+  eventType: otpEvents,
 });
 
 export type OtpRecord = z.infer<typeof otpRecordSchema>;
@@ -87,7 +77,7 @@ export type SaveOtp = z.infer<typeof saveOtpSchema>;
 
 export const getOtpSchema = otpRecordSchema.pick({
   userId: true,
-  otpType: true,
+  eventType: true,
 });
 
 export type GetOtp = z.infer<typeof getOtpSchema>;

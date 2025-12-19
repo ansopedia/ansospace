@@ -1,7 +1,7 @@
+import { AuthFlowFooter } from "@/components/auth/AuthFlowFooter";
 import { AuthFlowIllustration } from "@/components/auth/AuthFlowIllustration";
 import { AuthFlowLayout } from "@/components/auth/AuthFlowLayout";
 
-import { AuthFlowFooter } from "../../../components/auth/AuthFlowFooter";
 import { PasswordResetFlow } from "./PasswordResetFlow";
 
 export default function ForgotPasswordPage() {

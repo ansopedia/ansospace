@@ -1,7 +1,9 @@
 import z from "zod";
 
 import { deviceId, objectId } from "./common";
-import { userActionTypeSchema } from "./notificationTypes";
+import { userActions } from "./events";
+
+// import { userActionTypeSchema } from "./notificationTypes";
 
 /**
  * Token types used for both HTTP headers and storage keys
@@ -39,7 +41,7 @@ export const refreshTokenPayloadSchema = z.object({
 
 export const actionTokenPayloadSchema = z.object({
   userId: objectId,
-  action: userActionTypeSchema,
+  action: userActions,
 });
 
 export type AccessTokenPayload = z.infer<typeof accessTokenPayloadSchema>;
@@ -49,7 +51,7 @@ export type ActionTokenPayload = z.infer<typeof actionTokenPayloadSchema>;
 export const tokenSchema = z.object({
   id: objectId,
   userId: objectId,
-  action: userActionTypeSchema,
+  action: userActions,
   token: z.string(),
   isUsed: z.boolean(),
   expiryTime: z.date(),

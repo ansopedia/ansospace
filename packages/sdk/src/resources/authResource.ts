@@ -3,6 +3,7 @@ import type {
   IApiResponse,
   LoginRequest,
   LoginResponse,
+  ObjectId,
   RefreshTokenRequest,
   RegisterRequest,
   RegisterResponse,
@@ -10,6 +11,7 @@ import type {
   SendOtpRequest,
   SendOtpResponse,
   Session,
+  SessionQueryOptions,
   UserAccessControlProfile,
   VerifyOtpRequest,
   VerifyOtpResponse,
@@ -117,8 +119,20 @@ export class AuthResource {
    * Usage: Display "Active Devices" list in Settings/Profile page.
    * Route: GET /api/v1/sessions
    */
-  async getActiveSessions(): Promise<IApiResponse<Session[]>> {
-    const url = "/api/v1/sessions";
+  async getActiveSessions(options?: Partial<SessionQueryOptions>): Promise<IApiResponse<Session[]>> {
+    const params = new URLSearchParams();
+
+    if (options) {
+      if (options.limit) params.append("limit", options.limit.toString());
+      if (options.skip) params.append("skip", options.skip.toString());
+      if (options.sortBy) params.append("sortBy", options.sortBy);
+      if (options.order) params.append("order", options.order);
+    }
+
+    // Construct URL
+    const queryString = params.toString();
+    const url = queryString ? `/api/v1/sessions?${queryString}` : "/api/v1/sessions";
+
     return this.httpClient.GET<Session[]>(url);
   }
 
@@ -157,7 +171,7 @@ export class AuthResource {
    * Usage: Clicking "Remove" next to a specific "iPhone 12" in the device list.
    * Route: DELETE /api/v1/sessions/:sessionId
    */
-  async revokeSessionById(sessionId: string): Promise<IApiResponse<void>> {
+  async revokeSessionById(sessionId: ObjectId): Promise<IApiResponse<void>> {
     // const url = `/api/v1/sessions/${sessionId}`;
     // return this.httpClient.DELETE<void>(url);
     throw new Error("Method not implemented.");

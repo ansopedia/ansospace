@@ -79,9 +79,10 @@ function LoginComponent() {
 - `useLogin()` - Login hook with loading/error states
 - `useLogout()` - Logout hook
 - `useRegister()` - Registration hook
-- `useOtp()` - OTP sending and verification
-- `usePasswordReset()` - Password reset flow
-- `useAuthContext()` - Direct access to auth context
+- `useOtpActions()` - OTP sending and verification
+- `usePasswordActions()` - Password reset flow
+- `useGetSessions()` - Get active sessions
+- `useSessionActions()` - Session actions (revokeById, revokeOthers, revokeAll)
 
 ## Storage Adapters
 

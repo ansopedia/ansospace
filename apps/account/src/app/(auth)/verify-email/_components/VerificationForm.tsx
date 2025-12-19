@@ -1,4 +1,4 @@
-import { NotificationType } from "@ansospace/types";
+import { otpEvents } from "@ansospace/types";
 
 import { AuthFlowCard } from "@/components/auth/AuthFlowCard";
 import { VerifyOtpForm } from "@/components/auth/VerifyOtpForm";
@@ -14,7 +14,7 @@ export function VerificationForm({ isOtpSent, onOtpSent, onSuccess }: Verificati
     <AuthFlowCard>
       <VerifyOtpForm
         onSuccess={onSuccess}
-        otpType={NotificationType.EMAIL_VERIFICATION_OTP}
+        eventType={otpEvents.enum.EMAIL_VERIFICATION}
         isOtpSent={isOtpSent}
         onOtpSent={onOtpSent}
       />

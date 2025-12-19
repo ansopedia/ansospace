@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { useStorage, useUser } from "@ansospace/react";
-import { NotificationType } from "@ansospace/types";
+import { otpEvents } from "@ansospace/types";
 import { KeyRound, Lock, Mail } from "lucide-react";
 
 import { AuthFlowCard } from "@/components/auth/AuthFlowCard";
@@ -64,7 +64,7 @@ export const PasswordResetFlow = () => {
               setStep("reset");
               await storage.set("passwordResetStep", "reset");
             }}
-            otpType={NotificationType.FORGET_PASSWORD_OTP}
+            eventType={otpEvents.enum.FORGET_PASSWORD}
             isOtpSent={true}
           />
         </AuthFlowCard>

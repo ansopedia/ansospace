@@ -1,7 +1,7 @@
 import z from "zod";
 
 import { emailSchema } from "./auth";
-import { NotificationType, UserActionType } from "./notificationTypes";
+import { OtpEvents, UserActions, emailNotificationEvents, otpEvents, userActions } from "./events";
 import { otpSchema } from "./otp";
 
 export const otpValidatorSchema = z.string().length(6, "OTP must be exactly 6 characters");
@@ -27,35 +27,24 @@ const passwordChangeConfirmationPayloadSchema = z.object({
 const emailNotificationSchema = z.discriminatedUnion("eventType", [
   z.object({
     to: emailSchema,
-    eventType: z.literal(NotificationType.EMAIL_VERIFICATION_OTP),
+    eventType: z.literal(emailNotificationEvents.enum.EMAIL_VERIFICATION_OTP),
     subject: z.string(),
     payload: emailVerificationOtpPayloadSchema,
   }),
-  // z.object({
-  //   to: emailSchema,
-  //   eventType: z.literal(NotificationType.EMAIL_VERIFICATION_MAGIC_LINK),
-  //   payload: emailVerificationMagicLinkPayload,
-  //   subject: z.string(),
-  // }),
-  // z.object({
-  //   to: emailSchema,
-  //   eventType: z.literal(NotificationType.EMAIL_CHANGE_CONFIRMATION),
-  //   payload: emailChangeConfirmationPayload,
-  //   subject: z.string(),
-  // }),
+
   z.object({
     to: emailSchema,
-    eventType: z.literal(NotificationType.FORGET_PASSWORD_OTP),
-    payload: passwordResetOtpPayloadSchema,
+    eventType: z.literal(emailNotificationEvents.enum.FORGET_PASSWORD_OTP),
     subject: z.string(),
+    payload: passwordResetOtpPayloadSchema,
   }),
+
   z.object({
     to: emailSchema,
-    eventType: z.literal(NotificationType.PASSWORD_CHANGE_CONFIRMATION),
+    eventType: z.literal(emailNotificationEvents.enum.PASSWORD_CHANGE_CONFIRMATION),
     subject: z.string(),
     payload: passwordChangeConfirmationPayloadSchema,
   }),
-  // ... Add other event types and their corresponding payloads ...
 ]);
 
 export const validateEmailNotification = (data: EmailNotification) => {
@@ -83,16 +72,14 @@ export const validateEmailNotification = (data: EmailNotification) => {
 
 export type EmailNotification = z.infer<typeof emailNotificationSchema>;
 export type EmailVerificationOtpPayload = z.infer<typeof emailVerificationOtpPayloadSchema>;
+export type ForgetPasswordOtpPayload = z.infer<typeof passwordResetOtpPayloadSchema>;
+export type PasswordChangeConfirmationPayload = z.infer<typeof passwordChangeConfirmationPayloadSchema>;
 
 /**
- * Mapping between notification types and user action types
+ * Mapping between send OTP events and user action types
  * This helps maintain consistency between the two systems
  */
-export const notificationToActionMap: Record<NotificationType, UserActionType> = {
-  [NotificationType.EMAIL_VERIFICATION_OTP]: UserActionType.VERIFY_EMAIL,
-  // [NotificationType.EMAIL_VERIFICATION_MAGIC_LINK]: UserActionType.VERIFY_EMAIL,
-  [NotificationType.FORGET_PASSWORD_OTP]: UserActionType.RESET_PASSWORD,
-  [NotificationType.PASSWORD_CHANGE_CONFIRMATION]: UserActionType.RESET_PASSWORD,
-  // [NotificationType.EMAIL_CHANGE_CONFIRMATION]: UserActionType.VERIFY_EMAIL,
-  // [NotificationType.PHONE_VERIFICATION]: UserActionType.VERIFY_PHONE,
+export const sendOtpToActionMap: Record<Extract<OtpEvents, "EMAIL_VERIFICATION" | "FORGET_PASSWORD">, UserActions> = {
+  [otpEvents.enum.EMAIL_VERIFICATION]: userActions.enum.VERIFY_EMAIL,
+  [otpEvents.enum.FORGET_PASSWORD]: userActions.enum.RESET_PASSWORD,
 };

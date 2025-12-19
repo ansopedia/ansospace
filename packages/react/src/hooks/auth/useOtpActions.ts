@@ -1,10 +1,11 @@
 import type { SendOtpRequest, VerifyOtpRequest } from "@ansospace/types";
-import { NotificationType, TokenType } from "@ansospace/types";
+import { TokenType, otpEvents } from "@ansospace/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { useAuthContext } from "../providers/AuthProvider";
+import { AUTH_QUERY_KEYS } from "../../constants/queryKeys";
+import { useAuthContext } from "../../providers/AuthProvider";
 
-export const useOtp = () => {
+export const useOtpActions = () => {
   const { sdk, storage, updateUser } = useAuthContext();
   const queryClient = useQueryClient();
 
@@ -26,7 +27,7 @@ export const useOtp = () => {
   });
 
   // 🔹 Mutation 2: Verify OTP (With Auto-Login Logic)
-  const verifyOtpMutation = useMutation({
+  const verifyMutation = useMutation({
     mutationFn: async (body: Omit<VerifyOtpRequest, "actionToken">) => {
       const actionToken = await storage.get(TokenType.ACTION);
       if (!actionToken) throw new Error("Action token missing. Please resend OTP.");
@@ -42,7 +43,7 @@ export const useOtp = () => {
         await storage.remove(TokenType.ACTION);
 
         // 🔥 LOGIC: If Email Verification, Auto-Login the user
-        if (variables.otpType === NotificationType.EMAIL_VERIFICATION_OTP) {
+        if (variables.eventType === otpEvents.enum.EMAIL_VERIFICATION) {
           const { actionToken: loginToken } = response.data;
 
           // Perform Auto Login immediately
@@ -61,9 +62,9 @@ export const useOtp = () => {
             });
 
             // Update Global State
-            await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
+            await queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEYS.accessProfile });
           }
-        } else if (variables.otpType === NotificationType.FORGET_PASSWORD_OTP) {
+        } else if (variables.eventType === otpEvents.enum.FORGET_PASSWORD) {
           // For Forget Password OTP, just mark user as PARTIAL
           await storage.set(TokenType.ACTION, response.data.actionToken);
         }
@@ -72,7 +73,11 @@ export const useOtp = () => {
   });
 
   return {
-    sendMutation,
-    verifyOtpMutation,
+    // 1. Action Functions (Rename for clarity in UI)
+    sendOtp: sendMutation.mutateAsync,
+    verifyOtp: verifyMutation.mutateAsync,
+
+    isPending: sendMutation.isPending || verifyMutation.isPending,
+    error: sendMutation.error || verifyMutation.error,
   };
 };

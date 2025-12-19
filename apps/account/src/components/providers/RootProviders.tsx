@@ -1,16 +1,13 @@
 "use client";
 
-import * as React from "react";
-
-import { AnsospaceProvider, BrowserStorageAdapter } from "@ansospace/react";
-import { TokenManager } from "@ansospace/sdk";
 import { Toaster } from "@ansospace/ui/components";
 import { ThemeProvider as NextThemesProvider } from "@ansospace/ui/theme";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+import { AuthProvider, AuthProvidersProps } from "./AuthProvider";
 import { ReactQueryProvider } from "./ReactQueryProvider";
 
-export function Providers({ children, baseUrl }: { baseUrl: string; children: React.ReactNode }) {
+export function RootProviders({ children, baseUrl, initialUser }: AuthProvidersProps) {
   return (
     <NextThemesProvider
       attribute="class"
@@ -20,14 +17,9 @@ export function Providers({ children, baseUrl }: { baseUrl: string; children: Re
       enableColorScheme
     >
       <ReactQueryProvider>
-        <AnsospaceProvider
-          config={{
-            baseUrl,
-            storage: new TokenManager(new BrowserStorageAdapter()),
-          }}
-        >
+        <AuthProvider baseUrl={baseUrl} initialUser={initialUser}>
           {children}
-        </AnsospaceProvider>
+        </AuthProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </ReactQueryProvider>
 

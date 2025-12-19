@@ -26,12 +26,12 @@
   },
   "dependencies": {
     "bson": "^7.0.0",
-    "zod": "4.1.13"
+    "zod": "4.2.1"
   },
   "devDependencies": {
     "@ansospace/eslint-config": "workspace:*",
     "@ansospace/typescript-config": "workspace:*",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "tsup": "^8.5.1",
     "typescript": "5.9.3"
   },

@@ -1,21 +1,15 @@
 "use client";
 
-import { ReactNode } from "react";
-
-import type { AnsospaceStorage } from "@ansospace/types";
-
+import { AnsospaceProviderProps } from "../types";
 import { AuthProvider } from "./AuthProvider";
 import { ReactQueryProvider } from "./ReactQueryProvider";
 
-export interface AnsospaceProviderConfig {
-  baseUrl: string;
-  storage: AnsospaceStorage;
-}
-
-export const AnsospaceProvider = ({ children, config }: { children: ReactNode; config: AnsospaceProviderConfig }) => {
+export const AnsospaceProvider = ({ children, config, initialUser }: AnsospaceProviderProps) => {
   return (
     <ReactQueryProvider>
-      <AuthProvider config={config}>{children}</AuthProvider>
+      <AuthProvider config={config} initialUser={initialUser}>
+        {children}
+      </AuthProvider>
     </ReactQueryProvider>
   );
 };

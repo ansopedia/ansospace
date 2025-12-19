@@ -2,8 +2,8 @@
 
 import { FC } from "react";
 
-import { useOtp, useUser } from "@ansospace/react";
-import { NotificationType, otpSchema } from "@ansospace/types";
+import { useOtpActions, useUser } from "@ansospace/react";
+import { OtpEvents, otpSchema } from "@ansospace/types";
 import {
   Button,
   Form,
@@ -30,7 +30,7 @@ const verifyEmailSchema = z.object({
 type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;
 
 interface VerifyEmailFormProps {
-  otpType: NotificationType;
+  eventType: OtpEvents;
   onSuccess: () => void;
   isOtpSent: boolean;
   onOtpSent?: () => void;
@@ -38,8 +38,8 @@ interface VerifyEmailFormProps {
 
 const REGEXP_ONLY_DIGITS: RegExp = /^\d+$/;
 
-export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ otpType, onSuccess, isOtpSent, onOtpSent }) => {
-  const { sendMutation, verifyOtpMutation } = useOtp();
+export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ eventType, onSuccess, isOtpSent, onOtpSent }) => {
+  const { sendOtp, verifyOtp, isPending } = useOtpActions();
   const { email } = useUser();
 
   const form = useForm({
@@ -57,11 +57,11 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ otpType, onSuccess, is
   const onSubmit = async (data: VerifyEmailSchema) => {
     const otpBody = {
       otp: data.otp,
-      otpType,
+      eventType,
     };
 
     try {
-      const response = await verifyOtpMutation.mutateAsync(otpBody);
+      const response = await verifyOtp(otpBody);
       if (response.status === "success") {
         toast.success(response.message);
         // Auto-login happens inside verifyOtp hook; redirect to dashboard
@@ -83,7 +83,7 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ otpType, onSuccess, is
     }
 
     try {
-      const response = await sendMutation.mutateAsync({ otpType: NotificationType.EMAIL_VERIFICATION_OTP, email });
+      const response = await sendOtp({ eventType, email });
       if (response.status === "success" && response.data?.actionToken) {
         toast.success("OTP sent to your email");
         onOtpSent?.();
@@ -102,9 +102,9 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ otpType, onSuccess, is
         <Typography className="text-muted-foreground text-center text-sm">
           Please click the button below to receive a verification code.
         </Typography>
-        <Button onClick={handleResendOtp} className="w-full rounded-xl" size="lg" disabled={sendMutation.isPending}>
-          {sendMutation.isPending && <Spinner className="mr-2" />}
-          {sendMutation.isPending ? "Sending Code..." : "Send Verification Code"}
+        <Button onClick={handleResendOtp} className="w-full rounded-xl" size="lg" disabled={isPending}>
+          {isPending && <Spinner className="mr-2" />}
+          {isPending ? "Sending Code..." : "Send Verification Code"}
         </Button>
       </div>
     );
@@ -145,9 +145,9 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ otpType, onSuccess, is
           )}
         />
 
-        <Button type="submit" className="rounded-xl" size="lg" disabled={verifyOtpMutation.isPending || !otpValue}>
-          {verifyOtpMutation.isPending && <Spinner className="mr-2" />}
-          <span className="text-sm sm:text-base">{verifyOtpMutation.isPending ? "Verifying..." : "Verify Email"}</span>
+        <Button type="submit" className="rounded-xl" size="lg" disabled={isPending || !otpValue}>
+          {isPending && <Spinner className="mr-2" />}
+          <span className="text-sm sm:text-base">{isPending ? "Verifying..." : "Verify Email"}</span>
         </Button>
 
         <div className="text-center">
@@ -156,10 +156,10 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ otpType, onSuccess, is
             <button
               type="button"
               onClick={handleResendOtp}
-              disabled={sendMutation.isPending}
+              disabled={isPending}
               className="link-primary font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {sendMutation.isPending ? "Sending..." : "Resend OTP"}
+              {isPending ? "Sending..." : "Resend OTP"}
             </button>
           </Typography>
         </div>

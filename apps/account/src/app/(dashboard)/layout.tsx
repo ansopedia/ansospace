@@ -1,84 +1,12 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-import { useUser } from "@ansospace/react";
 import { Separator } from "@ansospace/ui/components/separator";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@ansospace/ui/components/sidebar";
-import { Grid3X3, Monitor, Shield, User } from "lucide-react";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@ansospace/ui/components/sidebar";
 
-const navigation = [
-  {
-    title: "Profile",
-    href: "/profile",
-    icon: User,
-  },
-  {
-    title: "Security",
-    href: "/security",
-    icon: Shield,
-  },
-  {
-    title: "Sessions",
-    href: "/security/sessions",
-    icon: Monitor,
-  },
-  {
-    title: "Connected Apps",
-    href: "/connected-apps",
-    icon: Grid3X3,
-  },
-];
+import { DashboardSidebar } from "./_components/Sidebar/DashboardSidebar";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname();
-  const { isAuthenticated } = useUser();
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return (
     <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader className="border-b px-6 py-4">
-          <h2 className="text-lg font-semibold">Account Settings</h2>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {navigation.map((item) => {
-                  const isActive = pathname === item.href;
-                  return (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={isActive}>
-                        <Link href={item.href}>
-                          <item.icon className="size-4" />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
+      <DashboardSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { usePasswordReset } from "@ansospace/react";
+import { usePasswordActions } from "@ansospace/react";
 import { ResetPasswordRequest, resetPasswordRequestSchema } from "@ansospace/types";
 import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,7 +15,7 @@ interface PasswordResetNewPasswordFormProps {
   onSuccess: () => void;
 }
 export function PasswordResetNewPasswordForm({ onSuccess }: PasswordResetNewPasswordFormProps) {
-  const { mutateAsync, isPending } = usePasswordReset();
+  const { mutateAsync, isPending } = usePasswordActions();
 
   const form = useForm({
     resolver: zodResolver(resetPasswordRequestSchema.pick({ password: true, confirmPassword: true })),

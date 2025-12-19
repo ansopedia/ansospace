@@ -2,8 +2,8 @@ import { Metadata } from "next";
 
 import "@ansospace/ui/globals.css";
 
-import { env } from "../lib/env";
-import { Providers } from "./providers";
+import { RootProviders } from "../components/providers/RootProviders";
+import { ANSOSPACE_CONFIG } from "../lib/ansospace/config";
 
 export interface RootLayoutProps {
   children: React.ReactNode;
@@ -18,7 +18,7 @@ export default async function RootLayout({ children }: Readonly<RootLayoutProps>
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={"font-sans antialiased"}>
-        <Providers baseUrl={env.USER_SERVICE_URL}>{children}</Providers>
+        <RootProviders baseUrl={ANSOSPACE_CONFIG.baseUrl}>{children}</RootProviders>
       </body>
     </html>
   );

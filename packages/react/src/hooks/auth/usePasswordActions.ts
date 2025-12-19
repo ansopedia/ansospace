@@ -2,9 +2,9 @@ import type { IApiResponse, ResetPasswordRequest } from "@ansospace/types";
 import { TokenType } from "@ansospace/types";
 import { useMutation } from "@tanstack/react-query";
 
-import { useAuthContext } from "../providers/AuthProvider";
+import { useAuthContext } from "../../providers/AuthProvider";
 
-export const usePasswordReset = () => {
+export const usePasswordActions = () => {
   const { sdk, storage } = useAuthContext();
 
   return useMutation({

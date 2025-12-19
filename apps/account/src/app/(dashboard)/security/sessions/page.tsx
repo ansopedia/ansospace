@@ -1,10 +1,5 @@
-"use client";
-
-import { useState } from "react";
-
 import {
   Badge,
-  Button,
   Card,
   CardContent,
   CardDescription,
@@ -17,84 +12,34 @@ import {
   TableHeader,
   TableRow,
 } from "@ansospace/ui/components";
-import { Laptop, Monitor, Smartphone, Trash2 } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { Laptop, Monitor, Smartphone } from "lucide-react";
 
-interface Session {
-  id: string;
-  device: string;
-  deviceType: "desktop" | "mobile" | "tablet";
-  location: string;
-  ipAddress: string;
-  lastActive: string;
-  isCurrent: boolean;
-}
+// Standard date formatting
+import { getServerSdk } from "../../../../lib/ansospace/server";
+import { SessionRevokeButton } from "./_components/SessionRevokeButton";
 
-const mockSessions: Session[] = [
-  {
-    id: "1",
-    device: "Chrome on Windows",
-    deviceType: "desktop",
-    location: "New York, USA",
-    ipAddress: "192.168.1.1",
-    lastActive: "Active now",
-    isCurrent: true,
-  },
-  {
-    id: "2",
-    device: "Safari on iPhone",
-    deviceType: "mobile",
-    location: "San Francisco, USA",
-    ipAddress: "192.168.1.2",
-    lastActive: "2 hours ago",
-    isCurrent: false,
-  },
-  {
-    id: "3",
-    device: "Firefox on macOS",
-    deviceType: "desktop",
-    location: "London, UK",
-    ipAddress: "192.168.1.3",
-    lastActive: "1 day ago",
-    isCurrent: false,
-  },
-  {
-    id: "4",
-    device: "Chrome on Android",
-    deviceType: "mobile",
-    location: "Tokyo, Japan",
-    ipAddress: "192.168.1.4",
-    lastActive: "3 days ago",
-    isCurrent: false,
-  },
-];
+// Helper to determine icon based on device type
+const getDeviceIcon = (type?: string) => {
+  const t = type?.toLowerCase() || "";
+  if (t.includes("mobile")) return <Smartphone className="text-muted-foreground size-5" />;
+  if (t.includes("tablet")) return <Laptop className="text-muted-foreground size-5" />;
+  return <Monitor className="text-muted-foreground size-5" />;
+};
 
-const SessionPage = () => {
-  const [sessions, setSessions] = useState<Session[]>(mockSessions);
+const SessionPage = async () => {
+  const sdk = await getServerSdk();
 
-  const handleRevokeSession = (sessionId: string) => {
-    setSessions(sessions.filter((session) => session.id !== sessionId));
-    console.log("Revoked session:", sessionId);
-  };
-
-  const getDeviceIcon = (deviceType: Session["deviceType"]) => {
-    switch (deviceType) {
-      case "desktop":
-        return <Monitor className="size-4" />;
-      case "mobile":
-        return <Smartphone className="size-4" />;
-      case "tablet":
-        return <Laptop className="size-4" />;
-      default:
-        return <Monitor className="size-4" />;
-    }
-  };
+  // 1. Fetch Data (Server Side)
+  const res = await sdk.auth.getActiveSessions();
+  const sessions = res.status === "success" ? res.data : [];
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Active Sessions</CardTitle>
-          <CardDescription>Manage devices where you're currently signed in</CardDescription>
+          <CardDescription>Manage devices where you are currently signed in.</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -108,39 +53,62 @@ const SessionPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sessions.map((session) => (
-                <TableRow key={session.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      {getDeviceIcon(session.deviceType)}
-                      <div className="flex flex-col">
-                        <span className="font-medium">{session.device}</span>
-                        {session.isCurrent && (
-                          <Badge variant="secondary" className="mt-1 w-fit">
-                            Current Session
-                          </Badge>
-                        )}
+              {sessions.map((session) => {
+                // 2. Data Transformation (Schema -> UI)
+                const { browser, os, device, geolocation, ip } = session.deviceInfo ?? {};
+
+                // Construct readable device name: "Chrome on Windows"
+                const deviceName = device?.model
+                  ? `${device.model}`
+                  : `${browser?.name || "Unknown Browser"} on ${os?.name || "Unknown OS"}`;
+
+                const location = geolocation?.city ? `${geolocation.city}, ${geolocation.country}` : "Unknown Location";
+
+                const isCurrent = session.isActive; // API should return this
+
+                return (
+                  <TableRow key={session.id.toString()}>
+                    {/* Device Column */}
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="bg-muted/50 rounded-md p-2">{getDeviceIcon(device?.type)}</div>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">{deviceName}</span>
+                          {isCurrent && (
+                            <Badge variant="secondary" className="mt-1 h-5 w-fit px-1.5 text-[10px]">
+                              Current Session
+                            </Badge>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{session.location}</TableCell>
-                  <TableCell className="text-muted-foreground">{session.ipAddress}</TableCell>
-                  <TableCell className="text-muted-foreground">{session.lastActive}</TableCell>
-                  <TableCell className="text-right">
-                    {!session.isCurrent && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRevokeSession(session.id)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="size-4" />
-                        Revoke
-                      </Button>
-                    )}
+                    </TableCell>
+
+                    {/* Location Column */}
+                    <TableCell className="text-sm">{location}</TableCell>
+
+                    {/* IP Column */}
+                    <TableCell className="text-muted-foreground font-mono text-sm">{ip}</TableCell>
+
+                    {/* Time Column */}
+                    <TableCell className="text-muted-foreground text-sm">
+                      {formatDistanceToNow(new Date(session.lastActive), { addSuffix: true })}
+                    </TableCell>
+
+                    {/* Action Column */}
+                    <TableCell className="text-right">
+                      {!isCurrent && <SessionRevokeButton sessionId={session.id} />}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+
+              {sessions.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-muted-foreground py-8 text-center">
+                    No active sessions found.
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>

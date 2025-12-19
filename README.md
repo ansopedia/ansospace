@@ -45,7 +45,7 @@ Ansospace aims to become the foundational ecosystem powering all current and fut
   - Modular resource-based architecture (AuthResource, UserResource, etc.)
   - Works on Node.js, Web, and Mobile
 - `@ansospace/react`: React integration layer
-  - Hooks (useLogin, useUser, useOtp, etc.)
+  - Hooks (useLogin, useUser, useOtpActions, etc.)
   - Context providers (AnsospaceProvider)
   - Platform-specific storage adapters (BrowserStorageAdapter)
 - `@ansospace/types`: Shared TypeScript types and Zod schemas

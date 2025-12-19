@@ -168,6 +168,15 @@ export const sessionSchema = z.object({
 
 export type Session = z.infer<typeof sessionSchema>;
 
+export const sessionQueryOptionsSchema = z.object({
+  limit: z.coerce.number().min(1).max(100).optional().default(10),
+  skip: z.coerce.number().min(0).optional().default(0),
+  sortBy: z.enum(["lastActive", "createdAt"]).optional().default("lastActive"),
+  order: z.enum(["asc", "desc"]).optional().default("desc"),
+});
+
+export type SessionQueryOptions = z.infer<typeof sessionQueryOptionsSchema>;
+
 // ============================================================================
 // AUTHENTICATION TYPES
 // ============================================================================

@@ -1,33 +1,15 @@
 // providers/AuthProvider.tsx
 "use client";
 
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { AnsospaceSDK } from "@ansospace/sdk";
-import { type AnsospaceStorage, Email, ObjectId, UserAccessControlProfile } from "@ansospace/types";
+import { type AnsospaceStorage, Email, ObjectId } from "@ansospace/types";
 import { useQuery } from "@tanstack/react-query";
 
-// 1. GUEST: No data known
-export type GuestUser = {
-  kind: "GUEST";
-};
+import { AUTH_QUERY_KEYS } from "../constants/queryKeys";
+import { AnsospaceProviderProps, AuthUser } from "../types";
 
-// 2. PARTIAL: Known from Storage/Invite (Not fully validated by backend yet)
-export type PartialUser = {
-  kind: "PARTIAL";
-  id?: ObjectId; // We might know ID (from previous login)
-  email?: Email; // We might know Email (from invite/OTP)
-  isVerified: boolean;
-};
-
-// 3. AUTHENTICATED: Full profile from backend
-export type AuthenticatedUser = UserAccessControlProfile & {
-  kind: "AUTHENTICATED";
-  isVerified: true; // Always true for this state
-};
-
-// The Unified User Type
-export type AuthUser = GuestUser | PartialUser | AuthenticatedUser;
 export interface AuthContextValue {
   user: AuthUser;
   isAuthLoading: boolean;
@@ -38,18 +20,13 @@ export interface AuthContextValue {
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-export const AuthProvider = ({
-  children,
-  config,
-}: {
-  children: ReactNode;
-  config: { baseUrl: string; storage: AnsospaceStorage };
-}) => {
+export const AuthProvider = ({ children, config, initialUser }: AnsospaceProviderProps) => {
   const [sdk] = useState(() => new AnsospaceSDK(config));
 
-  // 1. STATE: Default to GUEST
-  const [user, setUser] = useState<AuthUser>({ kind: "GUEST" });
-  const [isStorageChecked, setIsStorageChecked] = useState(false);
+  // 1. Initialize State with Server Data (if available)
+  // If initialUser is passed, we assume storage is already "checked"
+  const [user, setUser] = useState<AuthUser>(initialUser || { kind: "GUEST" });
+  const [isStorageChecked, setIsStorageChecked] = useState(!!initialUser);
 
   // 2. BOOTSTRAP: Hydrate from Storage
   useEffect(() => {
@@ -83,7 +60,7 @@ export const AuthProvider = ({
   const hasSessionId = user.kind !== "GUEST" && !!user.id;
 
   const { data: profile, isLoading: isQueryLoading } = useQuery({
-    queryKey: ["auth", "session"],
+    queryKey: AUTH_QUERY_KEYS.accessProfile,
     queryFn: async () => {
       const res = await sdk.auth.getMyAccessProfile();
       return res.status === "success" ? res.data : null;

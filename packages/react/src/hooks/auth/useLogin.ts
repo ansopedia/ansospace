@@ -1,7 +1,8 @@
 import { LoginRequest } from "@ansospace/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { useAuthContext } from "../providers/AuthProvider";
+import { AUTH_QUERY_KEYS } from "../../constants/queryKeys";
+import { useAuthContext } from "../../providers/AuthProvider";
 
 export const useLogin = () => {
   const { sdk, storage, updateUser } = useAuthContext();
@@ -24,7 +25,7 @@ export const useLogin = () => {
 
         // We tell React Query: "The 'auth session' is dirty, refetch it."
         // This automatically updates the user state in AuthProvider.
-        await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
+        await queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEYS.accessProfile });
       } else {
         const emailToSave = variables.email;
 

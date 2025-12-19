@@ -1,7 +1,7 @@
 import { RegisterRequest, TokenType } from "@ansospace/types";
 import { useMutation } from "@tanstack/react-query";
 
-import { useAuthContext } from "../providers/AuthProvider";
+import { useAuthContext } from "../../providers/AuthProvider";
 
 export const useRegister = () => {
   const { sdk, storage, updateUser } = useAuthContext();

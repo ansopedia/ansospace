@@ -74,6 +74,9 @@ export class HttpClient {
   /**
    * Extract tokens and device ID from response headers and save them
    * Direct mapping: authorization header → TokenType.AUTHORIZATION, refresh-token header → TokenType.REFRESH
+   *
+   * Note: For custom headers like X-Device-Id to be accessible in cross-origin requests,
+   * the server must include them in the Access-Control-Expose-Headers response header.
    */
   private async extractAndSaveTokens(response: Response, url: string) {
     // Save tokens from auth endpoints
