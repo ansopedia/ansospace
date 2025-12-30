@@ -69,13 +69,11 @@ const ProfilePage = () => {
   });
 
   const onProfileSubmit = (data: ProfileFormValues) => {
-    console.log("Profile data:", data);
-    // Handle profile update
+    throw new Error("method not implemented");
   };
 
   const onPasswordSubmit = (data: PasswordFormValues) => {
-    console.log("Password data:", data);
-    // Handle password change
+    throw new Error("method not implemented");
   };
 
   return (

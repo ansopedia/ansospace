@@ -20,11 +20,14 @@ export class HttpClient {
   private defaultHeaders: Record<string, string>;
   private isRefreshing = false;
   private failedQueue: QueueItem<unknown>[] = [];
+  private isServerSide: boolean;
 
   constructor(baseUrl: string, storage: AnsospaceStorage, defaultHeaders: Record<string, string> = {}) {
     this.baseUrl = baseUrl;
     this.storage = storage;
     this.defaultHeaders = defaultHeaders;
+    // Detect if running on server side
+    this.isServerSide = typeof window === "undefined";
   }
 
   /**
@@ -72,13 +75,27 @@ export class HttpClient {
   }
 
   /**
+   * Clear all authentication data from storage
+   */
+  public async clearAuthSession(): Promise<void> {
+    await this.storage.remove(TokenType.AUTHORIZATION);
+    await this.storage.remove(TokenType.REFRESH);
+    // keep the Device ID for tracking the same device across logins.
+  }
+
+  /**
    * Extract tokens and device ID from response headers and save them
-   * Direct mapping: authorization header → TokenType.AUTHORIZATION, refresh-token header → TokenType.REFRESH
    *
-   * Note: For custom headers like X-Device-Id to be accessible in cross-origin requests,
-   * the server must include them in the Access-Control-Expose-Headers response header.
+   * IMPORTANT: Only works on client-side or in Server Actions/Route Handlers
+   * Will skip saving on server-side rendering to avoid Next.js cookie errors
    */
   private async extractAndSaveTokens(response: Response, url: string) {
+    // Skip token saving during server-side rendering
+    // Tokens should only be saved in Server Actions or Route Handlers
+    if (this.isServerSide) {
+      return;
+    }
+
     // Save tokens from auth endpoints
     if (
       url.includes("/auth/login") ||
@@ -97,7 +114,6 @@ export class HttpClient {
         await this.storage.set(TokenType.REFRESH, newRefreshToken);
       }
       if (newDeviceId) {
-        // Store device ID using same key as header name for consistency
         await this.storage.set(HttpHeaders.X_DEVICE_ID, newDeviceId);
       }
     }
@@ -105,42 +121,50 @@ export class HttpClient {
 
   /**
    * Refresh access token using refresh token
-   * Follows the SDK pattern: uses POST method structure but bypasses token injection
-   * to avoid circular dependency (refresh endpoint doesn't require auth)
+   *
+   * IMPORTANT: This should not be called during server-side rendering
+   * Use Server Actions for token refresh on the server
    */
   private async refreshToken() {
-    // Use type-safe storage key constant
+    // Prevent token refresh during server-side rendering
+    if (this.isServerSide) {
+      throw new Error("Token refresh is not allowed during server-side rendering. Use Server Actions instead.");
+    }
+
     const refreshTokenValue = await this.storage.get(TokenType.REFRESH);
 
     if (!refreshTokenValue || typeof refreshTokenValue !== "string") {
       throw new Error("Unauthorized User. Please log in again.");
     }
 
-    // Follow SDK pattern: use same structure as POST but without token injection
     const body: { refreshToken: string } = { refreshToken: refreshTokenValue };
 
     const headers = new Headers({
       ...this.defaultHeaders,
     });
 
-    // Set Content-Type following SDK pattern
     if (!headers.has(HttpHeaders.CONTENT_TYPE)) {
       headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
     }
 
-    // Make request following SDK pattern (POST method)
     const response = await fetch(`${this.baseUrl}/api/v1/auth/refresh`, {
       method: "POST",
       headers,
       body: JSON.stringify(body),
     });
 
-    if (!response.ok) {
-      throw new Error("Refresh token failed");
+    if (response.ok) {
+      await this.extractAndSaveTokens(response, "/api/v1/auth/refresh");
+      return;
     }
 
-    // Use existing extractAndSaveTokens method to handle token extraction and storage
-    await this.extractAndSaveTokens(response, "/api/v1/auth/refresh");
+    const errorData = await this.handleResponse(response);
+
+    if (errorData.status === "failed" && errorData.code === "session_inactive") {
+      await this.clearAuthSession();
+    }
+
+    throw new Error(errorData.message || "Session expired. Please login again.");
   }
 
   /**
@@ -175,6 +199,7 @@ export class HttpClient {
 
   /**
    * Handle 401 response with token refresh
+   * Only attempts refresh on client-side; throws error on server-side
    */
   private async handle401Error<T>(
     method: HttpMethod,
@@ -183,6 +208,11 @@ export class HttpClient {
     _retry: boolean
   ): Promise<IApiResponse<T> | null> {
     if (url.includes("/auth/login")) {
+      return null;
+    }
+
+    // On server-side, don't attempt token refresh - just return the 401
+    if (this.isServerSide) {
       return null;
     }
 

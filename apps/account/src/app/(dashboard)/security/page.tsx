@@ -53,8 +53,8 @@ const SecurityPage = () => {
           <div className="flex items-start justify-between">
             <div className="space-y-1">
               <p className="text-sm">
-                This will log you out from all other devices where you're currently signed in. You'll need to sign in
-                again on those devices.
+                This will log you out from all other devices where you&apos;re currently signed in. You&apos;ll need to
+                sign in again on those devices.
               </p>
             </div>
           </div>
@@ -70,7 +70,7 @@ const SecurityPage = () => {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will log you out from all devices except this one. You'll need to sign in again on those
+                    This will log you out from all devices except this one. You&apos;ll need to sign in again on those
                     devices.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

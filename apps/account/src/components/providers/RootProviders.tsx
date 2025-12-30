@@ -1,13 +1,14 @@
 "use client";
 
+import { ReactNode, Suspense } from "react";
+
 import { Toaster } from "@ansospace/ui/components";
 import { ThemeProvider as NextThemesProvider } from "@ansospace/ui/theme";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { AuthProvider, AuthProvidersProps } from "./AuthProvider";
 import { ReactQueryProvider } from "./ReactQueryProvider";
 
-export function RootProviders({ children, baseUrl, initialUser }: AuthProvidersProps) {
+export function RootProviders({ children }: { children: ReactNode }) {
   return (
     <NextThemesProvider
       attribute="class"
@@ -17,9 +18,7 @@ export function RootProviders({ children, baseUrl, initialUser }: AuthProvidersP
       enableColorScheme
     >
       <ReactQueryProvider>
-        <AuthProvider baseUrl={baseUrl} initialUser={initialUser}>
-          {children}
-        </AuthProvider>
+        <Suspense>{children}</Suspense>
         <ReactQueryDevtools initialIsOpen={false} />
       </ReactQueryProvider>
 

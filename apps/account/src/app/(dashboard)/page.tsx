@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ansospace/ui/components";

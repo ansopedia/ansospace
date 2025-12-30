@@ -30,6 +30,12 @@ export const AuthProvider = ({ children, config, initialUser }: AnsospaceProvide
 
   // 2. BOOTSTRAP: Hydrate from Storage
   useEffect(() => {
+    // Skip bootstrap if we already have authenticated user from server
+    if (initialUser?.kind === "AUTHENTICATED") {
+      setIsStorageChecked(true);
+      return;
+    }
+
     const bootstrap = async () => {
       try {
         const [id, email, verifiedStr] = await Promise.all([
@@ -38,7 +44,8 @@ export const AuthProvider = ({ children, config, initialUser }: AnsospaceProvide
           config.storage.get("isUserVerified"),
         ]);
 
-        if (id || email) {
+        // Only set partial user if we don't already have user data
+        if ((id || email) && user.kind === "GUEST") {
           setUser({
             kind: "PARTIAL",
             id: id as unknown as ObjectId,
@@ -46,34 +53,52 @@ export const AuthProvider = ({ children, config, initialUser }: AnsospaceProvide
             isVerified: verifiedStr === "true" || verifiedStr === true,
           });
         }
-      } catch (e) {
-        console.error("Storage check failed", e);
+      } catch {
+        setIsStorageChecked(false);
       } finally {
         setIsStorageChecked(true);
       }
     };
     bootstrap();
-  }, [config.storage]);
+  }, [config.storage, initialUser, user.kind]);
 
   // 3. QUERY: Fetch Full Profile
   // Only runs if we have an ID (meaning we are at least Partial/Authenticated)
   const hasSessionId = user.kind !== "GUEST" && !!user.id;
+  const isAlreadyAuthenticated = user.kind === "AUTHENTICATED";
+  const shouldFetchProfile = isStorageChecked && hasSessionId && !isAlreadyAuthenticated;
 
   const { data: profile, isLoading: isQueryLoading } = useQuery({
     queryKey: AUTH_QUERY_KEYS.accessProfile,
     queryFn: async () => {
       const res = await sdk.auth.getMyAccessProfile();
-      return res.status === "success" ? res.data : null;
+      if (res.status === "success") return res.data;
+      else {
+        config.storage.remove("userId");
+        config.storage.remove("userEmail");
+        config.storage.remove("isUserVerified");
+      }
     },
-    // 🔥 Only run if storage is checked AND we found a session marker
-    enabled: isStorageChecked && hasSessionId,
-    staleTime: 1000 * 60 * 5,
+    // 🔥 Only run if we need to fetch (not already authenticated from server)
+    enabled: shouldFetchProfile,
+    // Pre-populate cache if we have initial authenticated user
+    initialData:
+      isAlreadyAuthenticated && user.kind === "AUTHENTICATED"
+        ? {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            roles: user.roles,
+            permissions: user.permissions,
+          }
+        : undefined,
+    staleTime: 1000 * 60 * 5, // 5 minutes
     retry: false,
   });
 
   // 4. SYNC EFFECT: Upgrade User when Query Data Arrives
   useEffect(() => {
-    if (profile) {
+    if (profile && user.kind !== "AUTHENTICATED") {
       setUser((prev) => ({
         ...prev, // Keep existing partial data if needed
         ...profile, // Overwrite with backend data
@@ -81,7 +106,7 @@ export const AuthProvider = ({ children, config, initialUser }: AnsospaceProvide
         isVerified: true,
       }));
     }
-  }, [profile]);
+  }, [profile, user.kind]);
 
   // 5. Helper to let hooks update state manually (e.g. after Login success)
   const updateUser = (updates: Partial<AuthUser>) => {

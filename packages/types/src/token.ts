@@ -3,8 +3,6 @@ import z from "zod";
 import { deviceId, objectId } from "./common";
 import { userActions } from "./events";
 
-// import { userActionTypeSchema } from "./notificationTypes";
-
 /**
  * Token types used for both HTTP headers and storage keys
  * This ensures consistency between backend communication and frontend storage

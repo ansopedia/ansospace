@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
 import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ansospace/ui/components";
@@ -59,7 +60,6 @@ const ConnectedAppPage = () => {
 
   const handleRevokeAccess = (appId: string) => {
     setApps(apps.filter((app) => app.id !== appId));
-    console.log("Revoked access for app:", appId);
   };
 
   return (
@@ -73,7 +73,7 @@ const ConnectedAppPage = () => {
           <div className="space-y-4">
             {apps.map((app) => (
               <div key={app.id} className="flex items-start gap-4 rounded-lg border p-4">
-                <img src={app.icon} alt={`${app.name} icon`} className="size-12 rounded-lg" />
+                <Image src={app.icon} alt={`${app.name} icon`} className="size-12 rounded-lg" />
                 <div className="flex-1 space-y-2">
                   <div className="flex items-start justify-between">
                     <div>
