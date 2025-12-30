@@ -24,28 +24,18 @@ import {
   Switch,
 } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, Key } from "lucide-react";
+import { Camera } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { ChangePasswordForm } from "./_components/ChangePasswordForm";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: emailSchema,
 });
 
-const passwordFormSchema = z
-  .object({
-    currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
-type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 const ProfilePage = () => {
   const { email, user } = useUser();
@@ -59,20 +49,7 @@ const ProfilePage = () => {
     },
   });
 
-  const passwordForm = useForm<PasswordFormValues>({
-    resolver: zodResolver(passwordFormSchema),
-    defaultValues: {
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    },
-  });
-
   const onProfileSubmit = (data: ProfileFormValues) => {
-    throw new Error("method not implemented");
-  };
-
-  const onPasswordSubmit = (data: PasswordFormValues) => {
     throw new Error("method not implemented");
   };
 
@@ -142,62 +119,7 @@ const ProfilePage = () => {
         </CardContent>
       </Card>
 
-      {/* Password Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Change Password</CardTitle>
-          <CardDescription>Update your password to keep your account secure</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...passwordForm}>
-            <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
-              <FormField
-                control={passwordForm.control}
-                name="currentPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Current Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Enter current password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={passwordForm.control}
-                name="newPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>New Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Enter new password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={passwordForm.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm New Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Confirm new password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">
-                <Key className="size-4" />
-                Update Password
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+      <ChangePasswordForm />
 
       {/* Two-Factor Authentication */}
       <Card>

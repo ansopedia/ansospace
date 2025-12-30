@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 
-import { Separator } from "@ansospace/ui/components/separator";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@ansospace/ui/components/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@ansospace/ui/components/sidebar";
 
+import { ThemeToggle } from "../../../../../packages/ui/src/theme/theme-toggle";
 import { AuthProvider } from "../../components/providers/AuthProvider";
 import { ANSOSPACE_CONFIG } from "../../lib/ansospace/config";
 import { getServerUser } from "../../lib/ansospace/server";
@@ -25,14 +25,18 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
       <UserProvider>
         <SidebarProvider>
           <DashboardSidebar />
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <div className="relative flex flex-1 flex-col">
+            <header className="bg-background sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b px-4">
               <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="mr-2 h-4" />
               <h1 className="text-lg font-semibold">Dashboard</h1>
+              <div className="ml-auto flex items-center space-x-4">
+                <ThemeToggle />
+              </div>
             </header>
-            <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">{children}</div>
-          </SidebarInset>
+            <main className="flex-1 overflow-y-auto">
+              <div className="container mx-auto p-3 md:p-4">{children}</div>
+            </main>
+          </div>
         </SidebarProvider>
       </UserProvider>
     </Suspense>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -48,9 +49,18 @@ export const DashboardSidebar = () => {
   }
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b px-6 py-4">
-        <h2 className="text-lg font-semibold">Account Settings</h2>
+    <Sidebar collapsible="icon" variant="floating">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={pathname === "/"}>
+              <Link href="/">
+                <Image alt="AnsoSpace Logo" src="/images/Ansopedia_logo.svg" width={32} height={32} />
+                <span className="text-sm font-medium">Ansopedia</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
