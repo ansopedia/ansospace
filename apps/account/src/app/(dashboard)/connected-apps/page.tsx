@@ -73,7 +73,7 @@ const ConnectedAppPage = () => {
           <div className="space-y-4">
             {apps.map((app) => (
               <div key={app.id} className="flex items-start gap-4 rounded-lg border p-4">
-                <Image src={app.icon} alt={`${app.name} icon`} className="size-12 rounded-lg" />
+                <Image src={app.icon} alt={`${app.name} icon`} className="size-12 rounded-lg" width={48} height={48} />
                 <div className="flex-1 space-y-2">
                   <div className="flex items-start justify-between">
                     <div>

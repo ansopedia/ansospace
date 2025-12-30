@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Button, buttonVariants } from "@ansospace/ui/components/button";
+import { type Button, buttonVariants } from "@ansospace/ui/components/button";
 import { cn } from "@ansospace/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 
