@@ -15,9 +15,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Key } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import { AuthFields } from "../../../../components/auth/AuthFields";
-import { AUTH_FORM_FIELDS } from "../../../../constants/auth-fields";
-import { changePasswordAction } from "./action";
+import { AuthFields } from "@/components/auth/AuthFields";
+import { changePasswordAction } from "@/lib/ansospace/actions";
+import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
 const CHANGE_PASSWORD_FIELDS = AUTH_FORM_FIELDS.filter((field) =>
   ["currentPassword", "password", "confirmPassword"].includes(field.name)

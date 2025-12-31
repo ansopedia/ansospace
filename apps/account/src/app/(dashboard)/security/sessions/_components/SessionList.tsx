@@ -2,7 +2,8 @@ import { Badge, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formatDistanceToNow } from "date-fns";
 import { Laptop, Monitor, Smartphone } from "lucide-react";
 
-import { getServerSdk } from "../../../../../lib/ansospace/server";
+import { getSessionsData } from "@/lib/ansospace/actions";
+
 import { SessionRevokeButton } from "./SessionRevokeButton";
 
 // Helper to determine icon based on device type
@@ -14,11 +15,7 @@ const getDeviceIcon = (type?: string) => {
 };
 
 export async function SessionList() {
-  const sdk = await getServerSdk();
-
-  // 1. Fetch Data (Server Side)
-  const res = await sdk.auth.getActiveSessions();
-  const sessions = res.status === "success" ? res.data : [];
+  const sessions = await getSessionsData();
 
   return (
     <>

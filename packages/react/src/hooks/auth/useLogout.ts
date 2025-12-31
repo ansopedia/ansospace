@@ -15,6 +15,8 @@ export const useLogout = () => {
       await storage.remove("isUserVerified");
       await storage.remove("userEmail");
       await storage.remove(TokenType.ACTION);
+      await storage.remove(TokenType.AUTHORIZATION);
+      await storage.remove(TokenType.REFRESH);
 
       // 2. Clear all React Query cache (Immediate UI update)
       queryClient.clear();
