@@ -1,5 +1,6 @@
 import type {
   AutoLoginRequest,
+  ChangePasswordRequest,
   IApiResponse,
   LoginRequest,
   LoginResponse,
@@ -65,7 +66,15 @@ export class AuthResource {
    * Reset password
    */
   async resetPassword(body: ResetPasswordRequest): Promise<IApiResponse<void>> {
-    const url = "/api/v1/auth/password-reset";
+    const url = "/api/v1/auth/reset-password";
+    return this.httpClient.POST<void>(url, { body });
+  }
+
+  /**
+   * Change password
+   */
+  async changePassword(body: ChangePasswordRequest): Promise<IApiResponse<void>> {
+    const url = "/api/v1/auth/change-password";
     return this.httpClient.POST<void>(url, { body });
   }
 

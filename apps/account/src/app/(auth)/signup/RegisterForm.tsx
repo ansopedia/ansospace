@@ -12,6 +12,10 @@ import { useForm } from "react-hook-form";
 import { AuthFields } from "@/components/auth/AuthFields";
 import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
+const registerFields = AUTH_FORM_FIELDS.filter((field) =>
+  ["username", "email", "password", "confirmPassword"].includes(field.name)
+);
+
 export const RegisterForm: FC = () => {
   const router = useRouter();
 
@@ -41,7 +45,7 @@ export const RegisterForm: FC = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 flex flex-col gap-6">
-        <AuthFields form={form} fields={AUTH_FORM_FIELDS} loading={loading} />
+        <AuthFields form={form} fields={registerFields} loading={loading} />
         <Button type="submit" className="rounded-2xl" disabled={loading}>
           {loading && <Spinner />}
           {loading ? "Creating account..." : "Sign Up"}

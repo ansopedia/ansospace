@@ -124,6 +124,19 @@ export const resetPasswordRequestSchema = z
 
 export type ResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
 
+export const changePasswordRequestSchema = z
+  .object({
+    currentPassword: passwordSchema,
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Confirm password does not match password",
+    path: ["confirmPassword"],
+  });
+
+export type ChangePasswordRequest = z.infer<typeof changePasswordRequestSchema>;
+
 // ============================================================================
 // AUTHENTICATION RESPONSE SCHEMAS
 // ============================================================================

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChangePasswordRequest, changePasswordRequestSchema } from "@ansospace/types";
 import {
   Button,
   Card,
@@ -8,43 +9,38 @@ import {
   CardHeader,
   CardTitle,
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
+  toast,
 } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Key } from "lucide-react";
 import { useForm } from "react-hook-form";
-import z from "zod";
 
-const passwordFormSchema = z
-  .object({
-    currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+import { AuthFields } from "../../../../components/auth/AuthFields";
+import { AUTH_FORM_FIELDS } from "../../../../constants/auth-fields";
+import { changePasswordAction } from "./action";
 
-type PasswordFormValues = z.infer<typeof passwordFormSchema>;
+const CHANGE_PASSWORD_FIELDS = AUTH_FORM_FIELDS.filter((field) =>
+  ["currentPassword", "password", "confirmPassword"].includes(field.name)
+).sort((a) => (a.name === "currentPassword" ? -1 : 0));
 
 export const ChangePasswordForm = () => {
-  const passwordForm = useForm<PasswordFormValues>({
-    resolver: zodResolver(passwordFormSchema),
+  const passwordForm = useForm({
+    resolver: zodResolver(changePasswordRequestSchema),
     defaultValues: {
       currentPassword: "",
-      newPassword: "",
+      password: "",
       confirmPassword: "",
     },
   });
 
-  const onPasswordSubmit = (data: PasswordFormValues) => {
-    throw new Error("method not implemented");
+  const onSubmit = async (data: ChangePasswordRequest) => {
+    const resp = await changePasswordAction(data);
+    if (resp.status === "success") {
+      toast.success("Password changed successfully");
+      passwordForm.reset();
+    } else {
+      toast.error(resp.message);
+    }
   };
 
   return (
@@ -55,8 +51,9 @@ export const ChangePasswordForm = () => {
       </CardHeader>
       <CardContent>
         <Form {...passwordForm}>
-          <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
-            <FormField
+          <form className="space-y-4" onSubmit={passwordForm.handleSubmit(onSubmit)}>
+            <AuthFields form={passwordForm} fields={CHANGE_PASSWORD_FIELDS} />
+            {/* <FormField
               control={passwordForm.control}
               name="currentPassword"
               render={({ field }) => (
@@ -71,7 +68,7 @@ export const ChangePasswordForm = () => {
             />
             <FormField
               control={passwordForm.control}
-              name="newPassword"
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>New Password</FormLabel>
@@ -94,7 +91,7 @@ export const ChangePasswordForm = () => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <Button type="submit">
               <Key className="size-4" />
               Update Password
