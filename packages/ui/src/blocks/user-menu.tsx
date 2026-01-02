@@ -61,7 +61,7 @@ export const UserMenu = ({
             <AvatarImage src={avatarUrl} alt={name} />
             <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
-          <span className="hidden text-sm font-medium sm:inline-block">{name}</span>
+          {/* <span className="hidden text-sm font-medium sm:inline-block">{name}</span> */}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

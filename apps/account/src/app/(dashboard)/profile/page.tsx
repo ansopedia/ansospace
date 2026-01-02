@@ -1,151 +1,70 @@
 "use client";
 
-import { useState } from "react";
+import { useUser } from "@ansospace/react";
+import { SpotlightCard } from "@ansospace/ui/blocks";
+import { Button } from "@ansospace/ui/components";
+import { Trash2 } from "lucide-react";
 
-import { useGetSessions, useUser } from "@ansospace/react";
-import { emailSchema } from "@ansospace/types";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-  Switch,
-} from "@ansospace/ui/components";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { AccountHealth } from "./_components/AccountHealth";
+import { ActivityLog } from "./_components/ActivityLog";
+import { IdentityCard } from "./_components/IdentityCard";
+import { SessionMap } from "./_components/SessionMap";
+import { SignInMethods } from "./_components/SignInMethods";
 
-import { ChangePasswordForm } from "./_components/ChangePasswordForm";
-
-const profileFormSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: emailSchema,
-});
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+const NOISE_TEXTURE =
+  "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E";
 
 const ProfilePage = () => {
-  const { email, user } = useUser();
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const { data: sessions } = useGetSessions();
-  console.log("sessions", sessions);
+  const { user } = useUser();
 
-  const profileForm = useForm({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues: {
-      name: user.kind === "AUTHENTICATED" ? user.username : "",
-      email,
-    },
-  });
-
-  const onProfileSubmit = (data: ProfileFormValues) => {
-    throw new Error("method not implemented");
-  };
+  if (user.kind !== "AUTHENTICATED") {
+    return null;
+  }
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-6">
-      {/* Avatar Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile Picture</CardTitle>
-          <CardDescription>Update your profile picture</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-6">
-            <Avatar className="size-24">
-              <AvatarImage src="https://i.pravatar.cc/96?u=johndoe" alt="Profile picture" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col gap-2">
-              <Button variant="outline" size="sm">
-                <Camera className="size-4" />
-                Upload Photo
-              </Button>
-              <p className="text-muted-foreground text-xs">JPG, PNG or GIF. Max size 2MB.</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="relative mx-auto w-full max-w-7xl">
+      {/* Subtle Noise Texture Overlay */}
+      <div
+        className="pointer-events-none fixed inset-0 z-[-1] opacity-[0.03] mix-blend-overlay grayscale"
+        style={{
+          backgroundImage: `url("${NOISE_TEXTURE}")`,
+        }}
+      />
 
-      {/* Personal Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
-          <CardDescription>Update your name and email address</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...profileForm}>
-            <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
-              <FormField
-                control={profileForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={profileForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="Enter your email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Save Changes</Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Row 1: Who & Health */}
+        <IdentityCard />
+        <AccountHealth />
 
-      <ChangePasswordForm />
+        {/* Row 2: Presence & Access */}
+        <SessionMap />
+        <SignInMethods />
 
-      {/* Two-Factor Authentication */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Two-Factor Authentication</CardTitle>
-          <CardDescription>Add an extra layer of security to your account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
+        {/* Row 3: History & Risks */}
+        <div className="lg:col-span-2">
+          <ActivityLog />
+        </div>
+
+        <div className="lg:col-span-1">
+          <SpotlightCard className="flex h-full flex-col justify-between border-red-500/20 bg-red-500/5 p-6">
             <div className="space-y-1">
-              <p className="text-sm font-medium">Enable 2FA</p>
-              <p className="text-muted-foreground text-sm">Require a verification code in addition to your password</p>
+              <div className="mb-2 flex items-center gap-2 text-red-500">
+                <Trash2 className="size-5" />
+                <h3 className="text-xl font-bold">Danger Zone</h3>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Permanently delete your account and all associated data. This action is irreversible.
+              </p>
             </div>
-            <Switch checked={twoFactorEnabled} onCheckedChange={setTwoFactorEnabled} />
-          </div>
-          {twoFactorEnabled && (
-            <div className="mt-4 space-y-2">
-              <Button variant="outline" size="sm">
-                Set Up Authenticator App
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            <Button
+              variant="ghost"
+              className="mt-8 w-full rounded-xl border border-red-900/50 font-bold text-red-500 transition-all duration-300 hover:bg-red-950/50"
+            >
+              Delete Account
+            </Button>
+          </SpotlightCard>
+        </div>
+      </div>
     </div>
   );
 };

@@ -17,8 +17,8 @@ export const Footer = ({ copyright, links, className, children, ...props }: Foot
   const defaultCopyright = `© ${currentYear} AnsoSpace. All rights reserved.`;
 
   return (
-    <footer className={cn("bg-background text-muted-foreground mt-auto border-t py-4", className)} {...props}>
-      <div className="container mx-auto px-4">
+    <footer className={cn("text-muted-foreground mt-auto py-4", className)} {...props}>
+      <div className="mx-auto px-4">
         {children || (
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-sm">{copyright || defaultCopyright}</p>

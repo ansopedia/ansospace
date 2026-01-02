@@ -3,6 +3,7 @@
     "streetsidesoftware.code-spell-checker",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "yoavbls.pretty-ts-errors"
+    "yoavbls.pretty-ts-errors",
+    "eamodio.gitlens"
   ]
 }

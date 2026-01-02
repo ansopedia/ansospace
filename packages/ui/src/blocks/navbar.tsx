@@ -2,46 +2,60 @@
 
 import * as React from "react";
 
-import { Separator } from "../components/separator";
-import { SidebarTrigger } from "../components/sidebar";
 import { cn } from "../lib/utils";
-import { ThemeToggle } from "../theme/theme-toggle";
-import { UserMenu, UserMenuProps } from "./user-menu";
 
 export interface NavbarProps extends React.ComponentProps<"header"> {
-  userMenu?: UserMenuProps;
-  showSidebarTrigger?: boolean;
-  title?: string;
-  actions?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export const Navbar = ({
-  userMenu,
-  showSidebarTrigger = true,
-  title,
-  actions,
-  className,
-  children,
-  ...props
-}: NavbarProps) => {
+const NavbarRoot = ({ children, className, ...props }: NavbarProps) => {
   return (
-    <header
-      className={cn("bg-background sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4", className)}
-      {...props}
-    >
-      {showSidebarTrigger && (
-        <>
-          <SidebarTrigger variant="outline" className="scale-125 sm:scale-100" />
-          <Separator orientation="vertical" className="h-6" />
-        </>
-      )}
-      {title && <h1 className="text-lg font-semibold">{title}</h1>}
-      {children}
-      <div className="ml-auto flex items-center gap-2">
-        {actions}
-        {userMenu && <UserMenu {...userMenu} />}
-        <ThemeToggle />
-      </div>
-    </header>
+    <div className="w-full px-4 pt-2 md:px-8 md:pt-2">
+      <header
+        className={cn(
+          "bg-background/80 border-border/40 shadow-card/10 mx-auto flex h-14 w-full max-w-7xl items-center justify-between rounded-2xl border px-4 backdrop-blur-md transition-all md:h-16 md:px-6",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </header>
+    </div>
   );
 };
+
+const NavbarLeft = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={cn("flex items-center gap-4", className)}>{children}</div>
+);
+
+const NavbarCenter = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={cn("hidden flex-1 items-center justify-center md:flex", className)}>{children}</div>
+);
+
+const NavbarRight = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={cn("flex items-center gap-2 md:gap-4", className)}>{children}</div>
+);
+
+const NavbarBrand = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={cn("flex items-center gap-2", className)}>{children}</div>
+);
+
+export interface NavbarComponent extends React.FC<NavbarProps> {
+  Left: typeof NavbarLeft;
+  Center: typeof NavbarCenter;
+  Right: typeof NavbarRight;
+  Brand: typeof NavbarBrand;
+}
+
+export const Navbar = Object.assign(NavbarRoot, {
+  Left: NavbarLeft,
+  Center: NavbarCenter,
+  Right: NavbarRight,
+  Brand: NavbarBrand,
+}) as NavbarComponent;
+
+Navbar.displayName = "Navbar";
+NavbarLeft.displayName = "Navbar.Left";
+NavbarCenter.displayName = "Navbar.Center";
+NavbarRight.displayName = "Navbar.Right";
+NavbarBrand.displayName = "Navbar.Brand";

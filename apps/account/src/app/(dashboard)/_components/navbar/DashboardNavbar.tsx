@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 
 import { useLogout, useUser } from "@ansospace/react";
-import { Navbar } from "@ansospace/ui/blocks";
+import { Navbar, UserMenu } from "@ansospace/ui/blocks";
+import { Separator } from "@ansospace/ui/components/separator";
+import { SidebarTrigger } from "@ansospace/ui/components/sidebar";
 
 export const DashboardNavbar = () => {
   const router = useRouter();
@@ -26,8 +28,7 @@ export const DashboardNavbar = () => {
     return null;
   }
 
-  const name = user.username || email || "User";
-  const initials = name
+  const initials = user.displayName
     .split(" ")
     .map((n: string) => n[0])
     .join("")
@@ -35,15 +36,25 @@ export const DashboardNavbar = () => {
     .slice(0, 2);
 
   return (
-    <Navbar
-      title="Dashboard"
-      userMenu={{
-        name,
-        email: email || "",
-        fallback: initials,
-        onLogout: handleLogout,
-        onManageAccount: handleManageAccount,
-      }}
-    />
+    <Navbar>
+      <Navbar.Left>
+        <SidebarTrigger variant="ghost" />
+        <Separator orientation="vertical" className="h-4" />
+        <Navbar.Brand>
+          <h1 className="text-lg font-bold tracking-tight">Dashboard</h1>
+        </Navbar.Brand>
+      </Navbar.Left>
+
+      <Navbar.Right>
+        <UserMenu
+          name={user.displayName}
+          avatarUrl={user.avatar}
+          email={email || ""}
+          fallback={initials}
+          onLogout={handleLogout}
+          onManageAccount={handleManageAccount}
+        />
+      </Navbar.Right>
+    </Navbar>
   );
 };
