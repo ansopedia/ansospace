@@ -3,8 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import "@ansospace/ui/globals.css";
 
-import { env } from "../lib/env";
-import { Providers } from "./providers";
+import { RootProviders } from "./providers/RootProviders";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers baseUrl={env.USER_SERVICE_URL}>{children}</Providers>
+        <RootProviders>{children}</RootProviders>
       </body>
     </html>
   );

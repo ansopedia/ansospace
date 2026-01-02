@@ -23,11 +23,13 @@
     "zod": "4.2.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "3.3.3",
     "@ansospace/eslint-config": "workspace:*",
     "@ansospace/types": "workspace:*",
     "@ansospace/typescript-config": "workspace:*",
+    "@eslint/eslintrc": "3.3.3",
     "@next/eslint-plugin-next": "16.1.1",
+    "@tanstack/react-query": "^5.90.16",
+    "@tanstack/react-query-devtools": "5.91.2",
     "@types/node": "25.0.3",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",

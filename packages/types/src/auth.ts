@@ -126,7 +126,7 @@ export type ResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
 
 export const changePasswordRequestSchema = z
   .object({
-    currentPassword: passwordSchema,
+    currentPassword: passwordSchema.optional(), // Optional because we might be using Google or Apple auth
     password: passwordSchema,
     confirmPassword: passwordSchema,
   })

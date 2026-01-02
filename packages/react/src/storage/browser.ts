@@ -9,6 +9,7 @@ export class BrowserStorageAdapter implements AnsospaceStorage {
     if (typeof document === "undefined") return undefined;
     const cookie = document.cookie.split("; ").find((row) => row.startsWith(`${key}=`));
     const cookieValue = cookie ? cookie.split("=")[1] || undefined : undefined;
+    console.log("cookieValue", cookieValue);
     if (cookieValue) return cookieValue;
     return undefined;
   }

@@ -107,15 +107,9 @@ export class HttpClient {
       const newRefreshToken = response.headers.get(HttpHeaders.REFRESH_TOKEN);
       const newDeviceId = response.headers.get(HttpHeaders.X_DEVICE_ID);
 
-      if (newAccessToken) {
-        await this.storage.set(TokenType.AUTHORIZATION, newAccessToken);
-      }
-      if (newRefreshToken) {
-        await this.storage.set(TokenType.REFRESH, newRefreshToken);
-      }
-      if (newDeviceId) {
-        await this.storage.set(HttpHeaders.X_DEVICE_ID, newDeviceId);
-      }
+      if (newAccessToken) await this.storage.set(TokenType.AUTHORIZATION, newAccessToken);
+      if (newRefreshToken) await this.storage.set(TokenType.REFRESH, newRefreshToken);
+      if (newDeviceId) await this.storage.set(HttpHeaders.X_DEVICE_ID, newDeviceId);
     }
   }
 
@@ -151,6 +145,7 @@ export class HttpClient {
       method: "POST",
       headers,
       body: JSON.stringify(body),
+      credentials: "include", // Critical for Cookie Refresh
     });
 
     if (response.ok) {
@@ -285,6 +280,7 @@ export class HttpClient {
         method,
         headers,
         body: body ? JSON.stringify(body) : undefined,
+        credentials: "include", // Critical for Cookie Refresh
         ...fetchOptions,
       });
 
@@ -367,6 +363,7 @@ export class HttpClient {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
+      credentials: "include", // Critical for Cookie Refresh
       ...fetchOptions,
     });
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { useUser } from "@ansospace/react";
+import { useGetSessions, useUser } from "@ansospace/react";
 import { emailSchema } from "@ansospace/types";
 import {
   Avatar,
@@ -40,6 +40,8 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 const ProfilePage = () => {
   const { email, user } = useUser();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const { data: sessions } = useGetSessions();
+  console.log("sessions", sessions);
 
   const profileForm = useForm({
     resolver: zodResolver(profileFormSchema),

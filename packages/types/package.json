@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "bson": "^7.0.0",
-    "zod": "4.2.1"
+    "zod": "4.3.2"
   },
   "devDependencies": {
     "@ansospace/eslint-config": "workspace:*",

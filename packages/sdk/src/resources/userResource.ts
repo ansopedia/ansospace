@@ -1,4 +1,4 @@
-import type { GetUser, IApiResponse, UpdateUser } from "@ansospace/types";
+import type { GetUser, IApiResponse, ProfileData, UpdateUser } from "@ansospace/types";
 
 import { HttpClient } from "../httpClient";
 
@@ -15,16 +15,16 @@ export class UserResource {
   /**
    * Get user profile
    */
-  async getProfile(): Promise<IApiResponse<GetUser>> {
-    const url = "/api/v1/users/profile";
-    return this.httpClient.GET<GetUser>(url);
+  async getProfile(): Promise<IApiResponse<{ profile: ProfileData | null; user: GetUser }>> {
+    const url = "/api/v1/profile";
+    return this.httpClient.GET<{ profile: ProfileData | null; user: GetUser }>(url);
   }
 
   /**
    * Update user profile
    */
   async updateProfile(body: UpdateUser): Promise<IApiResponse<GetUser>> {
-    const url = "/api/v1/users/profile";
+    const url = "/api/v1/profile";
     return this.httpClient.PUT<GetUser>(url, { body });
   }
 
@@ -33,6 +33,6 @@ export class UserResource {
    */
   async checkUsernameAvailability(username: string): Promise<IApiResponse<{ isAvailable: boolean }>> {
     const url = `/api/v1/users/check-username/${username}`;
-    return this.httpClient.GET<{ isAvailable: boolean }>(url);
+    return this.httpClient.publicRequest<{ isAvailable: boolean }>("GET", url);
   }
 }

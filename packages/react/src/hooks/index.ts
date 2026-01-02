@@ -10,3 +10,5 @@ export { usePasswordActions } from "./auth/usePasswordActions";
 
 export { useGetSessions } from "./sessions/useGetSessions";
 export { useSessionActions } from "./sessions/useSessionActions";
+
+export { useGetUserProfile } from "./user/useGetUserProfile";

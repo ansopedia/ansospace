@@ -7,4 +7,5 @@ export interface UserAccessControlProfile {
   email: Email;
   roles: string[]; // e.g. ["admin", "editor"]
   permissions: string[]; // e.g. ["create-post", "delete-user"]
+  hasPassword: boolean;
 }
