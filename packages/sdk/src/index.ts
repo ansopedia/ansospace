@@ -15,4 +15,11 @@ export { TokenManager } from "./storage/tokenManager";
 // Types
 export type { AnsospaceConfig, HttpMethod, RequestOptions } from "./types";
 // Re-export storage types from @ansospace/types
-export type { AnsospaceStorage, AuthStorageKey, StorageValueType } from "@ansospace/types";
+export type {
+  AnsospaceStorage,
+  AuditLog,
+  AuditLogQuery,
+  AuthStorageKey,
+  IAuditLog,
+  StorageValueType,
+} from "@ansospace/types";

@@ -111,16 +111,19 @@ export const registerRequestSchema = z.union([createUserWithEmailAndPasswordSche
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
 
 // Reset password request schema (moved from user.ts for better grouping)
-export const resetPasswordRequestSchema = z
-  .object({
-    password: passwordSchema,
-    confirmPassword: passwordSchema,
-    actionToken: z.string().min(1, "Action token is required"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
+export const resetPasswordBaseSchema = z.object({
+  password: passwordSchema,
+  confirmPassword: passwordSchema,
+  actionToken: z.string().min(1, "Action token is required"),
+});
+
+export const resetPasswordRequestSchema = resetPasswordBaseSchema.refine(
+  (data) => data.password === data.confirmPassword,
+  {
     message: "Confirm password does not match password",
     path: ["confirmPassword"],
-  });
+  }
+);
 
 export type ResetPasswordRequest = z.infer<typeof resetPasswordRequestSchema>;
 
@@ -172,6 +175,7 @@ export const sessionSchema = z.object({
   refreshToken: z.string(),
   tokenVersion: z.number().default(0),
   lastActive: z.date().default(() => new Date()),
+  lastLoginAt: z.date().default(() => new Date()),
   createdAt: z.date(),
   updatedAt: z.date(),
   deviceId: deviceId,
@@ -200,3 +204,36 @@ export type AuthenticatedUser = {
   deviceId: DeviceId;
   tokenVersion: number;
 };
+
+// ============================================================================
+// AUDIT LOG TYPES
+// ============================================================================
+
+export interface IAuditLog {
+  userId: ObjectId;
+  action: string;
+  sessionId?: ObjectId;
+  ip?: string;
+  metadata?: Record<string, unknown>;
+  createdAt: Date;
+}
+
+export type AuditLog = {
+  logs: IAuditLog[];
+  pagination: {
+    total: number;
+    limit: number;
+    offset: number;
+  };
+};
+
+export const auditLogQuerySchema = z.object({
+  limit: z.coerce.number().min(1).max(100).default(20),
+  offset: z.coerce.number().min(0).default(0),
+  userId: z.string().optional(),
+  action: z.string().optional(),
+  startDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
+});
+
+export type AuditLogQuery = z.infer<typeof auditLogQuerySchema>;

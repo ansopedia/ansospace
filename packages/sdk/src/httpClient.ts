@@ -89,12 +89,18 @@ export class HttpClient {
    * IMPORTANT: Only works on client-side or in Server Actions/Route Handlers
    * Will skip saving on server-side rendering to avoid Next.js cookie errors
    */
-  private async extractAndSaveTokens(response: Response, url: string) {
-    // Skip token saving during server-side rendering
-    // Tokens should only be saved in Server Actions or Route Handlers
-    if (this.isServerSide) {
-      return;
-    }
+  private async extractAndSaveTokens(response: Response, url: string, body?: unknown) {
+    const responseBody = body as
+      | {
+          data?: { accessToken?: string; refreshToken?: string; deviceId?: string };
+          accessToken?: string;
+          refreshToken?: string;
+          deviceId?: string;
+        }
+      | undefined;
+    // Skip token saving during server-side rendering IF it's likely to cause errors
+    // However, in Middleware or Server Actions, this is often fine if the storage adapter handles it.
+    // For now, we trust the storage adapter to handle isServerSide logic if needed.
 
     // Save tokens from auth endpoints
     if (
@@ -103,9 +109,18 @@ export class HttpClient {
       url.includes("/otp/verify") ||
       url.includes("/auth/auto-login")
     ) {
-      const newAccessToken = response.headers.get(HttpHeaders.AUTHORIZATION);
-      const newRefreshToken = response.headers.get(HttpHeaders.REFRESH_TOKEN);
-      const newDeviceId = response.headers.get(HttpHeaders.X_DEVICE_ID);
+      const newAccessToken =
+        response.headers.get(HttpHeaders.AUTHORIZATION) ||
+        (responseBody && responseBody.data?.accessToken) ||
+        (responseBody && responseBody.accessToken);
+      const newRefreshToken =
+        response.headers.get(HttpHeaders.REFRESH_TOKEN) ||
+        (responseBody && responseBody.data?.refreshToken) ||
+        (responseBody && responseBody.refreshToken);
+      const newDeviceId =
+        response.headers.get(HttpHeaders.X_DEVICE_ID) ||
+        (responseBody && responseBody.data?.deviceId) ||
+        (responseBody && responseBody.deviceId);
 
       if (newAccessToken) await this.storage.set(TokenType.AUTHORIZATION, newAccessToken);
       if (newRefreshToken) await this.storage.set(TokenType.REFRESH, newRefreshToken);
@@ -120,10 +135,8 @@ export class HttpClient {
    * Use Server Actions for token refresh on the server
    */
   private async refreshToken() {
-    // Prevent token refresh during server-side rendering
-    if (this.isServerSide) {
-      throw new Error("Token refresh is not allowed during server-side rendering. Use Server Actions instead.");
-    }
+    // Token refresh is now allowed on server-side (e.g. in Middleware or Server Actions)
+    // The storage adapter MUST handle cookie setting correctly.
 
     const refreshTokenValue = await this.storage.get(TokenType.REFRESH);
 
@@ -149,7 +162,8 @@ export class HttpClient {
     });
 
     if (response.ok) {
-      await this.extractAndSaveTokens(response, "/api/v1/auth/refresh");
+      const result = await this.handleResponse(response);
+      await this.extractAndSaveTokens(response, "/api/v1/auth/refresh", result);
       return;
     }
 
@@ -206,10 +220,8 @@ export class HttpClient {
       return null;
     }
 
-    // On server-side, don't attempt token refresh - just return the 401
-    if (this.isServerSide) {
-      return null;
-    }
+    // On server-side, we now attempt token refresh if we're not currently refreshing.
+    // This allows middleware and server-side components to automatically renew sessions.
 
     if (this.isRefreshing) {
       return new Promise<IApiResponse<T>>((resolve, reject) => {
@@ -286,7 +298,7 @@ export class HttpClient {
 
       const result = await this.handleResponse<T>(response);
 
-      await this.extractAndSaveTokens(response, url);
+      await this.extractAndSaveTokens(response, url, result);
 
       if (response.status === 401 && !_retry) {
         const errorResponse = await this.handle401Error<T>(method, url, options, _retry);

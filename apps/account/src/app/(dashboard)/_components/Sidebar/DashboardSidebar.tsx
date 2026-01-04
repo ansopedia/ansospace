@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@ansospace/ui/components/sidebar";
-import { Grid3X3, Home, Monitor, Shield, User } from "lucide-react";
+import { Grid3X3, History, Home, Monitor, Shield, User } from "lucide-react";
 
 const navigation = [
   {
@@ -41,6 +41,11 @@ const securityNavigation = [
     title: "Sessions",
     href: "/security/sessions",
     icon: Monitor,
+  },
+  {
+    title: "Security Activity",
+    href: "/profile/activity",
+    icon: History,
   },
   {
     title: "Connected Apps",

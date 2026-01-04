@@ -1,4 +1,6 @@
 import type {
+  AuditLog,
+  AuditLogQuery,
   AutoLoginRequest,
   ChangePasswordRequest,
   IApiResponse,
@@ -184,5 +186,22 @@ export class AuthResource {
     // const url = `/api/v1/sessions/${sessionId}`;
     // return this.httpClient.DELETE<void>(url);
     throw new Error("Method not implemented.");
+  }
+
+  async getAuditLogs(options?: Partial<AuditLogQuery>): Promise<IApiResponse<AuditLog>> {
+    const params = new URLSearchParams();
+
+    if (options) {
+      if (options.limit) params.append("limit", options.limit.toString());
+      if (options.offset) params.append("offset", options.offset.toString());
+      if (options.userId) params.append("userId", options.userId);
+      if (options.action) params.append("action", options.action);
+      if (options.startDate) params.append("startDate", options.startDate.toISOString());
+      if (options.endDate) params.append("endDate", options.endDate.toISOString());
+    }
+
+    const queryString = params.toString();
+    const url = queryString ? `/api/v1/auth/audit-logs?${queryString}` : "/api/v1/auth/audit-logs";
+    return this.httpClient.GET<AuditLog>(url);
   }
 }
