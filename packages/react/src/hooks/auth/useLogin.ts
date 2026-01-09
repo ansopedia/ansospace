@@ -14,8 +14,7 @@ export const useLogin = () => {
       if (response.status === "success") {
         const { userId } = response.data;
 
-        await storage.set("userId", userId.toString());
-        await storage.set("isUserVerified", true);
+        await storage.set("is-user-verified", true);
 
         updateUser({
           kind: "AUTHENTICATED",
@@ -30,10 +29,10 @@ export const useLogin = () => {
         const emailToSave = variables.email;
 
         if (emailToSave) {
-          await storage.set("userEmail", emailToSave);
+          await storage.set("user-email", emailToSave);
         }
 
-        await storage.set("isUserVerified", false);
+        await storage.set("is-user-verified", false);
 
         updateUser({
           kind: "PARTIAL",

@@ -12,10 +12,10 @@ export const useRegister = () => {
       if (response.status === "success") {
         const { actionToken, userId } = response.data;
 
-        await storage.set("userId", userId.toString());
+        await storage.set("user-id", userId.toString());
         await storage.set(TokenType.ACTION, actionToken);
-        await storage.set("userEmail", variables.email);
-        await storage.set("isUserVerified", false);
+        await storage.set("user-email", variables.email);
+        await storage.set("is-user-verified", false);
 
         // This switches the user from GUEST -> PARTIAL
         updateUser({

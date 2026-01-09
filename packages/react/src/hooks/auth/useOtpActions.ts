@@ -52,8 +52,8 @@ export const useOtpActions = () => {
           if (loginRes.status === "success") {
             const { userId } = loginRes.data;
             // Persist Session
-            await storage.set("userId", userId.toString());
-            await storage.set("isUserVerified", true);
+            await storage.set("user-id", userId.toString());
+            await storage.set("is-user-verified", true);
 
             updateUser({
               kind: "AUTHENTICATED",

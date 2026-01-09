@@ -11,9 +11,9 @@ export const useLogout = () => {
     mutationFn: async () => sdk.auth.logout(),
     onSuccess: async () => {
       // 1. Clear all persistence
-      await storage.remove("userId");
-      await storage.remove("isUserVerified");
-      await storage.remove("userEmail");
+      await storage.remove("user-id");
+      await storage.remove("is-user-verified");
+      await storage.remove("user-email");
       await storage.remove(TokenType.ACTION);
       await storage.remove(TokenType.AUTHORIZATION);
       await storage.remove(TokenType.REFRESH);

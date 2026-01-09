@@ -3,10 +3,10 @@ import { TokenType } from "./token";
 /**
  * Storage keys for authentication data
  * - TokenType values: "authorization", "refresh-token", "action-token"
- * - User data: "userId", "userEmail", "isUserVerified"
+ * - User data: "user-id", "user-email", "is-user-verified"
  * - Device tracking: "x-device-id" (matches HttpHeaders.X_DEVICE_ID)
  */
-export type AuthStorageKey = TokenType | "userId" | "userEmail" | "isUserVerified" | "x-device-id" | (string & {});
+export type AuthStorageKey = TokenType | "user-id" | "user-email" | "is-user-verified" | "x-device-id" | (string & {});
 
 export type StorageValueType = string | boolean | undefined;
 

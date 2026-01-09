@@ -32,6 +32,13 @@ export const HttpHeaders = {
   X_DEVICE_ID: "x-device-id",
 
   /**
+   * User ID header (used in response headers)
+   * Backend sends user ID in this header
+   * Value matches AuthStorageKey
+   */
+  USER_ID: "user-id",
+
+  /**
    * Access-Control-Expose-Headers (used in response headers)
    * Backend sets this to expose custom headers to the client
    * Value: "set-cookie, authorization, refresh-token"

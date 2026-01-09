@@ -39,9 +39,9 @@ export const AuthProvider = ({ children, config, initialUser }: AnsospaceProvide
     const bootstrap = async () => {
       try {
         const [id, email, verifiedStr] = await Promise.all([
-          config.storage.get("userId"),
-          config.storage.get("userEmail"),
-          config.storage.get("isUserVerified"),
+          config.storage.get("user-id"),
+          config.storage.get("user-email"),
+          config.storage.get("is-user-verified"),
         ]);
 
         // Only set partial user if we don't already have user data
@@ -74,9 +74,9 @@ export const AuthProvider = ({ children, config, initialUser }: AnsospaceProvide
       const res = await sdk.auth.getMyAccessProfile();
       if (res.status === "success") return res.data;
       else {
-        config.storage.remove("userId");
-        config.storage.remove("userEmail");
-        config.storage.remove("isUserVerified");
+        config.storage.remove("user-id");
+        config.storage.remove("user-email");
+        config.storage.remove("is-user-verified");
       }
     },
     // 🔥 Only run if we need to fetch (not already authenticated from server)
