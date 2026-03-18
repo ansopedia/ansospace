@@ -4,8 +4,18 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { useDebounce } from "@ansospace/react";
-import { SpotlightCard } from "@ansospace/ui/blocks";
-import { Button, Input, Spinner } from "@ansospace/ui/components";
+import {
+  Button,
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Spinner,
+  Typography,
+} from "@ansospace/ui/components";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,9 +52,6 @@ import {
 } from "lucide-react";
 
 import { getAuditLogsAction } from "@/lib/ansospace/actions";
-
-const NOISE_TEXTURE =
-  "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E";
 
 const getLogMetadata = (action: string) => {
   const lowerAction = action.toLowerCase();
@@ -108,7 +115,9 @@ const ActivityLogPage = () => {
       return (
         <div className="flex min-h-[400px] flex-col items-center justify-center space-y-4">
           <Spinner className="size-8" />
-          <p className="text-muted-foreground animate-pulse text-sm">Loading activity history...</p>
+          <Typography variant="mutedText" className="animate-pulse">
+            Loading activity history...
+          </Typography>
         </div>
       );
     }
@@ -163,96 +172,76 @@ const ActivityLogPage = () => {
             </div>
           </div>
 
-          <SpotlightCard
-            className={cn(
-              "border-border/30 hover:border-border/60 relative overflow-hidden bg-black/40 p-5 backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_0_30px_-10px_rgba(255,255,255,0.05)]",
-              "hover:-translate-y-0.5"
-            )}
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-4">
-                <div className={cn("rounded-xl p-2.5 transition-colors sm:hidden", meta.bg)}>
-                  <LogIcon className={cn("size-5", meta.color)} />
-                </div>
-                <div className={cn("mt-1.5 hidden rounded-xl p-2.5 transition-colors sm:block", meta.bg)}>
-                  <LogIcon className={cn("size-5", meta.color)} />
-                </div>
-                <div>
-                  <h4 className="flex items-start gap-2 text-base font-bold text-white sm:text-lg">
-                    {log.action}
-                    {log.metadata &&
-                      typeof log.metadata === "object" &&
-                      !!(log.metadata as Record<string, unknown>).isNewDevice && (
-                        <span className="rounded bg-indigo-500/10 px-2 py-0.5 text-[10px] font-bold tracking-wider text-indigo-400 uppercase">
-                          New Device
-                        </span>
+          <Card>
+            <CardHeader className="p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className={cn("rounded-xl p-2.5 transition-colors sm:hidden", meta.bg)}>
+                    <LogIcon className={cn("size-5", meta.color)} />
+                  </div>
+                  <div className={cn("mt-1.5 hidden rounded-xl p-2.5 transition-colors sm:block", meta.bg)}>
+                    <LogIcon className={cn("size-5", meta.color)} />
+                  </div>
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      {log.action}
+                      {log.metadata &&
+                        typeof log.metadata === "object" &&
+                        !!(log.metadata as Record<string, unknown>).isNewDevice && (
+                          <span className="rounded bg-indigo-500/10 px-2 py-0.5 text-[10px] font-bold tracking-wider text-indigo-400 uppercase">
+                            New Device
+                          </span>
+                        )}
+                    </CardTitle>
+                    <CardDescription>
+                      <Typography variant="mutedText" className="flex items-center gap-1.5 text-xs">
+                        <Calendar className="size-3.5" />
+                        {format(new Date(log.createdAt), "MMM d, yyyy 'at' h:mm a")}
+                      </Typography>
+                      {log.ip && (
+                        <Typography variant="mutedText" className="flex items-center gap-1.5 text-xs">
+                          <Search className="size-3.5" />
+                          IP: {log.ip}
+                        </Typography>
                       )}
-                  </h4>
-                  <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="size-3.5" />
-                      {format(new Date(log.createdAt), "MMM d, yyyy 'at' h:mm a")}
-                    </span>
-                    {log.ip && (
-                      <span className="flex items-center gap-1.5">
-                        <Search className="size-3.5" />
-                        IP: {log.ip}
-                      </span>
-                    )}
+                    </CardDescription>
                   </div>
                 </div>
-              </div>
 
-              <div className="hidden shrink-0 sm:block">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground group/btn gap-2 text-[10px] font-bold tracking-widest uppercase hover:text-white"
-                >
-                  Details
-                  <ArrowRight className="size-3.5 transition-transform group-hover/btn:translate-x-1" />
-                </Button>
+                <CardAction>
+                  <Button variant="ghost" size="sm">
+                    Details
+                    <ArrowRight />
+                  </Button>
+                </CardAction>
               </div>
-            </div>
+            </CardHeader>
 
             {/* Meta Info if expanded or complex metadata */}
             {log.metadata && Object.keys(log.metadata).length > 1 && (
-              <div className="border-border/20 mt-4 border-t pt-4">
+              <CardContent>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                   {Object.entries(log.metadata || {})
                     .filter(([k]) => k !== "isNewDevice")
                     .map(([key, value]) => (
-                      <div key={key}>
-                        <div
-                          className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase"
-                          title={key}
-                        >
-                          {key.replace(/([A-Z])/g, " $1")}
-                        </div>
-                        <div className="mt-0.5 truncate text-[11px] font-medium text-white">
+                      <div key={key} className="flex flex-col">
+                        <Typography variant="mutedText">{key.replace(/([A-Z])/g, " $1")}:</Typography>
+                        <Typography variant="smallText">
                           {typeof value === "object" ? JSON.stringify(value) : String(value)}
-                        </div>
+                        </Typography>
                       </div>
                     ))}
                 </div>
-              </div>
+              </CardContent>
             )}
-          </SpotlightCard>
+          </Card>
         </div>
       );
     });
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-7xl">
-      {/* Background Texture */}
-      <div
-        className="pointer-events-none fixed inset-0 z-[-1] opacity-[0.03] mix-blend-overlay grayscale"
-        style={{
-          backgroundImage: `url("${NOISE_TEXTURE}")`,
-        }}
-      />
-
+    <div className="relative mx-auto w-full">
       {/* Header */}
       <div className="mb-12">
         <Link
@@ -268,11 +257,13 @@ const ActivityLogPage = () => {
               <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/10 p-2.5">
                 <History className="size-6 text-indigo-500" />
               </div>
-              <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Security Activity</h1>
+              <Typography variant="h2" className="pb-0 text-white sm:text-4xl">
+                Security Activity
+              </Typography>
             </div>
-            <p className="text-muted-foreground max-w-md">
+            <Typography variant="mutedText" className="block max-w-md">
               Review your account&apos;s security events, login history, and important changes.
-            </p>
+            </Typography>
           </div>
 
           <div className="flex items-center gap-2">
@@ -286,18 +277,20 @@ const ActivityLogPage = () => {
               />
             </div>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className={cn(
-                    "shrink-0",
-                    filterAction && "border-indigo-500/50 bg-indigo-500/10 text-indigo-400 hover:text-indigo-300"
-                  )}
-                >
-                  <Filter className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={cn(
+                      "shrink-0",
+                      filterAction && "border-indigo-500/50 bg-indigo-500/10 text-indigo-400 hover:text-indigo-300"
+                    )}
+                  >
+                    <Filter className="size-4" />
+                  </Button>
+                }
+              />
               <DropdownMenuContent align="end" className="w-52">
                 <DropdownMenuItem onClick={() => setFilterAction(undefined)}>Clear Filter</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFilterAction("auth.login")}>Logins</DropdownMenuItem>
@@ -327,9 +320,12 @@ const ActivityLogPage = () => {
             >
               Previous
             </Button>
-            <div className="text-muted-foreground flex items-center gap-2 px-4 text-xs font-bold tracking-widest uppercase">
+            <Typography
+              variant="mutedText"
+              className="flex items-center gap-2 px-4 text-xs font-bold tracking-widest uppercase"
+            >
               {Math.floor(offset / limit) + 1} / {Math.ceil(total / limit)}
-            </div>
+            </Typography>
             <Button
               variant="outline"
               disabled={offset + limit >= total}
@@ -344,12 +340,11 @@ const ActivityLogPage = () => {
 
       {/* Footer Note */}
       <div className="mt-16 flex items-center justify-center gap-4 text-center">
-        <div className="h-px shrink-0 bg-gradient-to-r from-transparent to-zinc-800" />
-        <p className="text-muted-foreground flex w-full max-w-[400px] items-center justify-center gap-2 text-[10px] leading-relaxed select-none">
-          <Lock className="size-3 shrink-0" />
+        {/* <div className="h-px shrink-0 bg-linear-to-r from-transparent to-zinc-800" /> */}
+        <Typography variant="mutedText" className="flex items-center gap-2">
+          <Lock className="size-4 shrink-0" />
           This history is private and only visible to you. We monitor activity to protect your account security.
-        </p>
-        <div className="h-px shrink-0 bg-gradient-to-l from-transparent to-zinc-800" />
+        </Typography>
       </div>
     </div>
   );

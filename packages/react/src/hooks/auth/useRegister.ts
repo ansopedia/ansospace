@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuthContext } from "../../providers/AuthProvider";
 
 export const useRegister = () => {
-  const { sdk, storage, updateUser } = useAuthContext();
+  const { sdk, storage, setGuestUser } = useAuthContext();
 
   return useMutation({
     mutationFn: (body: RegisterRequest) => sdk.auth.register(body),
@@ -14,15 +14,10 @@ export const useRegister = () => {
 
         await storage.set("user-id", userId.toString());
         await storage.set(TokenType.ACTION, actionToken);
-        await storage.set("user-email", variables.email);
-        await storage.set("is-user-verified", false);
 
-        // This switches the user from GUEST -> PARTIAL
-        updateUser({
-          kind: "PARTIAL",
+        setGuestUser({
           id: userId,
           email: variables.email,
-          isVerified: false,
         });
       }
     },

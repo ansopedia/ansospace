@@ -40,7 +40,7 @@ export async function SessionList() {
 
           const location = geolocation?.city ? `${geolocation.city}, ${geolocation.country}` : "Unknown Location";
 
-          const isCurrent = session.isActive; // API should return this
+          const isCurrent = session.isActive;
 
           return (
             <TableRow key={session.id.toString()}>

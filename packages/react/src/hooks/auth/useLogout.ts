@@ -12,8 +12,6 @@ export const useLogout = () => {
     onSuccess: async () => {
       // 1. Clear all persistence
       await storage.remove("user-id");
-      await storage.remove("is-user-verified");
-      await storage.remove("user-email");
       await storage.remove(TokenType.ACTION);
       await storage.remove(TokenType.AUTHORIZATION);
       await storage.remove(TokenType.REFRESH);

@@ -5,40 +5,21 @@ import { AUTH_QUERY_KEYS } from "../../constants/queryKeys";
 import { useAuthContext } from "../../providers/AuthProvider";
 
 export const useLogin = () => {
-  const { sdk, storage, updateUser } = useAuthContext();
+  const { sdk, storage, setGuestUser } = useAuthContext();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (body: LoginRequest) => sdk.auth.login(body),
-    onSuccess: async (response, variables) => {
+    onSuccess: async (response) => {
       if (response.status === "success") {
         const { userId } = response.data;
 
-        await storage.set("is-user-verified", true);
+        await storage.set("user-id", userId.toString());
 
-        updateUser({
-          kind: "AUTHENTICATED",
-          id: userId,
-          isVerified: true,
-        });
-
+        setGuestUser(null);
         // We tell React Query: "The 'auth session' is dirty, refetch it."
         // This automatically updates the user state in AuthProvider.
         await queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEYS.accessProfile });
-      } else {
-        const emailToSave = variables.email;
-
-        if (emailToSave) {
-          await storage.set("user-email", emailToSave);
-        }
-
-        await storage.set("is-user-verified", false);
-
-        updateUser({
-          kind: "PARTIAL",
-          email: emailToSave,
-          isVerified: false,
-        });
       }
     },
   });

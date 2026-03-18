@@ -50,27 +50,31 @@ export const UserMenu = ({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          className={cn(
-            "focus:ring-ring focus:ring-offset-background flex items-center gap-2 rounded-full outline-none focus:ring-2 focus:ring-offset-2",
-            className
-          )}
-        >
-          <Avatar className="size-8">
-            <AvatarImage src={avatarUrl} alt={name} />
-            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
-          </Avatar>
-          {/* <span className="hidden text-sm font-medium sm:inline-block">{name}</span> */}
-        </button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <button
+            className={cn(
+              "focus:ring-ring focus:ring-offset-background flex cursor-pointer items-center gap-2 rounded-full outline-none focus:ring-2 focus:ring-offset-2",
+              className
+            )}
+          >
+            <Avatar className="size-8">
+              <AvatarImage src={avatarUrl} alt={name} />
+              <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+            </Avatar>
+            <span className="hidden text-sm font-medium sm:inline-block">{name}</span>
+          </button>
+        }
+      />
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm leading-none font-medium">{name}</p>
-            <p className="text-muted-foreground text-xs leading-none">{email}</p>
-          </div>
-        </DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm leading-none font-medium">{name}</p>
+              <p className="text-muted-foreground text-xs leading-none">{email}</p>
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={onManageAccount}>

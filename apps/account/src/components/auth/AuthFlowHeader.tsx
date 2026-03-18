@@ -21,7 +21,7 @@ export function AuthFlowHeader({
   return (
     <div className="space-y-6">
       <div className="inline-flex items-center justify-center">
-        <div className="from-primary/20 to-primary/10 relative rounded-2xl bg-gradient-to-br p-5 shadow-lg">
+        <div className="from-primary/20 to-primary/10 relative rounded-2xl bg-linear-to-br p-5 shadow-lg">
           <Icon className="text-primary h-12 w-12" strokeWidth={2} />
           <div className="bg-primary/20 absolute inset-0 animate-pulse rounded-2xl blur-xl" />
         </div>
@@ -32,7 +32,7 @@ export function AuthFlowHeader({
           <Typography variant="h1" className="text-foreground mb-2 text-3xl font-bold sm:text-4xl">
             {title}
             {highlightedText && (
-              <span className="from-primary to-primary/70 bg-gradient-to-r bg-clip-text text-transparent">
+              <span className="from-primary to-primary/70 bg-linear-to-r bg-clip-text text-transparent">
                 {" "}
                 {highlightedText}
               </span>

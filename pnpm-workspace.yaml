@@ -3,8 +3,9 @@ packages:
   - packages/*
 
 onlyBuiltDependencies:
-  - "@tailwindcss/oxide"
+  - '@tailwindcss/oxide'
   - core-js-pure
   - esbuild
+  - msw
   - sharp
   - unrs-resolver

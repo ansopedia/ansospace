@@ -3,13 +3,14 @@
 import { useRouter } from "next/navigation";
 
 import { useLogout, useUser } from "@ansospace/react";
-import { Navbar, UserMenu } from "@ansospace/ui/blocks";
-import { Separator } from "@ansospace/ui/components/separator";
+import { UserMenu } from "@ansospace/ui/blocks";
+import { Separator } from "@ansospace/ui/components";
 import { SidebarTrigger } from "@ansospace/ui/components/sidebar";
+import { ThemeToggle } from "@ansospace/ui/theme";
 
 export const DashboardNavbar = () => {
   const router = useRouter();
-  const { user, email } = useUser();
+  const { user, isSignedIn } = useUser();
   const { mutate: logout } = useLogout();
 
   const handleLogout = () => {
@@ -24,9 +25,7 @@ export const DashboardNavbar = () => {
     router.push("/profile");
   };
 
-  if (user.kind !== "AUTHENTICATED") {
-    return null;
-  }
+  if (!isSignedIn) return null;
 
   const initials = user.displayName
     .split(" ")
@@ -36,25 +35,23 @@ export const DashboardNavbar = () => {
     .slice(0, 2);
 
   return (
-    <Navbar>
-      <Navbar.Left>
+    <header className="bg-background/80 sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b-2 px-4 backdrop-blur-md">
+      <div className="flex items-center gap-2">
         <SidebarTrigger variant="ghost" />
-        <Separator orientation="vertical" className="h-4" />
-        <Navbar.Brand>
-          <h1 className="text-lg font-bold tracking-tight">Dashboard</h1>
-        </Navbar.Brand>
-      </Navbar.Left>
-
-      <Navbar.Right>
+        <Separator orientation="vertical" />
+        <h1 className="text-lg font-bold tracking-tight">Dashboard</h1>
+      </div>
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
         <UserMenu
           name={user.displayName}
           avatarUrl={user.avatar}
-          email={email || ""}
+          email={user.email}
           fallback={initials}
           onLogout={handleLogout}
           onManageAccount={handleManageAccount}
         />
-      </Navbar.Right>
-    </Navbar>
+      </div>
+    </header>
   );
 };

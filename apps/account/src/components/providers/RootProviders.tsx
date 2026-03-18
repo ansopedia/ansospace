@@ -1,16 +1,16 @@
 "use client";
 
-import { ReactNode, Suspense } from "react";
+import { ReactNode } from "react";
 
 import { Toaster } from "@ansospace/ui/components";
-import { ThemeProvider as NextThemesProvider } from "@ansospace/ui/theme";
+import { ThemeProvider as AnsospaceThemeProvider } from "@ansospace/ui/theme";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { ReactQueryProvider } from "./ReactQueryProvider";
 
 export function RootProviders({ children }: { children: ReactNode }) {
   return (
-    <NextThemesProvider
+    <AnsospaceThemeProvider
       attribute="class"
       defaultTheme="system"
       enableSystem
@@ -18,11 +18,10 @@ export function RootProviders({ children }: { children: ReactNode }) {
       enableColorScheme
     >
       <ReactQueryProvider>
-        <Suspense>{children}</Suspense>
+        {children}
         <ReactQueryDevtools initialIsOpen={false} />
       </ReactQueryProvider>
-
       <Toaster richColors />
-    </NextThemesProvider>
+    </AnsospaceThemeProvider>
   );
 }

@@ -5,7 +5,7 @@ import { FC } from "react";
 
 import { useRegister } from "@ansospace/react";
 import { RegisterRequest, registerRequestSchema } from "@ansospace/types";
-import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
+import { Button, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -43,14 +43,14 @@ export const RegisterForm: FC = () => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 flex flex-col gap-6">
-        <AuthFields form={form} fields={registerFields} loading={loading} />
-        <Button type="submit" className="rounded-2xl" disabled={loading}>
-          {loading && <Spinner />}
-          {loading ? "Creating account..." : "Sign Up"}
-        </Button>
-      </form>
-    </Form>
+    // <Form {...form}>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 flex flex-col gap-6">
+      <AuthFields form={form} fields={registerFields} loading={loading} />
+      <Button type="submit" className="rounded-2xl" disabled={loading}>
+        {loading && <Spinner />}
+        {loading ? "Creating account..." : "Sign Up"}
+      </Button>
+    </form>
+    // </Form>
   );
 };

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useLogin } from "@ansospace/react";
 import type { LoginRequest } from "@ansospace/types";
 import { loginRequestSchema } from "@ansospace/types";
-import { Button, Checkbox, Form, Spinner, toast } from "@ansospace/ui/components";
+import { Button, Checkbox, FieldGroup, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -49,35 +49,37 @@ export const LoginForm = () => {
   const LOGIN_FIELDS = AUTH_FORM_FIELDS.filter((f) => ["email", "password"].includes(f.name));
 
   return (
-    <Form {...form}>
-      <form className="mt-10 flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
+    // <Form {...form}>
+    <form className="mt-10 flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldGroup>
         <AuthFields form={form} fields={LOGIN_FIELDS} loading={loading} />
+      </FieldGroup>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="remember"
-              checked={rememberMe}
-              onCheckedChange={(checked) => setRememberMe(checked === true)}
-              disabled={loading}
-            />
-            <label
-              htmlFor="remember"
-              className="text-muted-foreground cursor-pointer text-sm leading-none font-medium select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
-            >
-              Remember me
-            </label>
-          </div>
-          <Link href="/forgot-password" className="link-primary">
-            Forgot password?
-          </Link>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="remember"
+            checked={rememberMe}
+            onCheckedChange={(checked) => setRememberMe(checked === true)}
+            disabled={loading}
+          />
+          <label
+            htmlFor="remember"
+            className="text-muted-foreground cursor-pointer text-sm leading-none font-medium select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+          >
+            Remember me
+          </label>
         </div>
+        <Link href="/forgot-password" className="link-primary">
+          Forgot password?
+        </Link>
+      </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading && <Spinner />}
-          {loading ? "Logging in..." : "Login"}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading && <Spinner />}
+        {loading ? "Logging in..." : "Login"}
+      </Button>
+    </form>
+    // </Form>
   );
 };

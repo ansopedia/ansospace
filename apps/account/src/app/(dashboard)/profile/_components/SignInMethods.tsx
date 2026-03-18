@@ -4,18 +4,22 @@ import { useMemo, useState } from "react";
 
 import { useUser } from "@ansospace/react";
 import { ChangePasswordRequest, changePasswordRequestSchema } from "@ansospace/types";
-import { SpotlightCard } from "@ansospace/ui/blocks";
 import {
   Badge,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Form,
+  Spinner,
   Switch,
+  Typography,
   toast,
 } from "@ansospace/ui/components";
 import { cn } from "@ansospace/ui/lib/utils";
@@ -28,21 +32,16 @@ import { changePasswordAction } from "@/lib/ansospace/actions";
 import { AUTH_FORM_FIELDS } from "@/src/constants/auth-fields";
 
 export function SignInMethods() {
-  const { user, isLoading: isLoadingProfile } = useUser();
+  const { user, isSignedIn } = useUser();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
-  const hasPassword = useMemo(() => {
-    if (user.kind === "AUTHENTICATED") {
-      return user.hasPassword ?? false;
-    }
-    return true;
-  }, [user]);
+  // if (!isLoadingProfile) return <div className="flex h-full w-full items-center justify-center">Loading...</div>;
+
+  const hasPassword = user?.hasPassword;
 
   const passwordFields = useMemo(() => {
-    const allFields = AUTH_FORM_FIELDS.filter((field) =>
-      ["currentPassword", "password", "confirmPassword"].includes(field.name)
-    );
+    const allFields = AUTH_FORM_FIELDS.filter((field) => field.type === "password");
 
     if (!hasPassword) {
       return allFields.filter((field) => field.name !== "currentPassword");
@@ -82,130 +81,143 @@ export function SignInMethods() {
     }
   };
 
-  if (user.kind !== "AUTHENTICATED") return null;
+  if (!isSignedIn) return <div>Redirecting...</div>;
 
   return (
-    <SpotlightCard className="flex min-h-[400px] flex-col p-6 lg:col-span-1 lg:row-span-1">
-      <div className="mb-6 flex items-center gap-2">
-        <div className="rounded-lg border border-indigo-500/20 bg-indigo-500/10 p-2">
-          <Lock className="size-5 text-indigo-500" />
-        </div>
-        <h3 className="font-bold tracking-tight">Sign-in & Security</h3>
-      </div>
-
-      <div className="flex-1 space-y-6">
-        {/* Password Section */}
-        <div className="group relative">
-          <div className="mb-3 flex items-center justify-between">
-            <div>
-              <h4 className="text-sm font-bold">Password</h4>
-              <p className="text-muted-foreground text-[10px] font-medium">Last changed 3 months ago</p>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2">
+            <div className="text-primary/10 border-primary/20 rounded-lg border p-2">
+              <Lock className="text-primary size-5" />
             </div>
-            <Badge
-              variant="outline"
-              className="border-emerald-500/20 bg-emerald-500/5 text-[10px] font-bold text-emerald-500 uppercase"
-            >
-              Secure
-            </Badge>
-          </div>
+            Sign-in & Security
+          </CardTitle>
+        </div>
+      </CardHeader>
 
-          <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                variant="secondary"
-                className="group/btn w-full justify-between rounded-xl py-6 transition-all hover:bg-indigo-500 hover:text-white"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="bg-background/50 rounded-lg p-2 group-hover/btn:bg-white/20">
-                    <Key className="size-4" />
-                  </div>
-                  <span className="font-bold">Update Password</span>
-                </div>
-                <ChevronRight className="size-4 opacity-50" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[450px]">
-              <DialogHeader className="gap-2">
-                <DialogTitle className="flex items-center gap-2 text-2xl font-bold">
-                  <Key className="size-6 text-indigo-500" />
-                  {hasPassword ? "Change Password" : "Set Password"}
-                </DialogTitle>
-                <DialogDescription>Protect your account with a strong, industrial-grade password.</DialogDescription>
-              </DialogHeader>
-              <Form {...passwordForm}>
+      <CardContent>
+        <div className="flex-1 space-y-6">
+          {/* Password Section */}
+          <div className="group relative">
+            <div className="mb-3 flex items-center justify-between">
+              <div>
+                <Typography variant="h6">Password</Typography>
+                <Typography variant="mutedText">
+                  {hasPassword ? "Last changed 3 months ago" : "No password set"}
+                </Typography>
+              </div>
+              {hasPassword ? (
+                <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary uppercase">
+                  Secure
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="border-red-500/20 bg-red-500/5 text-red-500 uppercase">
+                  Insecure
+                </Badge>
+              )}
+            </div>
+
+            <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+              <DialogTrigger
+                render={
+                  <Button
+                    variant="secondary"
+                    className="group/btn hover:bg-primary w-full justify-between rounded-xl py-6 transition-all hover:text-white"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="bg-background/50 rounded-lg p-2 group-hover/btn:bg-white/20">
+                        <Key className="size-4" />
+                      </div>
+                      <span className="font-bold">Update Password</span>
+                    </div>
+                    <ChevronRight className="size-4 opacity-50" />
+                  </Button>
+                }
+              />
+              <DialogContent className="sm:max-w-[450px]">
+                <DialogHeader className="gap-2">
+                  <DialogTitle className="flex items-center gap-2 text-2xl font-bold">
+                    <Key className="text-primary size-6" />
+                    {hasPassword ? "Change Password" : "Set Password"}
+                  </DialogTitle>
+                  <DialogDescription>Protect your account with a strong, industrial-grade password.</DialogDescription>
+                </DialogHeader>
                 <form className="mt-4 space-y-5" onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
-                  <AuthFields form={passwordForm} fields={passwordFields} loading={isLoadingProfile} />
+                  <AuthFields
+                    form={passwordForm}
+                    fields={passwordFields}
+                    loading={passwordForm.formState.isSubmitting}
+                  />
                   <div className="flex justify-end gap-3 pt-2">
                     <Button type="button" variant="ghost" onClick={() => setPasswordDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button
-                      type="submit"
-                      disabled={isLoadingProfile}
-                      className="bg-indigo-500 px-8 text-white hover:bg-indigo-600"
-                    >
-                      {isLoadingProfile ? (
-                        "Saving..."
+                    <Button type="submit" disabled={passwordForm.formState.isSubmitting}>
+                      {passwordForm.formState.isSubmitting ? (
+                        <>
+                          <Spinner /> Saving...
+                        </>
                       ) : (
                         <>
-                          <Check className="mr-2 size-4" /> Save changes
+                          <Check /> Save changes
                         </>
                       )}
                     </Button>
                   </div>
                 </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        <div className="bg-border/50 h-px w-full" />
-
-        {/* 2FA Section */}
-        <div className="group relative">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <h4 className="text-sm font-bold">Two-Factor Auth</h4>
-              <p className="text-muted-foreground max-w-[150px] text-[10px] leading-tight font-medium">
-                {twoFactorEnabled ? "Your account is bulletproof." : "Add a shield to your account."}
-              </p>
-            </div>
-            <Switch checked={twoFactorEnabled} onCheckedChange={setTwoFactorEnabled} />
+              </DialogContent>
+            </Dialog>
           </div>
 
-          <div
-            className={cn(
-              "flex items-center justify-between rounded-xl border p-4 transition-all duration-500",
-              twoFactorEnabled
-                ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-500"
-                : "bg-muted/30 border-border/50 text-muted-foreground grayscale"
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <div className={cn("rounded-lg p-2", twoFactorEnabled ? "bg-emerald-500/10" : "bg-muted")}>
-                {twoFactorEnabled ? <ShieldCheck className="size-5" /> : <ShieldAlert className="size-5" />}
-              </div>
+          <div className="bg-border/50 h-px w-full" />
+
+          {/* 2FA Section */}
+          <div className="group relative">
+            <div className="mb-4 flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-black tracking-widest uppercase">
-                  {twoFactorEnabled ? "Shield On" : "Shield Off"}
-                </p>
-                <p className="text-[9px] font-medium opacity-70">
-                  {twoFactorEnabled ? "Verified via Authenticator" : "Recommended security step"}
-                </p>
+                <Typography variant="h6">Two-Factor Auth</Typography>
+                <Typography variant="mutedText">
+                  {twoFactorEnabled ? "Your account is bulletproof." : "Add a shield to your account."}
+                </Typography>
               </div>
+              <Switch checked={twoFactorEnabled} onCheckedChange={setTwoFactorEnabled} />
             </div>
-            {!twoFactorEnabled && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-0 text-[10px] font-bold underline hover:bg-transparent"
-              >
-                Setup
-              </Button>
-            )}
+
+            <div
+              className={cn(
+                "flex items-center justify-between rounded-xl border p-4 transition-all duration-500",
+                twoFactorEnabled
+                  ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-500"
+                  : "bg-muted/30 border-border/50 text-muted-foreground grayscale"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <div className={cn("rounded-lg p-2", twoFactorEnabled ? "bg-emerald-500/10" : "bg-muted")}>
+                  {twoFactorEnabled ? <ShieldCheck className="size-5" /> : <ShieldAlert className="size-5" />}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <Typography variant="h6" className="font-bold tracking-widest uppercase">
+                    {twoFactorEnabled ? "Shield On" : "Shield Off"}
+                  </Typography>
+                  <Typography variant="smallText">
+                    {twoFactorEnabled ? "Verified via Authenticator" : "Recommended security step"}
+                  </Typography>
+                </div>
+              </div>
+              {!twoFactorEnabled && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-0 text-[10px] font-bold underline hover:bg-transparent"
+                >
+                  Setup
+                </Button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </SpotlightCard>
+      </CardContent>
+    </Card>
   );
 }

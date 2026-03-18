@@ -1,7 +1,6 @@
 "use server";
 import { cookies, headers } from "next/headers";
 
-import { AuthUser } from "@ansospace/react";
 import type {
   AuditLog,
   AuditLogQuery,
@@ -42,7 +41,7 @@ async function fetchServerUserInternal(): Promise<UserAccessControlProfile | und
   }
 }
 
-export async function getServerUser(): Promise<AuthUser | undefined> {
+export async function getServerUser(): Promise<UserAccessControlProfile | undefined> {
   // Read token from cookies (outside cache scope)
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(TokenType.AUTHORIZATION)?.value;
@@ -51,15 +50,7 @@ export async function getServerUser(): Promise<AuthUser | undefined> {
   // If no tokens, user is not authenticated
   if (!accessToken && !refreshToken) return undefined;
 
-  const user = await fetchServerUserInternal();
-
-  return user
-    ? {
-        ...user,
-        kind: "AUTHENTICATED",
-        isVerified: true,
-      }
-    : undefined;
+  return await fetchServerUserInternal();
 }
 
 export async function getSessionsData() {
@@ -76,4 +67,9 @@ export const changePasswordAction = async (data: ChangePasswordRequest) => {
 export const getAuditLogsAction = async (options?: Partial<AuditLogQuery>): Promise<IApiResponse<AuditLog>> => {
   const sdk = await getServerSdk();
   return await sdk.auth.getAuditLogs(options);
+};
+
+export const revokeOtherSessionsAction = async () => {
+  const sdk = await getServerSdk();
+  return await sdk.auth.revokeOtherSessions();
 };

@@ -5,7 +5,7 @@ import { getSessionsData } from "@/lib/ansospace/actions";
 export async function AccountOverviewData() {
   const sessions = await getSessionsData();
 
-  // TODO: Fetch connected apps count when API is available
+  // Fetch connected apps count when API is available
   const connectedAppsCount = 0;
   const twoFactorEnabled = false;
 

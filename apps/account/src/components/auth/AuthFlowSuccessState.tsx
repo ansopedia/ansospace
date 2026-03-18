@@ -48,7 +48,7 @@ export function AuthFlowSuccessState({
       <div className="flex flex-col items-center justify-center space-y-8 py-12 text-center">
         <div className="relative">
           <div className="bg-primary/20 absolute inset-0 animate-pulse rounded-full blur-2xl" />
-          <div className="from-primary/20 to-primary/10 relative rounded-full bg-gradient-to-br p-8 shadow-lg">
+          <div className="from-primary/20 to-primary/10 relative rounded-full bg-linear-to-br p-8 shadow-lg">
             <CheckCircle2 className="text-primary h-20 w-20 drop-shadow-lg" strokeWidth={2} />
           </div>
           <div className="absolute -top-2 -right-2">

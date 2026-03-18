@@ -30,7 +30,7 @@ const PARAM_VALUES = {
 export function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { email, isLoading, isVerified, id: userId } = useUser();
+  const { user, isLoaded } = useUser();
 
   // Check if OTP is already sent (from signup or login)
   const fromParam = searchParams.get(SEARCH_PARAMS.FROM_SIGNUP);
@@ -47,7 +47,7 @@ export function VerifyEmailContent() {
     }
 
     // Priority 2: If user has userId (already logged in or auto-logged in), go to dashboard
-    if (userId) {
+    if (user?.id) {
       return RedirectAfterLogin;
     }
 
@@ -58,7 +58,7 @@ export function VerifyEmailContent() {
 
     // Default fallback: redirect to login
     return "/login";
-  }, [customRedirect, fromSignup, userId]);
+  }, [customRedirect, fromSignup, user?.id]);
 
   // Handle successful OTP verification
   const handleVerificationSuccess = useCallback(() => {
@@ -71,22 +71,22 @@ export function VerifyEmailContent() {
   }, [getRedirectPath, router]);
 
   // Handle different states
-  if (isLoading) {
+  if (!isLoaded) {
     return <LoadingState />;
   }
 
-  if (isVerified) {
-    return <VerifiedState isVerified={isVerified} />;
+  if (user?.isEmailVerified) {
+    return <VerifiedState isVerified={user?.isEmailVerified} />;
   }
 
-  if (!email) {
+  if (!user?.email) {
     return <SessionExpiredState />;
   }
 
   // Main Verification State
   return (
     <AuthFlowLayout illustration={<VerificationIllustration />}>
-      <VerificationHeader isOtpSent={isOtpSent} userEmail={email} />
+      <VerificationHeader isOtpSent={isOtpSent} userEmail={user?.email} />
       <VerificationForm
         isOtpSent={isOtpSent}
         onOtpSent={() => setIsOtpSent(true)}

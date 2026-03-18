@@ -4,12 +4,12 @@ import { AnsospaceStorage, Email, ObjectId, UserAccessControlProfile } from "@an
 
 // 1. GUEST: No data known
 export type GuestUser = {
-  kind: "GUEST";
+  id?: ObjectId; // We might know ID (from previous login)
+  email?: Email; // We might know Email (from invite/OTP)
 };
 
 // 2. PARTIAL: Known from Storage/Invite (Not fully validated by backend yet)
 export type PartialUser = {
-  kind: "PARTIAL";
   id?: ObjectId; // We might know ID (from previous login)
   email?: Email; // We might know Email (from invite/OTP)
   isVerified: boolean;
@@ -17,7 +17,6 @@ export type PartialUser = {
 
 // 3. AUTHENTICATED: Full profile from backend
 export type AuthenticatedUser = UserAccessControlProfile & {
-  kind: "AUTHENTICATED";
   isVerified: true; // Always true for this state
 };
 
@@ -32,5 +31,5 @@ export type AnsospaceProviderConfig = {
 export type AnsospaceProviderProps = {
   children: ReactNode;
   config: { baseUrl: string; storage: AnsospaceStorage };
-  initialUser?: AuthUser;
+  initialUser?: UserAccessControlProfile;
 };

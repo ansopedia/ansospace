@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from "@ansospace/ui/components";
+import { Field, FieldError, FieldLabel, Input } from "@ansospace/ui/components";
 import { Eye, EyeOff } from "lucide-react";
-import { Control, FieldValues, Path } from "react-hook-form";
+// import { FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from "@ansospace/ui/components";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
 export interface AuthFieldConfig {
   id: string;
@@ -42,38 +43,38 @@ export function AuthFields<T extends FieldValues>({ form, fields, loading }: Aut
         const inputType = isPassword && showPassword ? "text" : type;
 
         return (
-          <FormField
+          <Controller
             key={id}
             control={form.control}
             name={name as Path<T>}
-            render={({ field }) => (
-              <FormItem>
-                {label && <FormLabel>{label}</FormLabel>}
-                <FormControl>
-                  <div className="relative">
-                    {icon}
-                    <Input
-                      {...field}
-                      id={id}
-                      type={inputType}
-                      placeholder={placeholder}
-                      disabled={loading}
-                      className={`pl-10 ${isPassword ? "pr-10" : ""}`}
-                    />
-                    {isPassword && (
-                      <button
-                        type="button"
-                        tabIndex={-1}
-                        onClick={() => togglePassword(name)}
-                        className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2"
-                      >
-                        {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                      </button>
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>{label}</FieldLabel>
+                <div className="relative">
+                  {icon}
+                  <Input
+                    {...field}
+                    id={id}
+                    type={inputType}
+                    placeholder={placeholder}
+                    disabled={loading}
+                    aria-invalid={fieldState.invalid}
+                    aria-describedby={fieldState.error?.message}
+                    className={`pl-10 ${isPassword ? "pr-10" : ""}`}
+                  />
+                  {isPassword && (
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => togglePassword(name)}
+                      className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2"
+                    >
+                      {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                    </button>
+                  )}
+                </div>
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
             )}
           />
         );

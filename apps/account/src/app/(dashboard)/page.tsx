@@ -35,12 +35,12 @@ const quickActions = [
 
 export default async function DashboardPage() {
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6">
+    <div className="mx-auto grid w-full gap-6">
       <WelcomeHeader />
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {quickActions.map((action) => (
-          <Card key={action.href} className="transition-shadow hover:shadow-md">
+          <Card key={action.href}>
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="bg-primary/10 flex size-10 items-center justify-center rounded-lg">
@@ -53,9 +53,12 @@ export default async function DashboardPage() {
               <CardDescription>{action.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button asChild variant="outline" size="sm">
-                <Link href={action.href}>Manage</Link>
-              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                render={<Link href={action.href}>Manage</Link>}
+                nativeButton={false}
+              />
             </CardContent>
           </Card>
         ))}

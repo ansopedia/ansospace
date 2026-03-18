@@ -1,11 +1,12 @@
 "use client";
-import { AnsospaceProvider, AuthUser, BrowserStorageAdapter } from "@ansospace/react";
+import { AnsospaceProvider, BrowserStorageAdapter } from "@ansospace/react";
 import { TokenManager } from "@ansospace/sdk";
+import { UserAccessControlProfile } from "@ansospace/types";
 
 export type AuthProvidersProps = {
   baseUrl: string;
   children: React.ReactNode;
-  initialUser?: AuthUser;
+  initialUser?: UserAccessControlProfile;
 };
 
 export function AuthProvider({ children, baseUrl, initialUser }: AuthProvidersProps) {

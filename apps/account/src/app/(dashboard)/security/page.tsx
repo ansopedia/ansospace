@@ -3,6 +3,8 @@
 import { useState } from "react";
 
 import {
+  Alert,
+  AlertDescription,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -12,37 +14,57 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  AlertTitle,
   Button,
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
+  Typography,
+  toast,
 } from "@ansospace/ui/components";
-import { LogOut, Trash2 } from "lucide-react";
+import { AlertCircleIcon, LogOut, Trash2 } from "lucide-react";
+
+import { revokeOtherSessionsAction } from "@/src/lib/ansospace/actions";
 
 const SecurityPage = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
   const handleLogoutAllDevices = async () => {
-    setIsLoggingOut(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("Logged out from all devices");
-    setIsLoggingOut(false);
+    try {
+      setIsLoggingOut(true);
+      const res = await revokeOtherSessionsAction();
+      if (res.status === "success") {
+        toast.success("Logged out from all other devices");
+        setIsLogoutDialogOpen(false);
+      } else {
+        toast.error(res.message || "Failed to log out from other devices");
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An unknown error occurred");
+    } finally {
+      setIsLogoutDialogOpen(false);
+      setIsLoggingOut(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
-    setIsDeleting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("Account deleted");
-    setIsDeleting(false);
+    try {
+      setIsDeleting(true);
+      await new Promise((_, reject) => setTimeout(() => reject("Method not implemented"), 500));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An unknown error occurred");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-6">
+    <div className="mx-auto w-full space-y-6">
       {/* Log Out All Devices */}
       <Card>
         <CardHeader>
@@ -52,20 +74,22 @@ const SecurityPage = () => {
         <CardContent>
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <p className="text-sm">
+              <Typography>
                 This will log you out from all other devices where you&apos;re currently signed in. You&apos;ll need to
                 sign in again on those devices.
-              </p>
+              </Typography>
             </div>
           </div>
           <div className="mt-4">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline">
-                  <LogOut className="size-4" />
-                  Log Out All Devices
-                </Button>
-              </AlertDialogTrigger>
+            <AlertDialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
+              <AlertDialogTrigger
+                render={
+                  <Button variant="outline">
+                    <LogOut className="size-4" />
+                    Log Out All Devices
+                  </Button>
+                }
+              />
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -93,48 +117,51 @@ const SecurityPage = () => {
           <CardDescription>Permanently delete your account and all associated data</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="bg-destructive/10 border-destructive/20 rounded-md border p-4">
-              <h4 className="text-sm font-medium">Warning: This action cannot be undone</h4>
-              <p className="text-muted-foreground mt-2 text-sm">
-                Deleting your account will permanently remove all your data, including:
-              </p>
+          <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 max-w-md min-w-full">
+            <AlertCircleIcon />
+            <AlertTitle>Warning: This action cannot be undone</AlertTitle>
+            <AlertDescription>
+              Deleting your account will permanently remove all your data, including:
               <ul className="text-muted-foreground mt-2 list-inside list-disc space-y-1 text-sm">
                 <li>Your profile information</li>
                 <li>All connected applications</li>
                 <li>Your activity history</li>
                 <li>Any saved preferences</li>
               </ul>
-            </div>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+        <CardFooter className="flex justify-end border-0 bg-transparent">
+          <AlertDialog>
+            <AlertDialogTrigger
+              render={
                 <Button variant="destructive">
-                  <Trash2 className="size-4" />
+                  <Trash2 />
                   Delete Account
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete your account?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your account and remove all your data
-                    from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteAccount}
-                    disabled={isDeleting}
-                    className="bg-destructive hover:bg-destructive/90 text-white"
-                  >
-                    {isDeleting ? "Deleting..." : "Delete Account"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </CardContent>
+              }
+            />
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your account and remove all your data from
+                  our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                  className="bg-destructive hover:bg-destructive/90 text-white"
+                >
+                  {isDeleting ? "Deleting..." : "Delete Account"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardFooter>
       </Card>
     </div>
   );

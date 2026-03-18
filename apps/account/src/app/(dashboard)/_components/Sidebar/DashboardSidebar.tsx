@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { useUser } from "@ansospace/react";
 import {
   Sidebar,
   SidebarContent,
@@ -56,23 +55,21 @@ const securityNavigation = [
 
 export const DashboardSidebar = () => {
   const pathname = usePathname();
-  const { isAuthenticated } = useUser();
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
-    <Sidebar collapsible="icon" variant="floating">
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/"}>
-              <Link href="/">
-                <Image alt="AnsoSpace Logo" src="/images/Ansopedia_logo.svg" width={32} height={32} />
-                <span className="text-sm font-medium">AnsoSpace</span>
-              </Link>
-            </SidebarMenuButton>
+            <SidebarMenuButton
+              render={
+                <Link href="/">
+                  <Image alt="AnsoSpace Logo" src="/images/Ansopedia_logo.svg" width={32} height={32} />
+                  <span className="text-sm font-medium">AnsoSpace</span>
+                </Link>
+              }
+              isActive={pathname === "/"}
+            />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -81,19 +78,19 @@ export const DashboardSidebar = () => {
           <SidebarGroupLabel>Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigation.map((item) => {
-                const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive}>
+              {navigation.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    isActive={pathname === item.href}
+                    render={
                       <Link href={item.href}>
                         <item.icon className="size-4" />
                         <span>{item.title}</span>
                       </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+                    }
+                  />
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -101,19 +98,19 @@ export const DashboardSidebar = () => {
           <SidebarGroupLabel>Security</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {securityNavigation.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(item.href);
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive}>
+              {securityNavigation.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    isActive={pathname === item.href}
+                    render={
                       <Link href={item.href}>
                         <item.icon className="size-4" />
                         <span>{item.title}</span>
                       </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+                    }
+                  />
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

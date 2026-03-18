@@ -15,7 +15,7 @@ export type StorageValueType = string | boolean | undefined;
  * Can be implemented using localStorage, SecureStore, cookies, etc.
  */
 export interface AnsospaceStorage {
-  get: (key: AuthStorageKey) => Promise<StorageValueType>;
-  set: (key: AuthStorageKey, value: string | boolean) => Promise<void>;
+  get: <T = StorageValueType>(key: AuthStorageKey) => Promise<T>;
+  set: <T = StorageValueType>(key: AuthStorageKey, value: T) => Promise<void>;
   remove(key: AuthStorageKey): Promise<void>;
 }

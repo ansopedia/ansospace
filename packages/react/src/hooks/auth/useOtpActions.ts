@@ -6,7 +6,7 @@ import { AUTH_QUERY_KEYS } from "../../constants/queryKeys";
 import { useAuthContext } from "../../providers/AuthProvider";
 
 export const useOtpActions = () => {
-  const { sdk, storage, updateUser } = useAuthContext();
+  const { sdk, storage, setGuestUser } = useAuthContext();
   const queryClient = useQueryClient();
 
   const sendMutation = useMutation({
@@ -17,8 +17,8 @@ export const useOtpActions = () => {
         await storage.set(TokenType.ACTION, response.data.actionToken);
         if (variables.email) {
           await storage.set("userEmail", variables.email);
-          updateUser({
-            kind: "PARTIAL",
+          setGuestUser({
+            id: response.data.userId,
             email: variables.email,
           });
         }
@@ -53,13 +53,7 @@ export const useOtpActions = () => {
             const { userId } = loginRes.data;
             // Persist Session
             await storage.set("user-id", userId.toString());
-            await storage.set("is-user-verified", true);
-
-            updateUser({
-              kind: "AUTHENTICATED",
-              id: userId,
-              isVerified: true,
-            });
+            setGuestUser(null);
 
             // Update Global State
             await queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEYS.accessProfile });

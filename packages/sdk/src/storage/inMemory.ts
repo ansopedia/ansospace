@@ -3,12 +3,12 @@ import type { AnsospaceStorage, AuthStorageKey, StorageValueType } from "@ansosp
 export class InMemoryStorageAdapter implements AnsospaceStorage {
   private storage = new Map<AuthStorageKey, string | boolean>();
 
-  async get(key: AuthStorageKey): Promise<StorageValueType> {
-    return this.storage.get(key);
+  async get<T = StorageValueType>(key: AuthStorageKey): Promise<T> {
+    return this.storage.get(key) as T;
   }
 
-  async set(key: AuthStorageKey, value: string | boolean): Promise<void> {
-    this.storage.set(key, value);
+  async set<T = StorageValueType>(key: AuthStorageKey, value: T): Promise<void> {
+    this.storage.set(key, value as string | boolean);
   }
 
   async remove(key: AuthStorageKey): Promise<void> {

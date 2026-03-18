@@ -24,12 +24,12 @@ export class MiddlewareStorage implements AnsospaceStorage {
     });
   }
 
-  async get(key: AuthStorageKey) {
+  async get<T>(key: AuthStorageKey): Promise<T> {
     // 1. Check internal cache first
-    return this.internalCache.get(key);
+    return this.internalCache.get(key) as T;
   }
 
-  async set(key: AuthStorageKey, value: string | boolean | number) {
+  async set<T>(key: AuthStorageKey, value: T) {
     const stringValue = String(value);
 
     // 1. Update internal cache

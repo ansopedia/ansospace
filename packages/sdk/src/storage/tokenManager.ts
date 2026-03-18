@@ -7,11 +7,11 @@ export class TokenManager implements AnsospaceStorage {
     this.storage = storage;
   }
 
-  async get(type: AuthStorageKey): Promise<StorageValueType> {
+  async get<T = StorageValueType>(type: AuthStorageKey): Promise<T> {
     return this.storage.get(type);
   }
 
-  async set(key: AuthStorageKey, value: string | boolean): Promise<void> {
+  async set<T = StorageValueType>(key: AuthStorageKey, value: T): Promise<void> {
     await this.storage.set(key, value);
   }
 

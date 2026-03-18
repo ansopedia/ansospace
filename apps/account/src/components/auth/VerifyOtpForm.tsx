@@ -6,11 +6,7 @@ import { useOtpActions, useUser } from "@ansospace/react";
 import { OtpEvents, otpSchema } from "@ansospace/types";
 import {
   Button,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
+  Field,
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
@@ -20,7 +16,7 @@ import {
   toast,
 } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 const verifyEmailSchema = z.object({
@@ -40,7 +36,7 @@ const REGEXP_ONLY_DIGITS: RegExp = /^\d+$/;
 
 export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ eventType, onSuccess, isOtpSent, onOtpSent }) => {
   const { sendOtp, verifyOtp, isPending } = useOtpActions();
-  const { email } = useUser();
+  const { user } = useUser();
 
   const form = useForm({
     resolver: zodResolver(verifyEmailSchema),
@@ -77,13 +73,13 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ eventType, onSuccess, 
   };
 
   const handleResendOtp = async () => {
-    if (!email) {
+    if (!user?.email) {
       toast.error("Email not found. Please try signing up again.");
       return;
     }
 
     try {
-      const response = await sendOtp({ eventType, email });
+      const response = await sendOtp({ eventType, email: user?.email });
       if (response.status === "success" && response.data?.actionToken) {
         toast.success("OTP sent to your email");
         onOtpSent?.();
@@ -111,59 +107,54 @@ export const VerifyOtpForm: FC<VerifyEmailFormProps> = ({ eventType, onSuccess, 
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 sm:gap-6">
-        <FormField
-          control={form.control}
-          name="otp"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <div className="flex w-full justify-center py-2 sm:py-4">
-                  <InputOTP
-                    maxLength={6}
-                    {...field}
-                    onComplete={() => form.handleSubmit(onSubmit)()}
-                    pattern={REGEXP_ONLY_DIGITS.source}
-                  >
-                    <InputOTPGroup>
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                    </InputOTPGroup>
-                    <InputOTPSeparator />
-                    <InputOTPGroup>
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                  </InputOTP>
-                </div>
-              </FormControl>
-              <FormMessage className="text-center text-xs sm:text-sm" />
-            </FormItem>
-          )}
-        />
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 sm:gap-6">
+      <Controller
+        control={form.control}
+        name="otp"
+        render={({ field }) => (
+          <Field>
+            <div className="flex w-full justify-center py-2 sm:py-4">
+              <InputOTP
+                maxLength={6}
+                {...field}
+                onComplete={() => form.handleSubmit(onSubmit)()}
+                pattern={REGEXP_ONLY_DIGITS.source}
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+          </Field>
+        )}
+      />
 
-        <Button type="submit" className="rounded-xl" size="lg" disabled={isPending || !otpValue}>
-          {isPending && <Spinner className="mr-2" />}
-          <span className="text-sm sm:text-base">{isPending ? "Verifying..." : "Verify Email"}</span>
-        </Button>
+      <Button type="submit" className="rounded-xl" size="lg" disabled={isPending || !otpValue}>
+        {isPending && <Spinner className="mr-2" />}
+        <span className="text-sm sm:text-base">{isPending ? "Verifying..." : "Verify Email"}</span>
+      </Button>
 
-        <div className="text-center">
-          <Typography className="text-muted-foreground text-xs sm:text-sm">
-            Didn&apos;t receive the code?{" "}
-            <button
-              type="button"
-              onClick={handleResendOtp}
-              disabled={isPending}
-              className="link-primary font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isPending ? "Sending..." : "Resend OTP"}
-            </button>
-          </Typography>
-        </div>
-      </form>
-    </Form>
+      <div className="text-center">
+        <Typography className="text-muted-foreground text-xs sm:text-sm">
+          Didn&apos;t receive the code?{" "}
+          <button
+            type="button"
+            onClick={handleResendOtp}
+            disabled={isPending}
+            className="link-primary font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isPending ? "Sending..." : "Resend OTP"}
+          </button>
+        </Typography>
+      </div>
+    </form>
   );
 };

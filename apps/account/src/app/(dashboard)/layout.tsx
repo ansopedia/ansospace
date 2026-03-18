@@ -1,11 +1,12 @@
 import { Suspense } from "react";
 
-import { AppShell, Footer } from "@ansospace/ui/blocks";
+import { SidebarProvider } from "@ansospace/ui/components";
 
 import { AuthProvider } from "../../components/providers/AuthProvider";
 import { getServerUser } from "../../lib/ansospace/actions";
 import { ANSOSPACE_CONFIG } from "../../lib/ansospace/config";
 import { DashboardSidebar } from "./_components/Sidebar/DashboardSidebar";
+import { Footer } from "./_components/footer";
 import { DashboardNavbar } from "./_components/navbar/DashboardNavbar";
 
 // Component that fetches user data (requires runtime data - cookies)
@@ -23,29 +24,14 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
       <UserProvider>
-        <AppShell>
-          <AppShell.Sidebar>
-            <DashboardSidebar />
-          </AppShell.Sidebar>
-
-          <AppShell.Content>
-            <AppShell.Navbar>
-              <DashboardNavbar />
-            </AppShell.Navbar>
-
-            <AppShell.Main>{children}</AppShell.Main>
-
-            <AppShell.Footer>
-              <Footer
-                links={[
-                  { label: "Privacy Policy", href: "/privacy" },
-                  { label: "Terms of Service", href: "/terms" },
-                  { label: "Support", href: "/support" },
-                ]}
-              />
-            </AppShell.Footer>
-          </AppShell.Content>
-        </AppShell>
+        <SidebarProvider>
+          <DashboardSidebar />
+          <div className="flex w-full flex-col gap-6">
+            <DashboardNavbar />
+            <main className="flex-1 p-4 md:p-6">{children}</main>
+            <Footer />
+          </div>
+        </SidebarProvider>
       </UserProvider>
     </Suspense>
   );

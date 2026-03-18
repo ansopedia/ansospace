@@ -3,9 +3,9 @@
 import { useUser } from "@ansospace/react";
 
 export function WelcomeHeader() {
-  const { user, email } = useUser();
+  const { user } = useUser();
 
-  const displayName = user.kind === "AUTHENTICATED" ? user.username : email || "User";
+  const displayName = user?.displayName || "User";
 
   return (
     <div>

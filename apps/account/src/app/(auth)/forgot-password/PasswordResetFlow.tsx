@@ -17,7 +17,7 @@ import { PasswordResetNewPasswordForm } from "./PasswordResetNewPasswordForm";
 export const PasswordResetFlow = () => {
   const storage = useStorage();
   const [step, setStep] = useState<"email" | "otp" | "reset" | "success">("email");
-  const { email } = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
     (async () => {
@@ -56,7 +56,7 @@ export const PasswordResetFlow = () => {
           icon={Mail}
           title="Verify"
           highlightedText="Code"
-          description={`We've sent a 6-digit code to ${email}`}
+          description={`We've sent a 6-digit code to ${user?.email}`}
         />
         <AuthFlowCard>
           <VerifyOtpForm

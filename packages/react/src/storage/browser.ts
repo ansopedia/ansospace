@@ -5,16 +5,15 @@ import type { AnsospaceStorage, AuthStorageKey, StorageValueType } from "@ansosp
  * Suitable for web applications (Next.js, React, etc.)
  */
 export class BrowserStorageAdapter implements AnsospaceStorage {
-  async get(key: AuthStorageKey): Promise<StorageValueType> {
-    if (typeof document === "undefined") return undefined;
+  async get<T = StorageValueType>(key: AuthStorageKey): Promise<T> {
+    if (typeof document === "undefined") return undefined as T;
     const cookie = document.cookie.split("; ").find((row) => row.startsWith(`${key}=`));
     const cookieValue = cookie ? cookie.split("=")[1] || undefined : undefined;
-    console.log("cookieValue", cookieValue);
-    if (cookieValue) return cookieValue;
-    return undefined;
+    if (cookieValue) return cookieValue as T;
+    return undefined as T;
   }
 
-  async set(key: AuthStorageKey, value: string | boolean): Promise<void> {
+  async set<T = StorageValueType>(key: AuthStorageKey, value: T): Promise<void> {
     if (typeof document === "undefined") return;
     document.cookie = `${key}=${value}; path=/; secure; samesite=strict`;
   }

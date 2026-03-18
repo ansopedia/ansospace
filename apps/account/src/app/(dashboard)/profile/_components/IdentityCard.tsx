@@ -1,20 +1,19 @@
 "use client";
 
-import * as React from "react";
+import { useState } from "react";
 
 import { useUser } from "@ansospace/react";
-import { SpotlightCard } from "@ansospace/ui/blocks";
-import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Input } from "@ansospace/ui/components";
+import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, Input } from "@ansospace/ui/components";
 import { Check, Edit2, Mail, ShieldCheck, Sparkles } from "lucide-react";
 
 export function IdentityCard() {
-  const { user, email } = useUser();
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [name, setName] = React.useState(user.kind === "AUTHENTICATED" ? user.displayName : "");
+  const { user, isSignedIn } = useUser();
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(user?.displayName);
 
-  if (user.kind !== "AUTHENTICATED") return null;
+  if (!isSignedIn) return <div>Redirecting...</div>;
 
-  const initials = user.displayName
+  const initials = user?.displayName
     .split(" ")
     .map((n: string) => n[0])
     .join("")
@@ -23,13 +22,13 @@ export function IdentityCard() {
 
   const handleSave = () => {
     setIsEditing(false);
-    // TODO: implement actual save logic
+    throw new Error("Not implemented");
   };
 
   return (
-    <SpotlightCard className="flex flex-col p-0 lg:col-span-2 lg:row-span-1">
+    <Card className="p-0">
       {/* Banner Section */}
-      <div className="relative h-32 w-full overflow-hidden bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 md:h-40">
+      <div className="relative h-32 w-full overflow-hidden bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 md:h-40">
         <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
         <div className="absolute top-4 right-4">
           <Badge variant="secondary" className="bg-background/20 border-white/20 text-white backdrop-blur-md">
@@ -43,7 +42,7 @@ export function IdentityCard() {
       <div className="relative flex flex-1 flex-col px-6 pt-16 pb-8">
         <div className="ring-background absolute -top-12 left-6 rounded-full ring-4">
           <Avatar className="border-primary/20 size-24 border-2 shadow-xl">
-            <AvatarImage src={user.avatar} alt={user.displayName} />
+            <AvatarImage src={user?.avatar} alt={user?.displayName} />
             <AvatarFallback className="text-xl">{initials}</AvatarFallback>
           </Avatar>
           <Button
@@ -72,7 +71,7 @@ export function IdentityCard() {
                   </div>
                 ) : (
                   <div className="group flex items-center gap-2">
-                    <h2 className="text-2xl font-bold tracking-tight">{name}</h2>
+                    <h2 className="text-2xl font-bold tracking-tight">{user?.displayName}</h2>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -86,7 +85,7 @@ export function IdentityCard() {
               </div>
               <div className="text-muted-foreground flex items-center gap-1.5">
                 <Mail className="size-4" />
-                <span className="text-sm">{email}</span>
+                <span className="text-sm">{user?.email}</span>
               </div>
             </div>
             <div className="hidden sm:block">
@@ -108,6 +107,6 @@ export function IdentityCard() {
           </div>
         </div>
       </div>
-    </SpotlightCard>
+    </Card>
   );
 }

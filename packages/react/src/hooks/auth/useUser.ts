@@ -1,65 +1,59 @@
-import { useCallback } from "react";
+import { UserAccessControlProfile } from "@ansospace/types";
 
 import { useAuthContext } from "../../providers/AuthProvider";
 
-export const useUser = () => {
-  // 1. Get the "Source of Truth" from the Context
-  const { user, isAuthLoading } = useAuthContext();
+type UseUserReturn =
+  | { isLoaded: false; isSignedIn: false; user: null }
+  | { isLoaded: true; isSignedIn: false; user: null }
+  | {
+      isLoaded: true;
+      isSignedIn: true;
+      user: UserAccessControlProfile;
+      can: (permission: string) => boolean;
+      is: (role: string) => boolean;
+    };
 
-  // 2. Derive Status Flags
-  const isAuthenticated = user.kind === "AUTHENTICATED";
-  const isGuest = user.kind === "GUEST";
+export const useUser = (): UseUserReturn => {
+  const { user, isLoading } = useAuthContext();
 
-  // 3. Safe Property Accessors (Handle Union Type)
-  // These properties only exist on Authenticated users
-  const roles = user.kind === "AUTHENTICATED" ? user.roles : [];
-  const permissions = user.kind === "AUTHENTICATED" ? user.permissions : [];
+  if (!isLoading && !user) {
+    return {
+      isLoaded: true,
+      isSignedIn: false,
+      user: null,
+    };
+  }
 
-  // ID and Email exist on both PARTIAL and AUTHENTICATED users
-  const id = "id" in user ? user.id : null;
-  const email = "email" in user ? user.email : null;
+  if (!user) {
+    return {
+      isLoaded: false,
+      isSignedIn: false,
+      user: null,
+    };
+  }
 
   /**
    * Helper: Check if user has a specific permission
    */
-  const can = useCallback(
-    (permission: string) => {
-      if (user.kind !== "AUTHENTICATED") return false;
-      // Admin Override: super-admin can do anything
-      if (user.roles.includes("super-admin")) return true;
-      return user.permissions.includes(permission);
-    },
-    [user]
-  );
+  const can = (permission: string) => {
+    if (!user) return false;
+    // Admin Override: super-admin can do anything
+    if (user.roles.includes("super-admin")) return true;
+    return user.permissions.includes(permission);
+  };
 
   /**
    * Helper: Check if user has a specific role
    */
-  const is = useCallback(
-    (role: string) => {
-      if (user.kind !== "AUTHENTICATED") return false;
-      return user.roles.includes(role);
-    },
-    [user]
-  );
+  const is = (role: string) => {
+    if (!user) return false;
+    return user.roles.includes(role);
+  };
 
   return {
-    // Data Objects
-    user, // The full discriminated union object
-
-    // Flat Data (Safe defaults)
-    id,
-    email,
-    roles,
-    permissions,
-
-    // Status Flags
-    isAuthenticated,
-    isGuest,
-    isLoading: isAuthLoading,
-    isVerified: "isVerified" in user ? user.isVerified : false,
-
-    // Helpers
+    isLoaded: true,
+    isSignedIn: true,
+    user,
     can,
     is,
   };

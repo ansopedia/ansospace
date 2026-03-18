@@ -2,7 +2,7 @@
 
 import { useOtpActions } from "@ansospace/react";
 import { Email, emailSchema, otpEvents } from "@ansospace/types";
-import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
+import { Button, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -37,14 +37,12 @@ export function PasswordResetEmailForm({ onSuccess }: PasswordResetEmailFormProp
   });
 
   return (
-    <Form {...form}>
-      <form className="flex flex-col gap-6" onSubmit={onSubmit}>
-        <AuthFields form={form} fields={FORGOT_PASSWORD_FIELDS} loading={isPending} />
-        <Button type="submit" className="w-full rounded-xl" size="lg" disabled={isPending}>
-          {isPending && <Spinner />}
-          {isPending ? "Sending Code..." : "Send Verification Code"}
-        </Button>
-      </form>
-    </Form>
+    <form className="flex flex-col gap-6" onSubmit={onSubmit}>
+      <AuthFields form={form} fields={FORGOT_PASSWORD_FIELDS} loading={isPending} />
+      <Button type="submit" className="w-full rounded-xl" size="lg" disabled={isPending}>
+        {isPending && <Spinner />}
+        {isPending ? "Sending Code..." : "Send Verification Code"}
+      </Button>
+    </form>
   );
 }

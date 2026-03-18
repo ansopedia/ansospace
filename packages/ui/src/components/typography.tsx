@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { cn } from "@ansospace/ui/lib/utils";
-import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
 
 const typographyVariants = cva("text-foreground leading-[130%]", {
@@ -19,7 +18,7 @@ const typographyVariants = cva("text-foreground leading-[130%]", {
       inlineCode: "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold",
       lead: "text-xl text-muted-foreground",
       largeText: "text-lg font-semibold",
-      smallText: "text-sm font-medium leading-none",
+      smallText: "text-sm leading-none",
       mutedText: "text-muted-foreground",
     },
   },
@@ -30,7 +29,7 @@ const typographyVariants = cva("text-foreground leading-[130%]", {
 
 type VariantPropType = VariantProps<typeof typographyVariants>;
 
-const variantElementMap: Record<NonNullable<VariantPropType["variant"]>, string> = {
+const variantElementMap: Record<NonNullable<VariantPropType["variant"]>, React.ElementType> = {
   h1: "h1",
   h2: "h2",
   h3: "h3",
@@ -48,13 +47,12 @@ const variantElementMap: Record<NonNullable<VariantPropType["variant"]>, string>
 };
 
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof typographyVariants> {
-  asChild?: boolean;
-  as?: string;
+  as?: React.ElementType;
+  variant?: keyof typeof variantElementMap;
 }
 
-const Typography = ({ className, variant, as, asChild, ...props }: TypographyProps) => {
-  const element = variant ? variantElementMap[variant] : "p";
-  const Comp = asChild ? Slot : (as ?? element);
+const Typography = ({ className, variant = "p", as, ...props }: TypographyProps) => {
+  const Comp = as ?? variantElementMap[variant];
   return <Comp className={cn(typographyVariants({ variant, className }))} {...props} />;
 };
 

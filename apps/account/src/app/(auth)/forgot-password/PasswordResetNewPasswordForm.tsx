@@ -2,7 +2,7 @@
 
 import { usePasswordActions } from "@ansospace/react";
 import { ResetPasswordRequest, resetPasswordBaseSchema } from "@ansospace/types";
-import { Button, Form, Spinner, toast } from "@ansospace/ui/components";
+import { Button, Spinner, toast } from "@ansospace/ui/components";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -34,15 +34,13 @@ export function PasswordResetNewPasswordForm({ onSuccess }: PasswordResetNewPass
   };
 
   return (
-    <Form {...form}>
-      <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
-        <AuthFields form={form} fields={RESET_PASSWORD_FIELDS} loading={isPending} />
+    <form className="flex flex-col gap-6" onSubmit={form.handleSubmit(onSubmit)}>
+      <AuthFields form={form} fields={RESET_PASSWORD_FIELDS} loading={isPending} />
 
-        <Button type="submit" className="w-full rounded-xl" size="lg" disabled={isPending}>
-          {isPending && <Spinner />}
-          {isPending ? "Resetting Password..." : "Reset Password"}
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="w-full rounded-xl" size="lg" disabled={isPending}>
+        {isPending && <Spinner />}
+        {isPending ? "Resetting Password..." : "Reset Password"}
+      </Button>
+    </form>
   );
 }

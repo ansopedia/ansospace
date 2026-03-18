@@ -3,13 +3,13 @@ import { cookies } from "next/headers";
 import { AnsospaceStorage, AuthStorageKey } from "@ansospace/types";
 
 export class NextServerStorage implements AnsospaceStorage {
-  async get(key: AuthStorageKey) {
+  async get<T>(key: AuthStorageKey): Promise<T> {
     const cookieStore = await cookies();
     const cookie = cookieStore.get(key);
-    return cookie?.value;
+    return cookie?.value as T;
   }
 
-  async set(key: AuthStorageKey, value: string | boolean | number) {
+  async set<T>(key: AuthStorageKey, value: T) {
     const cookieStore = await cookies();
     // Convert all values to strings for cookies
     cookieStore.set(key, String(value), {

@@ -1,12 +1,13 @@
 import Link from "next/link";
 
-import { SpotlightCard } from "@ansospace/ui/blocks";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, Typography } from "@ansospace/ui/components";
 import { cn } from "@ansospace/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import {
   AlertCircle,
   AlertTriangle,
+  ArrowUpRight,
   History,
   KeyRound,
   LogIn,
@@ -102,11 +103,11 @@ export function ActivityLog({ className }: ActivityLogProps) {
           <div className={cn("mt-1 rounded-full p-1", color, "bg-current/10")}>
             <LogIcon className="size-3.5" />
           </div>
-          <div className="border-border/40 flex flex-1 flex-col border-b border-dashed pb-3 text-white transition-colors group-last:border-0">
-            <span className="text-xs font-semibold">{log.action}</span>
-            <span className="text-muted-foreground text-[10px]">
+          <div className="border-border/40 flex flex-1 flex-col gap-1 border-b border-dashed pb-3 group-last:border-0">
+            <Typography variant="smallText">{log.action}</Typography>
+            <Typography variant="mutedText">
               {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}
-            </span>
+            </Typography>
           </div>
         </div>
       );
@@ -114,22 +115,28 @@ export function ActivityLog({ className }: ActivityLogProps) {
   };
 
   return (
-    <SpotlightCard className={cn("flex h-full flex-col p-6", className)}>
-      <div className="mb-6 flex items-center gap-2">
-        <div className="rounded-lg border border-indigo-500/20 bg-indigo-500/10 p-2">
-          <History className="size-5 text-indigo-500" />
+    <Card className="justify-between">
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2">
+            <div className="text-primary/10 rounded-lg border border-indigo-500/20 p-2">
+              <History className="text-primary size-5" />
+            </div>
+            Recent Activity
+          </CardTitle>
         </div>
-        <h3 className="font-bold tracking-tight">Recent Activity</h3>
-      </div>
+      </CardHeader>
+      <CardContent className="flex flex-1 flex-col gap-2">{renderContent()}</CardContent>
 
-      <div className="space-y-4">{renderContent()}</div>
-
-      <Link
-        href="/profile/activity"
-        className="text-muted-foreground hover:text-primary mt-auto w-full pt-6 text-center text-[10px] font-bold tracking-widest uppercase transition-colors"
-      >
-        View Full Audit Log
-      </Link>
-    </SpotlightCard>
+      <CardFooter className="border-0 bg-transparent">
+        <Link
+          href="/profile/activity"
+          className="text-muted-foreground hover:text-primary mt-auto flex w-full items-center justify-center gap-2 pt-6 text-center text-[10px] font-bold tracking-widest uppercase transition-colors"
+        >
+          View Full Audit Log
+          <ArrowUpRight className="size-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </Link>
+      </CardFooter>
+    </Card>
   );
 }

@@ -39,6 +39,7 @@ export type VerifyOtpRequest = z.infer<typeof verifyOtpRequestSchema>;
 
 export const sendOtpResponseSchema = z.object({
   actionToken: z.string(),
+  userId: objectId,
 });
 
 export type SendOtpResponse = z.infer<typeof sendOtpResponseSchema>;
