@@ -1,6 +1,6 @@
 {
   "name": "@ansospace/eslint-config",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Shared ESLint configuration for AnsoSpace projects with TypeScript, SonarJS, React, Next.js, and Node.js support",
   "type": "module",
   "main": "./base.mjs",
@@ -51,6 +51,7 @@
   },
   "peerDependencies": {
     "eslint": "^9.39.2",
+    "@eslint/js": "9.39.2",
     "eslint-plugin-sonarjs": "3.0.5",
     "eslint-config-prettier": "10.1.8",
     "typescript": "^5.9.3"

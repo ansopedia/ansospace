@@ -1,15 +1,8 @@
-"use client";
-
-import * as React from "react";
-
 import { cn } from "@ansospace/ui/lib/utils";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 
 function Slider({ className, defaultValue, value, min = 0, max = 100, ...props }: SliderPrimitive.Root.Props) {
-  const _values = React.useMemo(
-    () => (Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max]),
-    [value, defaultValue, min, max]
-  );
+  const _values = Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max];
 
   return (
     <SliderPrimitive.Root

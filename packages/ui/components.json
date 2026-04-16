@@ -7,9 +7,11 @@
     "config": "",
     "css": "src/styles/globals.css",
     "baseColor": "neutral",
-    "cssVariables": true
+    "cssVariables": true,
+    "prefix": ""
   },
   "iconLibrary": "lucide",
+  "rtl": false,
   "aliases": {
     "components": "@ansospace/ui/components",
     "utils": "@ansospace/ui/lib/utils",
@@ -18,7 +20,7 @@
     "ui": "@ansospace/ui/components",
     "theme": "@ansospace/ui/theme"
   },
-  "rtl": false,
   "menuColor": "default",
-  "menuAccent": "subtle"
+  "menuAccent": "subtle",
+  "registries": {}
 }

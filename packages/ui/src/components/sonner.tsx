@@ -4,7 +4,7 @@ import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps, toast } from "sonner";
 
-export const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
 
   return (
@@ -36,4 +36,4 @@ export const Toaster = ({ ...props }: ToasterProps) => {
   );
 };
 
-export { toast };
+export { Toaster, toast };

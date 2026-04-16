@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@ansospace/ui/lib/utils";
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";

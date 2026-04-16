@@ -11,7 +11,7 @@ const RegisterPage = () => {
       <div className="lg:1/4 w-full sm:w-2/3 md:w-2/4 lg:w-1/3">
         <Typography variant="h2">
           Want to be an
-          <span className="text-primary">&nbsp;Ansopedian?</span>
+          <span className="text-primary font-bold">&nbsp;Ansopedian?</span>
         </Typography>
         <Typography className="text-muted-foreground">Sign up to continue</Typography>
         <RegisterForm />

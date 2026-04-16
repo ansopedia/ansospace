@@ -4,4 +4,5 @@ export { AnsospaceProvider } from "./providers/AuthProvider";
 export { type AuthUser } from "./types";
 
 // Storage Adapters (Platform-specific - Web only)
+export { ReactQueryProvider } from "./providers/ReactQueryProvider";
 export { BrowserStorageAdapter } from "./storage/browser";
